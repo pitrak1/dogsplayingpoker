@@ -1,0 +1,7 @@
+packages:
+  - server
+  - client
+allowBuilds:
+  '0': esbuild
+  '1': '@parcel/watcher'
+  '@parcel/watcher': set this to true or false

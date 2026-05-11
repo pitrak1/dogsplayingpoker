@@ -1,0 +1,11 @@
+{
+  "name": "dogsplayingpoker",
+  "private": true,
+  "scripts": {
+    "dev:server": "pnpm --filter dogsplayingpoker-server dev",
+    "dev:client": "pnpm --filter dogsplayingpoker-client dev"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}
