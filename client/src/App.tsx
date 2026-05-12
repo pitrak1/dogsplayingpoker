@@ -1,9 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
 import { Header } from '@/components/header/header'
 import { BrowserRouter, Routes, Route } from 'react-router'
-import { Index } from '@/pages/index'
+import { Home } from '@/pages/home'
 import { About } from '@/pages/about'
 import { Login } from '@/pages/login'
+import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
 
 const GET_PLAYERS = gql`
@@ -29,9 +30,10 @@ export function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </main>
     </BrowserRouter>
