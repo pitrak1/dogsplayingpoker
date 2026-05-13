@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { YogaInitialContext } from 'graphql-yoga'
 
 export const generateAuthToken = (userId: number) =>
-  jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '5s' })
+  jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '15m' })
 
 export const verifyAuthToken = (token: string) : { userId: number} =>
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as unknown as { userId: number }

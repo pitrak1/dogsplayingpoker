@@ -2,35 +2,42 @@ import { createContext, useContext, useState, ReactNode } from 'react'
 import { User } from '@/types/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 
-const ACCESS_TOKEN_LIFETIME = 15 * 60
+const AUTH_MAX_AGE = 15 * 60
+const AUTH_TOKEN_KEY = 'authToken'
+const USER_KEY = 'user'
 
-export const getAuthToken = () => getCookie('authToken')
-export const setAuthToken = (token: string) => setCookie('authToken', token, ACCESS_TOKEN_LIFETIME)
-export const clearAuth = () => deleteCookie('authToken')
+export const getAuthToken = () => getCookie(AUTH_TOKEN_KEY)
+export const setAuthToken = (token: string) => setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
+export const clearAuth = () => deleteCookie(AUTH_TOKEN_KEY)
 
 type AuthContextType = {
   user: User | null
-  setAuthToken: (token: string) => void
+  setAuth: (token: string, user: User) => void
   clearAuth: () => void
-  setUser: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = getCookie(USER_KEY)
+    return stored ? JSON.parse(stored) : null
+  })
 
-  const setAuthToken = (token: string) => {
-    setCookie('authToken', token, ACCESS_TOKEN_LIFETIME)
+  const setAuth = (token: string, user: User) => {
+    setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
+    setCookie(USER_KEY, JSON.stringify(user), AUTH_MAX_AGE)
+    setUser(user)
   }
 
   const clearAuth = () => {
-    deleteCookie('authToken')
+    deleteCookie(AUTH_TOKEN_KEY)
+    deleteCookie(USER_KEY)
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, setAuthToken, clearAuth, setUser }}>
+    <AuthContext.Provider value={{ user, setAuth, clearAuth }}>
       {children}
     </AuthContext.Provider>
   )

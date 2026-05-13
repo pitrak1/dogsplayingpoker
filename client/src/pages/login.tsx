@@ -13,7 +13,7 @@ export function Login() {
 
   const [loginUser, { loading, error }] = useMutation<{ loginUser: AuthPayload }>(LOGIN_USER, { errorPolicy: 'all' })
 
-  const { setAuthToken, setUser } = useAuth()
+  const { setAuth } = useAuth()
 
   const isValid = email && password
   const isDisabled = !isValid || loading
@@ -32,8 +32,9 @@ export function Login() {
     e.preventDefault()
     const response = await loginUser({ variables: { email, password }})
     if (response.data) {
-      setAuthToken(response.data?.loginUser?.authToken!)
-      setUser(response.data?.loginUser?.user)
+      const authToken = response.data?.loginUser?.authToken!
+      const user = response.data?.loginUser?.user
+      setAuth(authToken, user)
       navigate('/', { replace: true })
     } else {
       console.log(response.errors)

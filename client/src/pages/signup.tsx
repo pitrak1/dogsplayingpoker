@@ -18,7 +18,7 @@ export function Signup() {
   const isValid = email.includes('@') && username && password.length >= 8 && password == confirmPassword
   const isDisabled = !isValid || loading
 
-  const { setAuthToken, setUser } = useAuth()
+  const { setAuth } = useAuth()
 
   const navigate = useNavigate()
 
@@ -42,8 +42,9 @@ export function Signup() {
     e.preventDefault()
     const response = await createUser({ variables: { username, email, password }})
     if (response.data) {
-      setAuthToken(response.data?.createUser?.authToken!)
-      setUser(response.data?.createUser?.user)
+      const authToken = response.data?.createUser?.authToken!
+      const user = response.data?.createUser?.user
+      setAuth(authToken, user)
       navigate('/', { replace: true })
     } else {
       console.log(response.errors)

@@ -9,11 +9,24 @@ export function UserMenu() {
     clearAuth()
   }
 
+  const renderMenuContents = () => {
+    if (user) {
+      return (
+        <Link to="/" onClick={logout}>LOGOUT</Link>
+      )
+    } else {
+      return (
+        <>
+          <Link to="/login">Log in</Link>
+          <Link to="/signup">Sign up</Link>
+        </>
+      )
+    }
+  }
+
   return (
     <div className="user-menu">
-      {user && <Link to="/" onClick={logout}>LOGOUT</Link>}
-      {!user && <Link to="/login">Log in</Link>}
-      {!user && <Link to="/signup">Sign up</Link>}
+      {renderMenuContents()}
     </div>
   )
 }
