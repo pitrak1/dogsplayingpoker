@@ -1,11 +1,11 @@
 import { FormField } from '@/components/forms/formField'
 import { useState } from 'react'
-import { CreateUserData, CREATE_USER } from '@/pages/signup.queries'
+import { CREATE_USER } from '@/pages/signup.queries'
+import { AuthPayload } from '@/types/authPayload'
 import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router'
+import { useAuth } from '@/context/auth'
 import './signup.scss'
-
-
 
 export function Signup() {
   const [email, setEmail] = useState('')
@@ -13,10 +13,12 @@ export function Signup() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const [createUser, { loading, error }] = useMutation<CreateUserData>(CREATE_USER, { errorPolicy: 'all' })
+  const [createUser, { loading, error }] = useMutation<{ createUser: AuthPayload }>(CREATE_USER, { errorPolicy: 'all' })
 
   const isValid = email.includes('@') && username && password.length >= 8 && password == confirmPassword
   const isDisabled = !isValid || loading
+
+  const { setAuthToken, setUser } = useAuth()
 
   const navigate = useNavigate()
 
@@ -38,11 +40,13 @@ export function Signup() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    await createUser({ variables: { username, email, password }})
-    if (error) {
-      console.log(error)
-    } else {
+    const response = await createUser({ variables: { username, email, password }})
+    if (response.data) {
+      setAuthToken(response.data?.createUser?.authToken!)
+      setUser(response.data?.createUser?.user)
       navigate('/', { replace: true })
+    } else {
+      console.log(response.errors)
     }
   }
 

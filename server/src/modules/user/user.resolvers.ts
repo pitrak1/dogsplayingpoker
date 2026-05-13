@@ -3,9 +3,17 @@ import { db } from '@/db'
 import { users } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { GraphQLError } from 'graphql'
+import { YogaInitialContext } from 'graphql-yoga'
+import { generateAuthToken, generateRefreshToken, setRefreshTokenCookie, getRefreshTokenFromCookies, verifyRefreshToken } from '@/lib/auth'
+import { GraphQLContext } from '@/index'
 
 type CreateUserArgs = {
   username: string, 
+  email: string, 
+  password: string
+}
+
+type LoginUserArgs = {
   email: string, 
   password: string
 }
@@ -14,7 +22,12 @@ const PG_UNIQUE_VIOLATION = '23505'
 
 export const userResolvers = {
   Query: {
-    users: () => db.select().from(users).where(isNull(users.deletedAt)),
+    users: async (_: unknown, __: unknown, ctx: GraphQLContext) => {
+      if (!ctx.userId) throw new GraphQLError('Unauthorized', {
+        extensions: { http: { status: 401 } }
+      })
+      return db.select().from(users).where(isNull(users.deletedAt))
+    },
     user: async (_: unknown, { id }: { id: number }) => {
       const rows = await db
         .select()
@@ -24,12 +37,34 @@ export const userResolvers = {
     }
   },
   Mutation: {
-    createUser: async (_: unknown, { username, email, password }: CreateUserArgs) => {
+    loginUser: async (_: unknown, { email, password }: LoginUserArgs, ctx: YogaInitialContext) => {
+      try {
+        const rows = await db.select().from(users).where(and(eq(users.email, email), isNull(users.deletedAt)))
+        const user = rows[0] ?? null
+
+        if (!user) throw new GraphQLError('Invalid credentials')
+
+        const valid = await bcrypt.compare(password, user.password)
+        if (!valid) throw new GraphQLError('Invalid credentials')
+
+        const authToken = generateAuthToken(user.id)
+        const refreshToken = generateRefreshToken(user.id)
+        await setRefreshTokenCookie(ctx, refreshToken)
+        return { authToken, user }
+      } catch (e: any) {
+        throw new GraphQLError('Something went wrong')
+      }
+    },
+    createUser: async (_: unknown, { username, email, password }: CreateUserArgs, ctx: YogaInitialContext) => {
       try {
         const hashed = await bcrypt.hash(password, 12)
         const values = { username, email, password: hashed }
         const rows = await db.insert(users).values(values).returning()
-        return rows[0]
+        const user = rows[0]
+        const authToken = generateAuthToken(user.id)
+        const refreshToken = generateRefreshToken(user.id)
+        await setRefreshTokenCookie(ctx, refreshToken)
+        return { authToken, user }
       } catch (e: any) {
         if (e.code === PG_UNIQUE_VIOLATION) {
           if (e.constraint?.includes('email')) {
@@ -40,6 +75,18 @@ export const userResolvers = {
           }
         }
         throw new GraphQLError('Something went wrong')
+      }
+    },
+    refreshToken: async (_: unknown, __: unknown, ctx: YogaInitialContext) => {
+      const token = await getRefreshTokenFromCookies(ctx)
+      if (!token) throw new GraphQLError('No refresh token')
+
+      try {
+        const payload = verifyRefreshToken(token)
+        const authToken = generateAuthToken(payload.userId)
+        return { authToken }
+      } catch {
+        throw new GraphQLError('Invalid or expired refresh token')
       }
     }
   },
