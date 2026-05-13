@@ -1,9 +1,12 @@
 import { Link } from 'react-router'
 import { useAuth } from '@/context/auth'
+import { useState } from 'react'
+import { DownArrow } from '@/components/shared/downArrow'
 import './userMenu.scss'
 
 export function UserMenu() {
   const { user, clearAuth } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
 
   const logout = () => {
     clearAuth()
@@ -12,7 +15,17 @@ export function UserMenu() {
   const renderMenuContents = () => {
     if (user) {
       return (
-        <Link to="/" onClick={logout}>LOGOUT</Link>
+        <div className="user-menu__username-display">
+          <button className="user-menu__username-button" onClick={() => setIsOpen(!isOpen)}>
+            {user.username}
+            <DownArrow />
+          </button>
+          {isOpen && (
+            <div className="user-menu__dropdown">
+              <Link to="/" onClick={logout}>Log out</Link>
+            </div>
+          )}
+        </div>
       )
     } else {
       return (

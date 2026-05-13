@@ -1,7 +1,4 @@
-$header-height: 64px;
-$header-bg: #dfdfdf;
-$nav-link-color: #333;
-$nav-link-hover: #0066cc;
+@use '@/styles/variables' as *;
 
 .header {
   width: 100%;
