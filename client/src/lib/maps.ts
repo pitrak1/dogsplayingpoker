@@ -1,3 +1,5 @@
+import { User } from '@/types/user'
+
 // At zoom 0, 1 pixel represents this many meters at the equator
 const EARTH_CIRCUMFERENCE_CONSTANT = 156543.03392
 
@@ -25,7 +27,3 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
 // Creates an array mapping zoom level to miles/px for the particular latitude and mile range
 export const getCircleStops = (miles: number, latitude: number): [number, number][] =>
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
-
-export const getMarker = (latitude: number, longitude: number) => {
-
-}

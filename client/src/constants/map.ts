@@ -1,7 +1,7 @@
 const CHICAGO = {
   longitude: -87.6298,
   latitude: 41.8781,
-  zoom: 10,
+  zoom: 11,
 }
 
 const UNITED_STATES = {
