@@ -22,7 +22,9 @@ export function UserMenu() {
           </button>
           {isOpen && (
             <div className="user-menu__dropdown">
-              <Link to="/" onClick={logout}>Log out</Link>
+              <Link to="/" onClick={logout}>
+                Log out
+              </Link>
             </div>
           )}
         </div>
@@ -37,9 +39,5 @@ export function UserMenu() {
     }
   }
 
-  return (
-    <div className="user-menu">
-      {renderMenuContents()}
-    </div>
-  )
+  return <div className="user-menu">{renderMenuContents()}</div>
 }

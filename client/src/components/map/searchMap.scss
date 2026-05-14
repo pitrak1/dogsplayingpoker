@@ -3,12 +3,12 @@
 .search-map__container {
   position: relative;
   width: 100%;
-  height: calc(100vh - $header-height)
+  height: calc(100vh - $header-height);
 }
 
 .search-map__map {
   width: 100%;
-  height:100%
+  height: 100%;
 }
 
 .search-map__input {

@@ -11,7 +11,9 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const [loginUser, { loading, error }] = useMutation<{ loginUser: AuthPayload }>(LOGIN_USER, { errorPolicy: 'all' })
+  const [loginUser, { loading, error }] = useMutation<{ loginUser: AuthPayload }>(LOGIN_USER, {
+    errorPolicy: 'all',
+  })
 
   const { setAuth } = useAuth()
 
@@ -30,7 +32,7 @@ export function Login() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const response = await loginUser({ variables: { email, password }})
+    const response = await loginUser({ variables: { email, password } })
     if (response.data) {
       const authToken = response.data?.loginUser?.authToken!
       const user = response.data?.loginUser?.user
@@ -45,8 +47,14 @@ export function Login() {
     <div className="login">
       <h1>Log in</h1>
       <form onSubmit={handleSubmit}>
-        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail}/>
-        <FormField name="password" label="Password" type="password" value={password} onChange={onChangePassword}/>
+        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />
+        <FormField
+          name="password"
+          label="Password"
+          type="password"
+          value={password}
+          onChange={onChangePassword}
+        />
         <button type="submit" disabled={isDisabled}>
           {loading ? 'Logging in...' : 'Log in'}
         </button>

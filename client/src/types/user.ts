@@ -1,7 +1,7 @@
 export type User = {
-  id: string,
-  username: string,
-  email: string,
+  id: string
+  username: string
+  email: string
   latitude: number | null
   longitude: number | null
   radiusMiles: number | null

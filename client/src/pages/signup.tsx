@@ -13,9 +13,12 @@ export function Signup() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const [createUser, { loading, error }] = useMutation<{ createUser: AuthPayload }>(CREATE_USER, { errorPolicy: 'all' })
+  const [createUser, { loading, error }] = useMutation<{ createUser: AuthPayload }>(CREATE_USER, {
+    errorPolicy: 'all',
+  })
 
-  const isValid = email.includes('@') && username && password.length >= 8 && password == confirmPassword
+  const isValid =
+    email.includes('@') && username && password.length >= 8 && password == confirmPassword
   const isDisabled = !isValid || loading
 
   const { setAuth } = useAuth()
@@ -40,7 +43,7 @@ export function Signup() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const response = await createUser({ variables: { username, email, password }})
+    const response = await createUser({ variables: { username, email, password } })
     if (response.data) {
       const authToken = response.data?.createUser?.authToken!
       const user = response.data?.createUser?.user
@@ -55,10 +58,28 @@ export function Signup() {
     <div className="signup">
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail}/>
-        <FormField name="username" label="Username" type="text" value={username} onChange={onChangeUsername}/>
-        <FormField name="password" label="Password" type="password" value={password} onChange={onChangePassword}/>
-        <FormField name="confirmPassword" label="Confirm Password" type="password" value={confirmPassword} onChange={onChangeConfirmPassword}/>
+        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />
+        <FormField
+          name="username"
+          label="Username"
+          type="text"
+          value={username}
+          onChange={onChangeUsername}
+        />
+        <FormField
+          name="password"
+          label="Password"
+          type="password"
+          value={password}
+          onChange={onChangePassword}
+        />
+        <FormField
+          name="confirmPassword"
+          label="Confirm Password"
+          type="password"
+          value={confirmPassword}
+          onChange={onChangeConfirmPassword}
+        />
         <button type="submit" disabled={isDisabled}>
           {loading ? 'Signing up...' : 'Sign up'}
         </button>

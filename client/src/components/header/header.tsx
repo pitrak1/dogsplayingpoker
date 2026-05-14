@@ -8,7 +8,7 @@ import './header.scss'
 export function Header() {
   const { pathname } = useLocation()
 
-  const isAuthPage = ["/login", "/signup"].includes(pathname)
+  const isAuthPage = ['/login', '/signup'].includes(pathname)
 
   const renderHeaderContent = () => {
     if (isAuthPage) {

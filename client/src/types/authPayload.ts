@@ -1,6 +1,6 @@
 import { User } from '@/types/user'
 
 export type AuthPayload = {
-  authToken: string,
+  authToken: string
   user: User
 }

@@ -9,7 +9,7 @@ const MILES_TO_METERS = 1609.34
 // Because we're using a Mercator projection, the number of meters per pixel will get lower further from equator
 // This is because the circumference away from the poles decreases but our map width stay the same
 const getLatitudeCoefficient = (latitude: number) => {
-  return Math.cos(latitude * Math.PI / 180)
+  return Math.cos((latitude * Math.PI) / 180)
 }
 
 // Every zoom level doubles the number of pixels
@@ -19,7 +19,8 @@ const getZoomCoefficient = (zoom: number) => {
 }
 
 export const milesToPixels = (miles: number, latitude: number, zoom: number) => {
-  const metersPerPixel = EARTH_CIRCUMFERENCE_CONSTANT * getLatitudeCoefficient(latitude) / getZoomCoefficient(zoom)
+  const metersPerPixel =
+    (EARTH_CIRCUMFERENCE_CONSTANT * getLatitudeCoefficient(latitude)) / getZoomCoefficient(zoom)
   const meters = miles * MILES_TO_METERS
   return meters / metersPerPixel
 }

@@ -1,51 +1,50 @@
 @use '@/styles/variables' as *;
 
 .user-menu {
-    font-size: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    a {
-        padding: 0.5rem;
-        color: #333;
-        text-decoration: none;
-        
-    }
+  font-size: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  a {
+    padding: 0.5rem;
+    color: #333;
+    text-decoration: none;
+  }
 
-    a:hover {
-        text-decoration: underline;
-    }
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 .user-menu__username-display {
-    position: relative;
-    height: $header-height;
-    display: flex;
-    align-items: center;
+  position: relative;
+  height: $header-height;
+  display: flex;
+  align-items: center;
 }
 
 .user-menu__username-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 
-    &:hover {
-        text-decoration: underline;
-    }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .user-menu__dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-    z-index: 100;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 100;
 }

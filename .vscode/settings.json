@@ -4,5 +4,15 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": ["client", "server"]
+  "eslint.workingDirectories": ["client", "server"],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "[typescriptreact]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[scss]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  }
 }

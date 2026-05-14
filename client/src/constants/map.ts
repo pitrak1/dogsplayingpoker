@@ -11,4 +11,3 @@ const UNITED_STATES = {
 }
 
 export const DEFAULT_MAP_CENTER = CHICAGO
-

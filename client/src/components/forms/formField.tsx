@@ -8,7 +8,7 @@ type Props = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function FormField({name, label, type, value, onChange}: Props) {
+export function FormField({ name, label, type, value, onChange }: Props) {
   return (
     <div className="form-field">
       <label htmlFor={name}>{label}</label>
