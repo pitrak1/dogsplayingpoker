@@ -1,5 +1,4 @@
 import { HeaderLogo } from '@/components/header/headerLogo'
-import { Nav } from '@/components/header/nav'
 import { ReturnHome } from '@/components/header/returnHome'
 import { UserMenu } from '@/components/header/userMenu'
 import { useLocation } from 'react-router'
@@ -20,9 +19,6 @@ export function Header() {
     } else {
       return (
         <>
-          <div className="header__nav">
-            <Nav />
-          </div>
           <div className="header__user-menu">
             <UserMenu />
           </div>
