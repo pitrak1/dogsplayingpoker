@@ -10,7 +10,8 @@ import { GraphQLContext } from '@/index'
 type CreateUserArgs = {
   username: string, 
   email: string, 
-  password: string
+  password: string,
+  profileImageUrl: string | null
 }
 
 type LoginUserArgs = {
@@ -55,10 +56,10 @@ export const userResolvers = {
         throw new GraphQLError('Something went wrong')
       }
     },
-    createUser: async (_: unknown, { username, email, password }: CreateUserArgs, ctx: YogaInitialContext) => {
+    createUser: async (_: unknown, { username, email, password, profileImageUrl }: CreateUserArgs, ctx: YogaInitialContext) => {
       try {
         const hashed = await bcrypt.hash(password, 12)
-        const values = { username, email, password: hashed }
+        const values = { username, email, password: hashed, profileImageUrl }
         const rows = await db.insert(users).values(values).returning()
         const user = rows[0]
         const authToken = generateAuthToken(user.id)

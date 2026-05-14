@@ -3,6 +3,7 @@ export const userTypeDefs = `
     id: Int!
     username: String!
     email: String!
+    profileImageUrl: String
     createdAt: String!
   }
 
@@ -17,7 +18,7 @@ export const userTypeDefs = `
   }
 
   type Mutation {
-    createUser(username: String!, email: String!, password: String!): AuthPayload!
+    createUser(username: String!, email: String!, password: String!, profileImageUrl: String): AuthPayload!
     loginUser(email: String!, password: String!): AuthPayload!
     refreshToken: AuthPayload!
   }

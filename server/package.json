@@ -15,6 +15,7 @@
     "@graphql-tools/merge": "^9.1.9",
     "@whatwg-node/server-plugin-cookies": "^1.0.5",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "graphql": "^16.10.0",

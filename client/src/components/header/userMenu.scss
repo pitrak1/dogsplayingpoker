@@ -31,6 +31,8 @@
   cursor: pointer;
   font: inherit;
   color: inherit;
+  display: flex;
+  align-items: center;
 
   &:hover {
     text-decoration: underline;
@@ -47,4 +49,13 @@
   flex-direction: column;
   min-width: 150px;
   z-index: 100;
+}
+
+.avatar--small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  margin-right: 0.5rem;
 }
