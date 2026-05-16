@@ -6,6 +6,8 @@ import { About } from '@/pages/about'
 import { Login } from '@/pages/login'
 import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
+import { Profile } from './pages/profile'
+import { ProfileEdit } from './pages/profileEdit'
 
 const GET_PLAYERS = gql`
   query GetPlayers {
@@ -34,6 +36,8 @@ export function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
         </Routes>
       </main>
     </BrowserRouter>
