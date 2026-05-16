@@ -4,6 +4,9 @@ export const userTypeDefs = `
     username: String!
     email: String!
     profileImageUrl: String
+    latitude: Float
+    longitude: Float
+    radiusMiles: Int
     createdAt: String!
   }
 
@@ -18,7 +21,7 @@ export const userTypeDefs = `
   }
 
   type Mutation {
-    createUser(username: String!, email: String!, password: String!, profileImageUrl: String): AuthPayload!
+    createUser(username: String!, email: String!, password: String!, profileImageUrl: String, latitude: Float, longitude: Float, radiusMiles: Int): AuthPayload!
     loginUser(email: String!, password: String!): AuthPayload!
     refreshToken: AuthPayload!
   }

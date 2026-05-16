@@ -8,14 +8,17 @@ import { generateAuthToken, generateRefreshToken, setRefreshTokenCookie, getRefr
 import { GraphQLContext } from '@/index'
 
 type CreateUserArgs = {
-  username: string, 
-  email: string, 
+  username: string,
+  email: string,
   password: string,
   profileImageUrl: string | null
+  latitude: number | null,
+  longitude: number | null,
+  radiusMiles: number | null
 }
 
 type LoginUserArgs = {
-  email: string, 
+  email: string,
   password: string
 }
 
@@ -56,10 +59,10 @@ export const userResolvers = {
         throw new GraphQLError('Something went wrong')
       }
     },
-    createUser: async (_: unknown, { username, email, password, profileImageUrl }: CreateUserArgs, ctx: YogaInitialContext) => {
+    createUser: async (_: unknown, { username, email, password, profileImageUrl, latitude, longitude, radiusMiles }: CreateUserArgs, ctx: YogaInitialContext) => {
       try {
         const hashed = await bcrypt.hash(password, 12)
-        const values = { username, email, password: hashed, profileImageUrl }
+        const values = { username, email, password: hashed, profileImageUrl, latitude, longitude, radiusMiles }
         const rows = await db.insert(users).values(values).returning()
         const user = rows[0]
         const authToken = generateAuthToken(user.id)

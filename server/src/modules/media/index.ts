@@ -1,2 +1,2 @@
-export { mediaTypeDefs } from "./media.typedef";
+export { mediaTypeDefs } from "./media.typedefs";
 export { mediaResolvers } from "./media.resolvers"
