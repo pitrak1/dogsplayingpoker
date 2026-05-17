@@ -1,0 +1,32 @@
+@use '@/styles/variables' as *;
+
+.search-sidebar__container {
+    display: flex;
+    flex-direction: column;
+    width: clamp(150px, 20%, 400px);
+    height: calc(100vh - $header-height);
+}
+
+.search-sidebar__header {
+    flex-shrink: 0;
+}
+
+.search-sidebar__input-container {
+    margin: 16px;
+}
+
+.search-sidebar__input-label {
+    font-size: 22px;
+    margin: 16px;
+}
+
+.search-sidebar__result-count {
+    font-size: 16px;
+    margin: 0 16px;
+    color: #666;
+}
+
+.search-sidebar__divider {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+}

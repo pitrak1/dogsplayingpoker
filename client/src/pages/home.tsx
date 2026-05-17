@@ -1,48 +1,31 @@
-import { useQuery } from '@apollo/client'
-import { GET_USERS } from './home.queries'
 import { User } from '@/types/user'
-import { SearchMap } from '@/components/map/searchMap'
-import { useAuth } from '@/context/auth'
+import { MapView } from '@/components/map/mapView'
+import { SearchSidebar } from '@/components/map/searchSidebar'
 import { useState } from 'react'
 import { DEMO_USERS } from '@/constants/demoUsers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
 
 export function Home() {
-  const { data, loading, error, refetch } = useQuery<{ users: User[] }>(GET_USERS)
-  const { user } = useAuth()
-
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchValue, setSearchValue] = useState('')
-
-  if (loading) return <p>Loading…</p>
-  if (error) return <p>Error: {error.message}</p>
+  const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
+  const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
 
   return (
     <div className="home">
-      <SearchMap
+      <MapView
         users={DEMO_USERS}
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
+        onMapReady={setMapInstance}
         onUserSelect={setSelectedUser}
       />
-      <button onClick={() => refetch()}>REFRESH</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <SearchSidebar
+        mapInstance={mapInstance}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchedLocation={searchedLocation}
+        onSearchLocationChange={setSearchedLocationChange}
+      />
     </div>
   )
 }

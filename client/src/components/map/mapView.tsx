@@ -4,16 +4,15 @@ import { SearchBox } from '@mapbox/search-js-react'
 import { useRef, useState, useEffect } from 'react'
 import { getCircleStops } from '@/lib/maps'
 import mapboxgl from 'mapbox-gl'
-import './searchMap.scss'
+import './mapView.scss'
 
 type Props = {
   users: User[]
-  searchValue: string
-  onSearchChange: (value: string) => void
+  onMapReady: (map: mapboxgl.Map) => void
   onUserSelect: (value: User) => void
 }
 
-export function SearchMap({ users, searchValue, onSearchChange, onUserSelect }: Props) {
+export function MapView({ users, onMapReady, onUserSelect }: Props) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null)
   const [mapLoaded, setMapLoaded] = useState(false)
@@ -32,6 +31,7 @@ export function SearchMap({ users, searchValue, onSearchChange, onUserSelect }: 
 
     mapInstanceRef.current.on('load', () => {
       setMapLoaded(true)
+      onMapReady(mapInstanceRef.current!)
     })
 
     return () => {
@@ -107,22 +107,8 @@ export function SearchMap({ users, searchValue, onSearchChange, onUserSelect }: 
   }
 
   return (
-    <div className="search-map__container">
-      <div ref={mapContainerRef} className="search-map__map" />
-      <div className="search-map__input">
-        <label id="search-map__search-box-label" className="search-map__input-label">
-          Enter a location to start finding friends!
-        </label>
-        <SearchBox
-          aria-labelledby="search-map__search-box-label"
-          accessToken={accessToken}
-          map={mapInstanceRef.current ?? undefined}
-          mapboxgl={mapboxgl}
-          value={searchValue}
-          onChange={onSearchChange}
-          options={{ language: 'en', country: 'US' }}
-        />
-      </div>
+    <div className="map-view__container">
+      <div ref={mapContainerRef} className="map-view__map" />
     </div>
   )
 }
