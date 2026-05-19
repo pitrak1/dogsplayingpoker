@@ -1,6 +1,5 @@
 import { User } from '@/types/user'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
-import { SearchBox } from '@mapbox/search-js-react'
 import { useRef, useState, useEffect } from 'react'
 import { getCircleStops } from '@/lib/maps'
 import mapboxgl from 'mapbox-gl'
@@ -56,6 +55,9 @@ export function MapView({ users, onMapReady, onUserSelect }: Props) {
     return () => {
       // remove markers
       markers.forEach((marker) => marker.remove())
+
+      // If we navigate away from the page and unmount this whole component, the map will clean itself up
+      if (!map.isStyleLoaded()) return
 
       // remove layers and sources
       users.forEach((user) => {

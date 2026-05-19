@@ -20,6 +20,7 @@ export function Home() {
         onUserSelect={setSelectedUser}
       />
       <SearchSidebar
+        users={DEMO_USERS}
         mapInstance={mapInstance}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
