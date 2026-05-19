@@ -1,4 +1,4 @@
-import { eq, isNull, and } from 'drizzle-orm'
+import { eq, isNull, and, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import bcrypt from 'bcrypt'
@@ -30,14 +30,25 @@ export const userResolvers = {
       if (!ctx.userId) throw new GraphQLError('Unauthorized', {
         extensions: { http: { status: 401 } }
       })
-      return db.select().from(users).where(isNull(users.deletedAt))
+      const rows = await db.select().from(users).where(isNull(users.deletedAt))
+      return rows.map(user => {
+        const coords = user.location
+          ? { latitude: user.location.y, longitude: user.location.x }
+          : { latitude: null, longitude: null }
+        return { ...user, ...coords }
+      })
     },
     user: async (_: unknown, { id }: { id: number }) => {
       const rows = await db
         .select()
         .from(users)
         .where(and(eq(users.id, id), isNull(users.deletedAt)))
-      return rows[0] ?? null
+      const user = rows[0]
+      if (!user) return null
+      const coords = user.location
+        ? { latitude: user.location.y, longitude: user.location.x }
+        : { latitude: null, longitude: null }
+      return { ...user, ...coords }
     }
   },
   Mutation: {
@@ -62,7 +73,14 @@ export const userResolvers = {
     createUser: async (_: unknown, { username, email, password, profileImageUrl, latitude, longitude, radiusMiles }: CreateUserArgs, ctx: YogaInitialContext) => {
       try {
         const hashed = await bcrypt.hash(password, 12)
-        const values = { username, email, password: hashed, profileImageUrl, latitude, longitude, radiusMiles }
+        const values = {
+          username,
+          email,
+          password: hashed,
+          profileImageUrl,
+          location: sql`ST_MakePoint(${longitude}, ${latitude})`,
+          radiusMiles
+        }
         const rows = await db.insert(users).values(values).returning()
         const user = rows[0]
         const authToken = generateAuthToken(user.id)

@@ -1,4 +1,13 @@
-import { integer, pgTable, serial, text, timestamp, index, pgEnum, numeric, doublePrecision } from 'drizzle-orm/pg-core'
+import {
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  index,
+  pgEnum,
+  geometry,
+} from 'drizzle-orm/pg-core'
 
 export const reactivityEnum = pgEnum('reactivity', ['strong', 'mixed', 'none', 'unknown'])
 export const sizeEnum = pgEnum('size', ['giant', 'large', 'medium', 'small', 'toy', 'unknown'])
@@ -9,8 +18,7 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   profileImageUrl: text('profile_image_url'),
-  latitude: doublePrecision('latitude'),
-  longitude: doublePrecision('longitude'),
+  location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }),
   radiusMiles: integer('radius_miles'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
