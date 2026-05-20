@@ -3,3 +3,34 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --text-primary: black;
+  --text-secondary: gray;
+  --button-hover: #f0f0f0;
+  --button-active: #0066cc;
+  --button-active-text: white;
+  --button-active-hover: #005bb5;
+  --form-field-border: 1px solid #ccc;
+  --form-field-background: #f4f4f4;
+}
+
+@mixin avatar($size) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.avatar__marker {
+  @include avatar(36px);
+}
+
+.avatar__menu {
+  @include avatar(40px);
+}
+
+.avatar__profile {
+  @include avatar(128px);
+}

@@ -5,8 +5,8 @@ import { About } from '@/pages/about'
 import { Login } from '@/pages/login'
 import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
-import { Profile } from './pages/profile'
-import { ProfileEdit } from './pages/profileEdit'
+import { Profile } from './pages/profile/profile'
+import { ProfileEdit } from './pages/profile/profileEdit'
 
 export function App() {
   return (
@@ -20,6 +20,7 @@ export function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
+          <Route path="/profile/edit/:tab" element={<ProfileEdit />} />
         </Routes>
       </main>
     </BrowserRouter>
