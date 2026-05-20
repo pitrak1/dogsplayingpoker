@@ -43,22 +43,10 @@ export function Signup() {
   const onChangeConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value)
   }
-  
-  const onChangeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setProfileImage(file)
-  }
-
-  const tryUploadProfileImage = async () => {
-    if (!profileImage) return null
-    return await uploadImage(profileImage)
-  }
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const profileImageUrl = await tryUploadProfileImage()
-    const response = await createUser({ variables: { username, email, password, profileImageUrl } })
+    const response = await createUser({ variables: { username, email, password } })
     if (response.data) {
       const authToken = response.data?.createUser?.authToken!
       const user = response.data?.createUser?.user
@@ -95,12 +83,8 @@ export function Signup() {
           value={confirmPassword}
           onChange={onChangeConfirmPassword}
         />
-        <ImageUpload 
-          name="profileImage"
-          label="Upload a profile image (optional)"
-          value={profileImage}
-          onChange={onChangeProfileImage}
-        />
+        <div>Although you use your email to sign in, your email will NOT be visible to other users.</div>
+        <div>To personalize your profile with photos and information about your pets, go to the user menu after signup and choose the "Your profile" option.</div>
         <button type="submit" disabled={isDisabled}>
           {loading ? 'Signing up...' : 'Sign up'}
         </button>

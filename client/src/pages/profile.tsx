@@ -1,23 +1,48 @@
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '@/context/auth'
+import { Dot, Calendar, MapPin, MessageCircle } from 'lucide-react'
+import { useQuery } from '@apollo/client'
+import { GET_USER_BY_USERNAME } from './profile.queries'
 import './profile.scss'
 import { User } from '@/types/user'
 
 export function Profile({ user }: { user?: User }) {
+    const { username } = useParams<{ username: string }>()
+    const { data, loading } = useQuery(GET_USER_BY_USERNAME, {
+        variables: { username }
+    })
     const { user: currentUser } = useAuth()
     const isProfileOwner = user == null || user?.id === currentUser?.id
     const profileUser = user || currentUser
     const navigate = useNavigate()
 
     const src = profileUser?.profileImageUrl ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser?.username || '')}&background=e8a87c&color=fff&size=128`
-    const onEditClick = () => {
+    const onMessageClick = () => {
         navigate('/profile/edit', { replace: true })
     }
+
     return (
         <div className="profile">
-            <img src={src} alt={profileUser?.username} className="avatar avatar--large" />
-            <h1>{profileUser?.username}</h1>
-            {isProfileOwner && <button onClick={onEditClick}>Edit</button>}
+            <img src={src} alt={profileUser?.username} className="profile__profile-image" />
+            <div className="profile__user-info">
+                <h1 className="profile__username">{profileUser?.username}</h1>
+                <h2 className="profile__user-subtitle">
+                    <div className="profile__user-subtitle-item">
+                        <Calendar size={20} className="profile__icon" />
+                        Since Jun 2023
+                    </div>
+                    <Dot size={30} />
+                    <div className="profile__user-subtitle-item">
+                        <MapPin size={20} className="profile__icon" />
+                        15.6 mi
+                    </div>
+                </h2>
+            </div>
+
+            <button className="profile__message-button" onClick={onMessageClick}>
+                <MessageCircle size={20} className="profile__icon" />
+                Send message
+            </button>
         </div>
     )
 }

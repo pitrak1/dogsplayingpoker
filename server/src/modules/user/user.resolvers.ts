@@ -1,11 +1,12 @@
 import { eq, isNull, and, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users } from '@/db/schema'
+import { users, pets } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { GraphQLError } from 'graphql'
 import { YogaInitialContext } from 'graphql-yoga'
 import { generateAuthToken, generateRefreshToken, setRefreshTokenCookie, getRefreshTokenFromCookies, verifyRefreshToken } from '@/lib/auth'
 import { GraphQLContext } from '@/index'
+import { transformUser, coordsToLocation } from '@/lib/geo'
 
 type CreateUserArgs = {
   username: string,
@@ -31,25 +32,22 @@ export const userResolvers = {
         extensions: { http: { status: 401 } }
       })
       const rows = await db.select().from(users).where(isNull(users.deletedAt))
-      return rows.map(user => {
-        const coords = user.location
-          ? { latitude: user.location.y, longitude: user.location.x }
-          : { latitude: null, longitude: null }
-        return { ...user, ...coords }
-      })
+      return rows.map(transformUser)
     },
     user: async (_: unknown, { id }: { id: number }) => {
       const rows = await db
         .select()
         .from(users)
         .where(and(eq(users.id, id), isNull(users.deletedAt)))
-      const user = rows[0]
-      if (!user) return null
-      const coords = user.location
-        ? { latitude: user.location.y, longitude: user.location.x }
-        : { latitude: null, longitude: null }
-      return { ...user, ...coords }
-    }
+      return transformUser(rows[0] ?? null)
+    },
+    userByUsername: async (_: unknown, { username }: { username: string }) => {
+      const rows = await db
+        .select()
+        .from(users)
+        .where(and(eq(users.username, username), isNull(users.deletedAt)))
+      return transformUser(rows[0] ?? null)
+    },
   },
   Mutation: {
     loginUser: async (_: unknown, { email, password }: LoginUserArgs, ctx: YogaInitialContext) => {
@@ -65,7 +63,7 @@ export const userResolvers = {
         const authToken = generateAuthToken(user.id)
         const refreshToken = generateRefreshToken(user.id)
         await setRefreshTokenCookie(ctx, refreshToken)
-        return { authToken, user }
+        return { authToken, user: transformUser(user) }
       } catch (e: any) {
         throw new GraphQLError('Something went wrong')
       }
@@ -78,7 +76,7 @@ export const userResolvers = {
           email,
           password: hashed,
           profileImageUrl,
-          location: sql`ST_MakePoint(${longitude}, ${latitude})`,
+          location: coordsToLocation(latitude, longitude),
           radiusMiles
         }
         const rows = await db.insert(users).values(values).returning()
@@ -86,7 +84,7 @@ export const userResolvers = {
         const authToken = generateAuthToken(user.id)
         const refreshToken = generateRefreshToken(user.id)
         await setRefreshTokenCookie(ctx, refreshToken)
-        return { authToken, user }
+        return { authToken, user: transformUser(user) }
       } catch (e: any) {
         if (e.code === PG_UNIQUE_VIOLATION) {
           if (e.constraint?.includes('email')) {
@@ -112,4 +110,9 @@ export const userResolvers = {
       }
     }
   },
+  User: {
+    pets: async (owner: { id: number }) => {
+      return db.select().from(pets).where(eq(pets.ownerId, owner.id))
+    }
+  }
 }

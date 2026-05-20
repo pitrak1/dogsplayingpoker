@@ -8,4 +8,7 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
+  extensionsFilters: ['postgis'],
+  schemaFilter: 'public',
+  tablesFilter: ['!spatial_ref_sys']
 })

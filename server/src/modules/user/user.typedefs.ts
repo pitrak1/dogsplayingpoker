@@ -8,11 +8,13 @@ export const userTypeDefs = `
     longitude: Float
     radiusMiles: Int
     createdAt: String!
+    pets: [Pet!]!
   }
 
   type Query {
     users: [User!]!
     user(id: Int!): User
+    userByUsername(username: String!): User
   }
 
   type AuthPayload {

@@ -23,7 +23,8 @@ export function UserMenu() {
           </button>
           {isOpen && (
             <div className="user-menu__dropdown">
-              <Link to="/profile">Your profile</Link>
+              <Link to={`/profile/${user.username}`}>Your profile</Link>
+              <Link to="/profile/edit">Edit profile</Link>
               <Link to="/" onClick={logout}>
                 Log out
               </Link>
