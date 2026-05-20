@@ -1,14 +1,14 @@
 import { eq, isNull, and } from 'drizzle-orm'
 import { db } from '@/db'
-import { pets } from '@/db/schema'
+import { pets, reactivityEnum, sizeEnum } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { GraphQLError } from 'graphql'
 import { YogaInitialContext } from 'graphql-yoga'
 import { generateAuthToken, generateRefreshToken, setRefreshTokenCookie, getRefreshTokenFromCookies, verifyRefreshToken } from '@/lib/auth'
 import { GraphQLContext } from '@/index'
 
-type Reactivity = 'strong' | 'mixed' | 'none' | 'unknown'
-type Size = 'giant' | 'large' | 'medium' | 'small' | 'toy' | 'unknown'
+type Reactivity = typeof reactivityEnum.enumValues[number]
+type Size = typeof sizeEnum.enumValues[number]
 
 type AddEditPetArgs = {
   name: string,

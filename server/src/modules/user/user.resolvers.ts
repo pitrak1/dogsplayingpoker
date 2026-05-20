@@ -1,6 +1,6 @@
 import { eq, isNull, and, sql } from 'drizzle-orm'
 import { db } from '@/db'
-import { users, pets } from '@/db/schema'
+import { users, pets, User } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { GraphQLError } from 'graphql'
 import { YogaInitialContext } from 'graphql-yoga'
@@ -39,21 +39,21 @@ export const userResolvers = {
         .select()
         .from(users)
         .where(and(eq(users.id, id), isNull(users.deletedAt)))
-      return transformUser(rows[0] ?? null)
+      return transformUser(rows[0])
     },
     userByUsername: async (_: unknown, { username }: { username: string }) => {
       const rows = await db
         .select()
         .from(users)
         .where(and(eq(users.username, username), isNull(users.deletedAt)))
-      return transformUser(rows[0] ?? null)
+      return transformUser(rows[0])
     },
   },
   Mutation: {
     loginUser: async (_: unknown, { email, password }: LoginUserArgs, ctx: YogaInitialContext) => {
       try {
         const rows = await db.select().from(users).where(and(eq(users.email, email), isNull(users.deletedAt)))
-        const user = rows[0] ?? null
+        const user = rows[0]
 
         if (!user) throw new GraphQLError('Invalid credentials')
 
@@ -111,7 +111,7 @@ export const userResolvers = {
     }
   },
   User: {
-    pets: async (owner: { id: number }) => {
+    pets: async (owner: User) => {
       return db.select().from(pets).where(eq(pets.ownerId, owner.id))
     }
   }

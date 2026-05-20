@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm'
+import { User } from '@/db/schema'
 
 export const locationToCoords = (location: { x: number, y: number } | null) => {
   if (!location) return { latitude: null, longitude: null }
@@ -10,7 +11,7 @@ export const coordsToLocation = (latitude: number | null, longitude: number | nu
   return sql`ST_MakePoint(${longitude}, ${latitude})`
 }
 
-export const transformUser = <T extends { location: { x: number, y: number } | null }>(user: T | null) => {
+export const transformUser = (user: User | null) => {
   if (!user) return null
   const coords = locationToCoords(user.location)
   return { ...user, ...coords }

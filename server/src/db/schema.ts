@@ -9,6 +9,11 @@ import {
   geometry,
 } from 'drizzle-orm/pg-core'
 
+export type User = typeof users.$inferSelect
+export type NewUser = typeof users.$inferInsert
+export type Pet = typeof pets.$inferSelect
+export type NewPet = typeof pets.$inferInsert
+
 export const reactivityEnum = pgEnum('reactivity', ['strong', 'mixed', 'none', 'unknown'])
 export const sizeEnum = pgEnum('size', ['giant', 'large', 'medium', 'small', 'toy', 'unknown'])
 
