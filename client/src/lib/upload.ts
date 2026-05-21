@@ -1,16 +1,8 @@
-import { GET_UPLOAD_SIGNATURE } from './upload.queries'
-import { client }from '@/apollo'
-
-type UploadSignature = {
-  uploadSignature: {
-    timestamp: number;
-    signature: string;
-  }
-}
+import { fetchUploadSignature } from '@/api/media'
 
 export const uploadImage = async (file: File): Promise<string> => {
   // 1. get signature from your server
-  const { data: { uploadSignature: { timestamp, signature }}} = await client.query<UploadSignature>({ query: GET_UPLOAD_SIGNATURE })
+  const { timestamp, signature } = await fetchUploadSignature()
 
   // 2. upload directly to Cloudinary
   const formData = new FormData()

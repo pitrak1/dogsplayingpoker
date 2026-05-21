@@ -1,16 +1,17 @@
-import { ApolloProvider } from '@apollo/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './App'
-import { client } from './apollo'
 import { AuthProvider } from './context/auth'
+
+const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AuthProvider>
-      <ApolloProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <App />
-      </ApolloProvider>
+      </QueryClientProvider>
     </AuthProvider>
   </React.StrictMode>,
 )

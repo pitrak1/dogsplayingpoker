@@ -1,24 +1,20 @@
 import { FormField } from '@/components/forms/formField'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { LOGIN_USER } from '@/pages/login.queries'
-import { AuthPayload } from '@/types/authPayload'
-import { useMutation } from '@apollo/client'
 import { useAuth } from '@/context/auth'
+import { useLogin } from '@/api/users'
 import './login.scss'
 
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const [loginUser, { loading, error }] = useMutation<{ loginUser: AuthPayload }>(LOGIN_USER, {
-    errorPolicy: 'all',
-  })
+  const { mutateAsync: loginUser, isPending, error } = useLogin()
 
   const { setAuth } = useAuth()
 
   const isValid = email && password
-  const isDisabled = !isValid || loading
+  const isDisabled = !isValid || isPending
 
   const navigate = useNavigate()
 
@@ -32,14 +28,12 @@ export function Login() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const response = await loginUser({ variables: { email, password } })
-    if (response.data) {
-      const authToken = response.data?.loginUser?.authToken!
-      const user = response.data?.loginUser?.user
+    try {
+      const { authToken, user } = await loginUser({ email, password })
       setAuth(authToken, user)
       navigate('/', { replace: true })
-    } else {
-      console.log(response.errors)
+    } catch (err) {
+      console.error('Login failed:', err)
     }
   }
 
@@ -56,7 +50,7 @@ export function Login() {
           onChange={onChangePassword}
         />
         <button type="submit" disabled={isDisabled}>
-          {loading ? 'Logging in...' : 'Log in'}
+          {isPending ? 'Logging in...' : 'Log in'}
         </button>
       </form>
     </div>

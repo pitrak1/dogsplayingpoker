@@ -1,12 +1,8 @@
 import { FormField } from '@/components/forms/formField'
 import { useState } from 'react'
-import { CREATE_USER } from '@/pages/signup.queries'
-import { AuthPayload } from '@/types/authPayload'
-import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
-import { ImageUpload } from '@/components/forms/imageUpload'
-import { uploadImage } from '@/lib/upload'
+import { useRegister } from '@/api/users'
 import './signup.scss'
 
 export function Signup() {
@@ -16,13 +12,11 @@ export function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [profileImage, setProfileImage] = useState<File | null>(null)
 
-  const [createUser, { loading, error }] = useMutation<{ createUser: AuthPayload }>(CREATE_USER, {
-    errorPolicy: 'all',
-  })
+  const { mutateAsync: createUser, isPending, error } = useRegister()
 
   const isValid =
     email.includes('@') && username && password.length >= 8 && password == confirmPassword
-  const isDisabled = !isValid || loading
+  const isDisabled = !isValid || isPending
 
   const { setAuth } = useAuth()
 
@@ -46,14 +40,12 @@ export function Signup() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
-    const response = await createUser({ variables: { username, email, password } })
-    if (response.data) {
-      const authToken = response.data?.createUser?.authToken!
-      const user = response.data?.createUser?.user
+    try {
+      const { authToken, user } = await createUser({ username, email, password })
       setAuth(authToken, user)
       navigate('/', { replace: true })
-    } else {
-      console.log(response.errors)
+    } catch (err) {
+      console.error('Signup failed:', err)
     }
   }
 
@@ -86,7 +78,7 @@ export function Signup() {
         <div>Although you use your email to sign in, your email will NOT be visible to other users.</div>
         <div>To personalize your profile with photos and information about your pets, go to the user menu after signup and choose the "Your profile" option.</div>
         <button type="submit" disabled={isDisabled}>
-          {loading ? 'Signing up...' : 'Sign up'}
+          {isPending ? 'Signing up...' : 'Sign up'}
         </button>
       </form>
     </div>

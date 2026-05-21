@@ -1,20 +1,17 @@
 import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { Dot, Calendar, MapPin, MessageCircle } from 'lucide-react'
-import { useQuery } from '@apollo/client'
-import { GET_USER_BY_USERNAME } from './profile.queries'
+import { useUserByUsername } from '@/api/users'
 import './profile.scss'
-import { User } from '@/types/user'
 
-export function Profile({ user }: { user?: User }) {
+export function Profile() {
     const { username } = useParams<{ username: string }>()
-    const { data, loading } = useQuery(GET_USER_BY_USERNAME, {
-        variables: { username }
-    })
+    const { data: user, isPending, error } = useUserByUsername(username!)
     const { user: currentUser } = useAuth()
+    const navigate = useNavigate()
+
     const isProfileOwner = user == null || user?.id === currentUser?.id
     const profileUser = user || currentUser
-    const navigate = useNavigate()
 
     const src = profileUser?.profileImageUrl ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser?.username || '')}&background=e8a87c&color=fff&size=128`
     const onMessageClick = () => {

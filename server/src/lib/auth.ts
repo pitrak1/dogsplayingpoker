@@ -1,30 +1,30 @@
 import jwt from 'jsonwebtoken'
-import { YogaInitialContext } from 'graphql-yoga'
+import { setCookie, getCookie, deleteCookie } from 'hono/cookie'
+import type { Context } from 'hono'
+
+const REFRESH_COOKIE = 'refreshToken'
 
 export const generateAuthToken = (userId: number) =>
   jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '15m' })
 
-export const verifyAuthToken = (token: string) : { userId: number} =>
+export const verifyAuthToken = (token: string): { userId: number } =>
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as unknown as { userId: number }
 
 export const generateRefreshToken = (userId: number) =>
   jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: '7d' })
 
-export const verifyRefreshToken = (token: CookieListItem) : { userId: number} =>
-  jwt.verify(token!.value!, process.env.REFRESH_TOKEN_SECRET!) as unknown as { userId: number }
+export const verifyRefreshToken = (token: string): { userId: number } =>
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!) as unknown as { userId: number }
 
-export const setRefreshTokenCookie = async (ctx: YogaInitialContext, refreshToken: string) => {
-  await ctx.request.cookieStore?.set({
-    name: 'refreshToken',
-    value: refreshToken,
-    domain: null,
+export const setRefreshCookie = (c: Context, token: string) => {
+  setCookie(c, REFRESH_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'Strict',
     path: '/',
+    maxAge: 60 * 60 * 24 * 7,
   })
 }
 
-export const getRefreshTokenFromCookies = async (ctx: YogaInitialContext) => 
-  await ctx.request.cookieStore?.get('refreshToken')
+export const getRefreshCookie = (c: Context) => getCookie(c, REFRESH_COOKIE)
+export const clearRefreshCookie = (c: Context) => deleteCookie(c, REFRESH_COOKIE)
