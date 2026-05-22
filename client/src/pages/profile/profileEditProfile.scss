@@ -1,49 +1,49 @@
 .profile-edit-profile {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .profile-edit-profile__field {
-    width: 100%;
-    background-color: var(--form-field-background);
-    padding: 25px;
-    border-radius: 6px;
-    border: var(--form-field-border);
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  background-color: var(--form-field-background);
+  padding: 25px;
+  border-radius: 6px;
+  border: var(--form-field-border);
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-edit-profile__label {
-    color: var(--text-primary);
-    font-size: 22px;
-    padding-bottom: 0.3rem;
+  color: var(--text-primary);
+  font-size: 22px;
+  padding-bottom: 0.3rem;
 }
 
 .profile-edit-profile__description {
-    color: var(--text-primary);
-    font-size: 16px;
-    padding-bottom: 0.8rem;
+  color: var(--text-primary);
+  font-size: 16px;
+  padding-bottom: 0.8rem;
 }
 
 .profile-edit-profile__input {
-    font-size: 16px;
-    padding: 0.5rem;
-    width: 400px;
-    margin-right: 1rem;
+  font-size: 16px;
+  padding: 0.5rem;
+  width: 400px;
+  margin-right: 1rem;
 }
 
 .profile-edit-profile__submit {
-    font-size: 16px;
-    background-color: var(--button-active);
-    color: var(--button-active-text);
-    border: none;
-    border-radius: 6px;
-    padding: 0.5rem;
-    width: 100px;
-    cursor: pointer;
+  font-size: 16px;
+  background-color: var(--button-active);
+  color: var(--button-active-text);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  width: 100px;
+  cursor: pointer;
 
-    &:hover {
-        background-color: var(--button-active-hover);
-    }
+  &:hover {
+    background-color: var(--button-active-hover);
+  }
 }

@@ -17,7 +17,13 @@ export function UserMenu() {
       return (
         <div className="user-menu__username-display">
           <button className="user-menu__username-button" onClick={() => setIsOpen(!isOpen)}>
-            {user.profileImageUrl && <img src={user.profileImageUrl} alt={user.username} className="avatar avatar--small" />}
+            {user.profileImageUrl && (
+              <img
+                src={user.profileImageUrl}
+                alt={user.username}
+                className="avatar avatar--small"
+              />
+            )}
             {user.username}
             <DownArrow />
           </button>
@@ -28,7 +34,6 @@ export function UserMenu() {
               <Link to="/" onClick={logout}>
                 Log out
               </Link>
-
             </div>
           )}
         </div>

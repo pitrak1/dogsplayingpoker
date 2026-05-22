@@ -10,7 +10,9 @@ type Props = {
 export function ImageUpload({ name, label, value, onChange }: Props) {
   return (
     <div className="image-upload">
-      <label htmlFor={name} className="image-upload__button">{label}</label>
+      <label htmlFor={name} className="image-upload__button">
+        {label}
+      </label>
       <input id={name} type="file" accept="image/*" onChange={onChange} />
       {value && <span className="image-upload__filename">{value.name}</span>}
     </div>

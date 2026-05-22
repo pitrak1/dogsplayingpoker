@@ -11,7 +11,14 @@ type Options = {
   onMapMove: (lat: number, lng: number, zoom: number) => void
 }
 
-export const useMapboxMap = ({ container, initialLat, initialLng, initialZoom, onMapReady, onMapMove }: Options) => {
+export const useMapboxMap = ({
+  container,
+  initialLat,
+  initialLng,
+  initialZoom,
+  onMapReady,
+  onMapMove,
+}: Options) => {
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const [mapLoaded, setMapLoaded] = useState(false)
 
@@ -29,7 +36,9 @@ export const useMapboxMap = ({ container, initialLat, initialLng, initialZoom, o
       setMapLoaded(true)
       onMapReady(mapRef.current!)
     })
-    return () => { mapRef.current?.remove() }
+    return () => {
+      mapRef.current?.remove()
+    }
   }, [])
 
   // move handler

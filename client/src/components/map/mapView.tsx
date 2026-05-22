@@ -14,7 +14,14 @@ type Props = {
   onMapMove: (lat: number, lng: number, zoom: number) => void
 }
 
-export function MapView({ users, initialLat, initialLng, initialZoom, onMapReady, onMapMove }: Props) {
+export function MapView({
+  users,
+  initialLat,
+  initialLng,
+  initialZoom,
+  onMapReady,
+  onMapMove,
+}: Props) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
 

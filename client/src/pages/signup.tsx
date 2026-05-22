@@ -75,8 +75,13 @@ export function Signup() {
           value={confirmPassword}
           onChange={onChangeConfirmPassword}
         />
-        <div>Although you use your email to sign in, your email will NOT be visible to other users.</div>
-        <div>To personalize your profile with photos and information about your pets, go to the user menu after signup and choose the "Your profile" option.</div>
+        <div>
+          Although you use your email to sign in, your email will NOT be visible to other users.
+        </div>
+        <div>
+          To personalize your profile with photos and information about your pets, go to the user
+          menu after signup and choose the "Your profile" option.
+        </div>
         <button type="submit" disabled={isDisabled}>
           {isPending ? 'Signing up...' : 'Sign up'}
         </button>

@@ -18,13 +18,19 @@ export function Home() {
   const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
   const zoom = parseFloat(searchParams.get('zoom') ?? DEFAULT_MAP_CENTER.zoom.toString())
 
-  const handleMapMove = useCallback((lat: number, lng: number, zoom: number) => {
-    setSearchParams({
-      lat: lat.toFixed(6),
-      lng: lng.toFixed(6),
-      zoom: zoom.toFixed(2),
-    }, { replace: true })
-  }, [setSearchParams])
+  const handleMapMove = useCallback(
+    (lat: number, lng: number, zoom: number) => {
+      setSearchParams(
+        {
+          lat: lat.toFixed(6),
+          lng: lng.toFixed(6),
+          zoom: zoom.toFixed(2),
+        },
+        { replace: true },
+      )
+    },
+    [setSearchParams],
+  )
 
   return (
     <div className="home">
