@@ -13,7 +13,10 @@
   --button-active-hover: #005bb5;
   --form-field-border: 1px solid #ccc;
   --form-field-background: #f4f4f4;
+  --color-primary: #0066cc;
 }
+
+$color-primary: var(--color-primary);
 
 @mixin avatar($size) {
   width: $size;
@@ -21,6 +24,9 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .avatar__marker {

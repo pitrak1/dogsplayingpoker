@@ -1,4 +1,6 @@
 import { User } from '@/types/user'
+import { getCssVar } from './cssVars'
+import mapboxgl from 'mapbox-gl'
 
 // At zoom 0, 1 pixel represents this many meters at the equator
 const EARTH_CIRCUMFERENCE_CONSTANT = 156543.03392
@@ -28,3 +30,48 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
 // Creates an array mapping zoom level to miles/px for the particular latitude and mile range
 export const getCircleStops = (miles: number, latitude: number): [number, number][] =>
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
+
+export const createMarkerElement = (user: User, onClick: () => void) => {
+  const el = document.createElement('div')
+  el.className = 'avatar__marker map-view__marker-avatar'
+  if (user.profileImageUrl) el.style.backgroundImage = `url(${user.profileImageUrl})`
+  el.addEventListener('click', onClick)
+  return el
+}
+
+export const addUserMarker = (map: mapboxgl.Map, user: User, onClick: () => void) =>
+  new mapboxgl.Marker({ element: createMarkerElement(user, onClick) })
+    .setLngLat([user.longitude!, user.latitude!])
+    .addTo(map)
+
+export const addUserRange = (map: mapboxgl.Map, user: User) => {
+  const sourceId = `range-${user.id}`
+  const color = getCssVar('color-primary')
+  map.addSource(sourceId, {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [user.longitude!, user.latitude!] },
+      properties: {},
+    },
+  })
+  map.addLayer({
+    id: `${sourceId}-fill`,
+    type: 'circle',
+    source: sourceId,
+    paint: {
+      'circle-radius': { stops: getCircleStops(user.radiusMiles!, user.latitude!), base: 2 },
+      'circle-color': color,
+      'circle-opacity': 0.2,
+      'circle-stroke-color': color,
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 0.8,
+    },
+  })
+  return sourceId
+}
+
+export const removeUserRange = (map: mapboxgl.Map, sourceId: string) => {
+  if (map.getLayer(`${sourceId}-fill`)) map.removeLayer(`${sourceId}-fill`)
+  if (map.getSource(sourceId)) map.removeSource(sourceId)
+}

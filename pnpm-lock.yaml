@@ -16,6 +16,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.100.11
         version: 5.100.11(react@19.2.6)
+      es-toolkit:
+        specifier: ^1.46.1
+        version: 1.46.1
       hono:
         specifier: ^4.12.21
         version: 4.12.21
@@ -1350,6 +1353,9 @@ packages:
 
   electron-to-chromium@1.5.353:
     resolution: {integrity: sha512-kOrWphBi8TOZyiJZqsgqIle0lw+tzmnQK83pV9dZUd01Nm2POECSyFQMAuarzZdYqQW7FH9RaYOuaRo3h+bQ3w==}
+
+  es-toolkit@1.46.1:
+    resolution: {integrity: sha512-5eNtXOs3tbfxXOj04tjjseeWkRWaoCjdEI+96DgwzZoe6c9juL49pXlzAFTI72aWC9Y8p7168g6XIKjh7k6pyQ==}
 
   esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
@@ -2852,6 +2858,8 @@ snapshots:
       safe-buffer: 5.2.1
 
   electron-to-chromium@1.5.353: {}
+
+  es-toolkit@1.46.1: {}
 
   esbuild@0.18.20:
     optionalDependencies:
