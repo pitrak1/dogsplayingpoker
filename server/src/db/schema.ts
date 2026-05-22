@@ -8,6 +8,7 @@ import {
   pgEnum,
   geometry,
 } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -50,3 +51,14 @@ export const pets = pgTable('pets', {
   peopleReactivity: reactivityEnum('people_reactivity').notNull().default('unknown'),
   peopleReactivityNotes: text('people_reactivity_notes'),
 })
+
+export const usersRelations = relations(users, ({ many }) => ({
+  pets: many(pets),
+}))
+
+export const petsRelations = relations(pets, ({ one }) => ({
+  owner: one(users, {
+    fields: [pets.ownerId],
+    references: [users.id],
+  }),
+}))

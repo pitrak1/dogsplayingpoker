@@ -11,7 +11,7 @@ type Props = {
   initialLng: number
   initialZoom: number
   onMapReady: (map: mapboxgl.Map) => void
-  onMapMove: (lat: number, lng: number, zoom: number) => void
+  onMapMove: (map: mapboxgl.Map) => void
 }
 
 export function MapView({

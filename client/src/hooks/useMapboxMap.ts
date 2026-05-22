@@ -8,7 +8,7 @@ type Options = {
   initialLng: number
   initialZoom: number
   onMapReady: (map: mapboxgl.Map) => void
-  onMapMove: (lat: number, lng: number, zoom: number) => void
+  onMapMove: (map: mapboxgl.Map) => void
 }
 
 export const useMapboxMap = ({
@@ -45,10 +45,7 @@ export const useMapboxMap = ({
   useEffect(() => {
     if (!mapLoaded || !mapRef.current) return
     const map = mapRef.current
-    const handler = debounce(() => {
-      const c = map.getCenter()
-      onMapMove(c.lat, c.lng, map.getZoom())
-    }, 200)
+    const handler = debounce(() => onMapMove(map), 200)
     map.on('moveend', handler)
     return () => {
       handler.cancel()

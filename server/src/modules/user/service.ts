@@ -1,9 +1,10 @@
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq, isNull, sql, getTableColumns, inArray } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { db } from '@/db'
 import { users, pets, User } from '@/db/schema'
 import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/lib/auth'
 import { transformUser, coordsToLocation } from '@/lib/geo'
+import { SearchUsersParams } from '@/routes/users'
 
 const PG_UNIQUE_VIOLATION = '23505'
 
@@ -88,4 +89,47 @@ export const createUser = async (input: {
 export const refreshAccessToken = (refreshToken: string) => {
   const payload = verifyRefreshToken(refreshToken)
   return { authToken: generateAuthToken(payload.userId) }
+}
+
+export const searchUsersNearby = async (params: SearchUsersParams) => {
+  const pageSize = params.pageSize ?? 25
+  const offset = ((params.page ?? 1) - 1) * pageSize
+
+  const center = sql`ST_MakePoint(${params.centerLng}, ${params.centerLat})::geography`
+  const envelope = sql`ST_MakeEnvelope(${params.swLng}, ${params.swLat}, ${params.neLng}, ${params.neLat}, 4326)`
+
+  const userRows = await db
+    .select({
+      ...getTableColumns(users),
+      distanceMeters: sql<number>`ST_Distance(${users.location}::geography, ${center})`.as('distance_meters'),
+    })
+    .from(users)
+    .where(and(
+      isNull(users.deletedAt),
+      sql`${users.location} && ${envelope}`,
+    ))
+    .orderBy(sql`distance_meters`)
+    .limit(pageSize)
+    .offset(offset)
+
+  if (userRows.length === 0) return []
+
+  // Single query for all pets across all returned users
+  const userIds = userRows.map((u) => u.id)
+  const allPets = await db.select().from(pets).where(inArray(pets.ownerId, userIds))
+
+  // Group pets by owner
+  const petsByOwner = new Map<number, typeof allPets>()
+  for (const pet of allPets) {
+    const list = petsByOwner.get(pet.ownerId) ?? []
+    list.push(pet)
+    petsByOwner.set(pet.ownerId, list)
+  }
+
+  // Combine
+  return userRows.map((row) => ({
+    ...transformUser(row),
+    distanceMeters: row.distanceMeters,
+    pets: petsByOwner.get(row.id) ?? [],
+  }))
 }

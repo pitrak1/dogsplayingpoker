@@ -1,9 +1,9 @@
 import { SearchBox } from '@mapbox/search-js-react'
-import mapboxgl from 'mapbox-gl'
-import './searchSidebar.scss'
 import { SearchResults } from './searchResults'
 import { SearchPagination } from './searchPagination'
 import { User } from '@/types/user'
+import mapboxgl from 'mapbox-gl'
+import './searchSidebar.scss'
 
 type Props = {
   users: User[] | null
@@ -53,9 +53,9 @@ export function SearchSidebar({
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
       <hr className="search-sidebar__divider" />
-      <SearchResults users={users} pageNumber={1} onPageChange={() => {}} />
+      <SearchResults users={users} pageNumber={1} onPageChange={() => { }} />
       <hr className="search-sidebar__divider" />
-      <SearchPagination pageNumber={1} totalPages={5} onPageChange={() => {}} />
+      <SearchPagination pageNumber={1} totalPages={5} onPageChange={() => { }} />
     </div>
   )
 }
