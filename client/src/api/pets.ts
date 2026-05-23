@@ -1,24 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { rpc } from './rpc'
+import { InferRequestType } from 'hono'
 
-export type Reactivity = 'strong' | 'mixed' | 'none' | 'unknown'
-export type Size = 'giant' | 'large' | 'medium' | 'small' | 'toy' | 'unknown'
-
-export type CreatePetInput = {
-  name: string
-  age: number
-  size: Size
-  breed: string
-  pictureUrl?: string | null
-  dogReactivity: Reactivity
-  dogReactivityNotes?: string | null
-  catReactivity: Reactivity
-  catReactivityNotes?: string | null
-  kidReactivity: Reactivity
-  kidReactivityNotes?: string | null
-  peopleReactivity: Reactivity
-  peopleReactivityNotes?: string | null
-}
+type CreatePetInput = InferRequestType<typeof rpc.api.pets.$post>['json']
 
 export const usePetsForOwner = (ownerId: number | undefined) =>
   useQuery({
@@ -47,7 +31,7 @@ export const useCreatePet = () => {
   return useMutation({
     mutationFn: async (input: CreatePetInput) => {
       const res = await rpc.api.pets.$post({ json: input })
-      if (!res.ok) throw new Error((await res.json()).message ?? 'Failed to create pet')
+      if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to create pet')
       return res.json()
     },
     onSuccess: (pet) => {
