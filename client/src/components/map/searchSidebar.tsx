@@ -10,6 +10,8 @@ type Props = {
   totalCount: number | null
   mapInstance: mapboxgl.Map | null
   searchValue: string
+  currentPage: number
+  onPageChange: (value: number) => void
   onSearchChange: (value: string) => void
   searchedLocation: string | null
   onSearchLocationChange: (value: string | null) => void
@@ -20,6 +22,8 @@ export function SearchSidebar({
   totalCount,
   mapInstance,
   searchValue,
+  currentPage,
+  onPageChange,
   onSearchChange,
   searchedLocation,
   onSearchLocationChange,
@@ -53,9 +57,9 @@ export function SearchSidebar({
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
       <hr className="search-sidebar__divider" />
-      <SearchResults users={users} pageNumber={1} onPageChange={() => { }} />
+      <SearchResults users={users} />
       <hr className="search-sidebar__divider" />
-      <SearchPagination pageNumber={1} totalPages={5} onPageChange={() => { }} />
+      <SearchPagination pageNumber={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
     </div>
   )
 }

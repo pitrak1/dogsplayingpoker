@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useState } from 'react'
-import { DownArrow } from '@/components/shared/downArrow'
+import { ChevronDown } from 'lucide-react'
 import './userMenu.scss'
 
 export function UserMenu() {
@@ -25,7 +25,7 @@ export function UserMenu() {
               />
             )}
             {user.username}
-            <DownArrow />
+            <ChevronDown />
           </button>
           {isOpen && (
             <div className="user-menu__dropdown">

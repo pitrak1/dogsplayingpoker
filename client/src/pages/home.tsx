@@ -38,15 +38,6 @@ export function Home() {
         { replace: true },
       )
 
-      const x = {
-        swLat: String(bounds.getSouth()),
-        swLng: String(bounds.getWest()),
-        neLat: String(bounds.getNorth()),
-        neLng: String(bounds.getEast()),
-        centerLat: String(center.lat),
-        centerLng: String(center.lng),
-        page: '1',
-      }
       setSearchInput({
         swLat: String(bounds.getSouth()),
         swLng: String(bounds.getWest()),
@@ -68,6 +59,12 @@ export function Home() {
     [handleMapMove]
   )
 
+  const handlePageChange = (page: number) => {
+    setSearchInput((prev) => prev ? { ...prev, page: String(page) } : prev)
+  }
+
+  const currentPage = Number(searchInput?.page) ?? 1
+
   const { data } = useSearchUsers(searchInput)
   const users = data?.users ?? []
   const totalCount = data?.totalCount ?? 0
@@ -87,6 +84,8 @@ export function Home() {
         totalCount={totalCount}
         mapInstance={mapInstance}
         searchValue={searchValue}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
         onSearchChange={setSearchValue}
         searchedLocation={searchedLocation}
         onSearchLocationChange={setSearchedLocationChange}
