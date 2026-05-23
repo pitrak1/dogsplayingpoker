@@ -98,19 +98,27 @@ export const searchUsersNearby = async (params: SearchUsersParams) => {
   const center = sql`ST_MakePoint(${params.centerLng}, ${params.centerLat})::geography`
   const envelope = sql`ST_MakeEnvelope(${params.swLng}, ${params.swLat}, ${params.neLng}, ${params.neLat}, 4326)`
 
-  const userRows = await db
-    .select({
+  const [userRows, totalCount] = await Promise.all([
+    db.select({
       ...getTableColumns(users),
       distanceMeters: sql<number>`ST_Distance(${users.location}::geography, ${center})`.as('distance_meters'),
     })
-    .from(users)
-    .where(and(
-      isNull(users.deletedAt),
-      sql`${users.location} && ${envelope}`,
-    ))
-    .orderBy(sql`distance_meters`)
-    .limit(pageSize)
-    .offset(offset)
+      .from(users)
+      .where(and(
+        isNull(users.deletedAt),
+        sql`${users.location} && ${envelope}`,
+      ))
+      .orderBy(sql`distance_meters`)
+      .limit(pageSize)
+      .offset(offset),
+    db.select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(
+        isNull(users.deletedAt),
+        sql`${users.location} && ${envelope}`
+      ))
+      .then(r => r[0].count)
+  ])
 
   if (userRows.length === 0) return []
 
@@ -127,9 +135,11 @@ export const searchUsersNearby = async (params: SearchUsersParams) => {
   }
 
   // Combine
-  return userRows.map((row) => ({
+  const usersWithPets = userRows.map((row) => ({
     ...transformUser(row),
     distanceMeters: row.distanceMeters,
     pets: petsByOwner.get(row.id) ?? [],
   }))
+
+  return { users: usersWithPets, totalCount }
 }

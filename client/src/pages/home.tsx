@@ -8,6 +8,7 @@ import './home.scss'
 import { InferRequestType } from 'hono'
 import { rpc } from '@/api/rpc'
 import { useSearchUsers } from '@/api/users'
+import { handle } from 'hono/cloudflare-pages'
 
 type SearchUsersInput = InferRequestType<typeof rpc.api.users.search.$get>['query']
 
@@ -37,6 +38,15 @@ export function Home() {
         { replace: true },
       )
 
+      const x = {
+        swLat: String(bounds.getSouth()),
+        swLng: String(bounds.getWest()),
+        neLat: String(bounds.getNorth()),
+        neLng: String(bounds.getEast()),
+        centerLat: String(center.lat),
+        centerLng: String(center.lng),
+        page: '1',
+      }
       setSearchInput({
         swLat: String(bounds.getSouth()),
         swLng: String(bounds.getWest()),
@@ -50,7 +60,17 @@ export function Home() {
     [setSearchParams],
   )
 
-  const { data: users } = useSearchUsers(searchInput)
+  const handleMapReady = useCallback(
+    (map: mapboxgl.Map) => {
+      setMapInstance(map)
+      handleMapMove(map)
+    },
+    [handleMapMove]
+  )
+
+  const { data } = useSearchUsers(searchInput)
+  const users = data?.users ?? []
+  const totalCount = data?.totalCount ?? 0
 
   return (
     <div className="home">
@@ -59,11 +79,12 @@ export function Home() {
         initialLat={lat}
         initialLng={lng}
         initialZoom={zoom}
-        onMapReady={setMapInstance}
+        onMapReady={handleMapReady}
         onMapMove={handleMapMove}
       />
       <SearchSidebar
         users={users ?? []}
+        totalCount={totalCount}
         mapInstance={mapInstance}
         searchValue={searchValue}
         onSearchChange={setSearchValue}

@@ -7,6 +7,7 @@ import './searchSidebar.scss'
 
 type Props = {
   users: User[] | null
+  totalCount: number | null
   mapInstance: mapboxgl.Map | null
   searchValue: string
   onSearchChange: (value: string) => void
@@ -16,6 +17,7 @@ type Props = {
 
 export function SearchSidebar({
   users,
+  totalCount,
   mapInstance,
   searchValue,
   onSearchChange,
@@ -26,9 +28,7 @@ export function SearchSidebar({
   const map = mapInstance ?? undefined
 
   const labelText = searchedLocation ? `Searching near` : `Search for a location`
-  const resultCountText = searchedLocation
-    ? `Number users shown`
-    : `See how many users are shown here`
+  const resultCountText = `${totalCount} total users in search area`
 
   const handleSearchSubmit = (result: any) => {
     onSearchLocationChange(result.features[0].properties.name)

@@ -75,3 +75,7 @@ export const removeUserRange = (map: mapboxgl.Map, sourceId: string) => {
   if (map.getLayer(`${sourceId}-fill`)) map.removeLayer(`${sourceId}-fill`)
   if (map.getSource(sourceId)) map.removeSource(sourceId)
 }
+
+export const metersToMiles = (meters: number) => {
+  return meters * 0.000621371
+}

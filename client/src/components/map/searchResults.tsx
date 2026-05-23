@@ -1,6 +1,8 @@
 import { SearchBox } from '@mapbox/search-js-react'
 import mapboxgl from 'mapbox-gl'
 import { User } from '@/types/user'
+import { metersToMiles } from '@/lib/maps'
+import { MapPin, PawPrint } from 'lucide-react'
 import './searchResults.scss'
 
 type Props = {
@@ -22,7 +24,19 @@ export function SearchResults({ users, pageNumber, onPageChange }: Props) {
           />
         </div>
       )}
-      <div className="search-result-item__info">{user.username}</div>
+      <div className="search-result-item__info">
+        <div className="search-result-item__username">{user.username}</div>
+        <div className="search-result-item__user-info">
+          <div className="search-result-item__distance">
+            <MapPin size={16} />
+            {metersToMiles(user.distanceMeters).toFixed(1)}mi
+          </div>
+          <div className="search-result-item__pets">
+            <PawPrint size={16} />
+            {user.pets.length} pets
+          </div>
+        </div>
+      </div>
       <svg
         className="search-result-item__nav-icon"
         xmlns="http://www.w3.org/2000/svg"

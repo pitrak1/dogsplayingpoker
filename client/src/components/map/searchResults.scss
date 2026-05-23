@@ -25,6 +25,8 @@
 
 .search-result-item__info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-result-item__profile-image {
@@ -38,4 +40,22 @@
 
 .search-result-item__nav-icon {
   margin: 8px;
+}
+
+.search-result-item__username {
+  font-size: 18px;
+}
+
+.search-result-item__user-info {
+  width: 100%;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.search-result-item__distance {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
