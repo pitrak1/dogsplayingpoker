@@ -10,8 +10,10 @@ type Props = {
   initialLat: number
   initialLng: number
   initialZoom: number
+  hasMapMoved: boolean
   onMapReady: (map: mapboxgl.Map) => void
   onMapMove: (map: mapboxgl.Map) => void
+  onRedoSearch: () => void
 }
 
 export function MapView({
@@ -19,8 +21,10 @@ export function MapView({
   initialLat,
   initialLng,
   initialZoom,
+  hasMapMoved,
   onMapReady,
   onMapMove,
+  onRedoSearch
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
@@ -55,6 +59,7 @@ export function MapView({
 
   return (
     <div className="map-view__container">
+      {hasMapMoved && <button className="map-view__search-in-map-button" onClick={onRedoSearch}>Redo search in map</button>}
       <div ref={mapContainerRef} className="map-view__map" />
     </div>
   )

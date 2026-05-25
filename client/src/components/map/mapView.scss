@@ -3,6 +3,7 @@
 .map-view__container {
   flex: 1;
   height: calc(100vh - $header-height);
+  position: relative;
 }
 
 .map-view__map {
@@ -12,4 +13,21 @@
 
 .map-view__marker-avatar {
   cursor: pointer;
+}
+
+.map-view__search-in-map-button {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 16px;
+  background-color: white;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: var(--button-hover);
+  }
 }

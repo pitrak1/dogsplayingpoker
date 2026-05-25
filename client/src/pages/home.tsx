@@ -5,19 +5,27 @@ import { useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
-import { InferRequestType } from 'hono'
-import { rpc } from '@/api/rpc'
 import { useSearchUsers } from '@/api/users'
-import { handle } from 'hono/cloudflare-pages'
+import { boundsFromMap } from '@/lib/maps'
 
-type SearchUsersInput = InferRequestType<typeof rpc.api.users.search.$get>['query']
+type MapBounds = {
+  swLat: number
+  swLng: number
+  neLat: number
+  neLng: number
+  centerLat: number
+  centerLng: number
+}
+
+export type ActiveSearch = MapBounds & { page: number }
 
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchValue, setSearchValue] = useState('')
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
   const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
-  const [searchInput, setSearchInput] = useState<SearchUsersInput | null>(null)
+  const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
+  const [pendingBounds, setPendingBounds] = useState<MapBounds | null>(null)
 
   const lat = parseFloat(searchParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
   const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
@@ -25,28 +33,18 @@ export function Home() {
 
   const handleMapMove = useCallback(
     (map: mapboxgl.Map) => {
-      const bounds = map.getBounds()!
-      const center = map.getCenter()
-      const zoom = map.getZoom()
+      const next = boundsFromMap(map)
+      setPendingBounds(next)
 
+      const zoom = map.getZoom()
       setSearchParams(
         {
-          lat: center.lat.toFixed(6),
-          lng: center.lng.toFixed(6),
+          lat: Number(next.centerLat).toFixed(6),
+          lng: Number(next.centerLng).toFixed(6),
           zoom: zoom.toFixed(2),
         },
         { replace: true },
       )
-
-      setSearchInput({
-        swLat: String(bounds.getSouth()),
-        swLng: String(bounds.getWest()),
-        neLat: String(bounds.getNorth()),
-        neLng: String(bounds.getEast()),
-        centerLat: String(center.lat),
-        centerLng: String(center.lng),
-        page: '1',
-      })
     },
     [setSearchParams],
   )
@@ -54,20 +52,30 @@ export function Home() {
   const handleMapReady = useCallback(
     (map: mapboxgl.Map) => {
       setMapInstance(map)
-      handleMapMove(map)
+      const initial = boundsFromMap(map)
+      setPendingBounds(initial)
+      setActiveSearch({ ...initial, page: 1 })
     },
-    [handleMapMove]
+    []
   )
 
   const handlePageChange = (page: number) => {
-    setSearchInput((prev) => prev ? { ...prev, page: String(page) } : prev)
+    setActiveSearch((prev) => prev ? { ...prev, page } : prev)
   }
 
-  const currentPage = Number(searchInput?.page) ?? 1
+  const currentPage = Number(activeSearch?.page) ?? 1
 
-  const { data } = useSearchUsers(searchInput)
+  const { data } = useSearchUsers(activeSearch)
   const users = data?.users ?? []
   const totalCount = data?.totalCount ?? 0
+
+  const handleRedoSearch = () => {
+    if (!pendingBounds) return
+    setActiveSearch({ ...pendingBounds, page: 1 })
+  }
+
+  const hasMapMoved = JSON.stringify({ ...pendingBounds, page: undefined }) !==
+    JSON.stringify({ ...activeSearch, page: undefined })
 
   return (
     <div className="home">
@@ -76,8 +84,10 @@ export function Home() {
         initialLat={lat}
         initialLng={lng}
         initialZoom={zoom}
+        hasMapMoved={hasMapMoved}
         onMapReady={handleMapReady}
         onMapMove={handleMapMove}
+        onRedoSearch={handleRedoSearch}
       />
       <SearchSidebar
         users={users ?? []}

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
-import { debounce } from 'es-toolkit'
 
 type Options = {
   container: React.RefObject<HTMLDivElement | null>
@@ -45,10 +44,9 @@ export const useMapboxMap = ({
   useEffect(() => {
     if (!mapLoaded || !mapRef.current) return
     const map = mapRef.current
-    const handler = debounce(() => onMapMove(map), 200)
+    const handler = () => onMapMove(map)
     map.on('moveend', handler)
     return () => {
-      handler.cancel()
       map.off('moveend', handler)
     }
   }, [mapLoaded, onMapMove])

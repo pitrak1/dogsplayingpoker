@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { rpc } from './rpc'
 import type { InferRequestType } from 'hono/client'
+import type { ActiveSearch } from '@/pages/home'
 
 type SearchUsersInput = InferRequestType<typeof rpc.api.users.search.$get>['query']
 
@@ -15,15 +16,25 @@ export const useUserByUsername = (username: string) =>
     enabled: !!username,
   })
 
-export const useSearchUsers = (input: SearchUsersInput | null) =>
+export const useSearchUsers = (input: ActiveSearch | null) =>
   useQuery({
     queryKey: ['users', 'search', input],
     queryFn: async () => {
-      const res = await rpc.api.users.search.$get({ query: input! })
+      const res = await rpc.api.users.search.$get({
+        query: {
+          swLat: String(input!.swLat),
+          swLng: String(input!.swLng),
+          neLat: String(input!.neLat),
+          neLng: String(input!.neLng),
+          centerLat: String(input!.centerLat),
+          centerLng: String(input!.centerLng),
+          page: String(input!.page),
+        },
+      })
       if (!res.ok) throw new Error('Failed to search users')
       return res.json()
     },
-    enabled: !!input,
+    enabled: !!input
   })
 
 export const useLogin = () =>

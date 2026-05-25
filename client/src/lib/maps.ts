@@ -79,3 +79,16 @@ export const removeUserRange = (map: mapboxgl.Map, sourceId: string) => {
 export const metersToMiles = (meters: number) => {
   return meters * 0.000621371
 }
+
+export const boundsFromMap = (map: mapboxgl.Map) => {
+  const bounds = map.getBounds()!
+  const center = map.getCenter()
+  return {
+    swLat: bounds.getSouth(),
+    swLng: bounds.getWest(),
+    neLat: bounds.getNorth(),
+    neLng: bounds.getEast(),
+    centerLat: center.lat,
+    centerLng: center.lng,
+  }
+}
