@@ -14,6 +14,7 @@ type Props = {
   onMapReady: (map: mapboxgl.Map) => void
   onMapMove: (map: mapboxgl.Map) => void
   onRedoSearch: () => void
+  hoveredUserId: number | null
 }
 
 export function MapView({
@@ -24,9 +25,11 @@ export function MapView({
   hasMapMoved,
   onMapReady,
   onMapMove,
-  onRedoSearch
+  onRedoSearch,
+  hoveredUserId
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const markersRef = useRef(new Map<number, mapboxgl.Marker>())
   const navigate = useNavigate()
 
   const { mapRef, mapLoaded } = useMapboxMap({
@@ -39,19 +42,35 @@ export function MapView({
   })
 
   useEffect(() => {
+    if (hoveredUserId) {
+      const marker = markersRef.current.get(hoveredUserId)
+      marker?.getElement().classList.add('map-view__marker-avatar-highlighted')
+    }
+
+    return () => {
+      if (hoveredUserId) {
+        const marker = markersRef.current.get(hoveredUserId)
+        marker?.getElement().classList.remove('map-view__marker-avatar-highlighted')
+      }
+    }
+  }, [hoveredUserId])
+
+  useEffect(() => {
     if (!mapLoaded || !mapRef.current) return
     const map = mapRef.current
     const sourceIds: string[] = []
-    const markers: mapboxgl.Marker[] = []
+
 
     users.forEach((user) => {
       if (!user.longitude || !user.latitude || !user.radiusMiles) return
-      markers.push(addUserMarker(map, user, () => navigate(`/profile/${user.username}`)))
+      const el = addUserMarker(map, user, () => navigate(`/profile/${user.username}`))
+      markersRef.current.set(user.id, el)
       sourceIds.push(addUserRange(map, user))
     })
 
     return () => {
-      markers.forEach((m) => m.remove())
+      markersRef.current.forEach((m) => m.remove())
+      markersRef.current.clear()
       if (!map.isStyleLoaded()) return
       sourceIds.forEach((id) => removeUserRange(map, id))
     }

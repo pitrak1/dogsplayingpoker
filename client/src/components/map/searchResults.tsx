@@ -8,9 +8,10 @@ import './searchResults.scss'
 
 type Props = {
   users: User[] | null
+  onSearchResultHover: (userId: number | null) => void
 }
 
-export function SearchResults({ users }: Props) {
+export function SearchResults({ users, onSearchResultHover }: Props) {
   const navigate = useNavigate()
 
   const onUserClick = (user: User) => {
@@ -18,7 +19,13 @@ export function SearchResults({ users }: Props) {
   }
 
   const userItems = users?.map((user, index) => (
-    <div key={user.id} className="search-result-item" onClick={() => onUserClick(user)}>
+    <div
+      key={user.id}
+      className="search-result-item"
+      onClick={() => onUserClick(user)}
+      onMouseEnter={() => onSearchResultHover(user.id)}
+      onMouseLeave={() => onSearchResultHover(null)}
+    >
       <div className="search-result-item__index">{index + 1}</div>
       {
         user.profileImageUrl && (

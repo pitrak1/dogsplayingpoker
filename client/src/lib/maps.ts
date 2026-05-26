@@ -32,11 +32,14 @@ export const getCircleStops = (miles: number, latitude: number): [number, number
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
 
 export const createMarkerElement = (user: User, onClick: () => void) => {
-  const el = document.createElement('div')
-  el.className = 'avatar__marker map-view__marker-avatar'
-  if (user.profileImageUrl) el.style.backgroundImage = `url(${user.profileImageUrl})`
-  el.addEventListener('click', onClick)
-  return el
+  const wrapper = document.createElement('div')
+  wrapper.className = 'map-view__marker-avatar'
+  const inner = document.createElement('div')
+  inner.className = 'avatar__marker map-view__marker-avatar-inner'
+  if (user.profileImageUrl) inner.style.backgroundImage = `url(${user.profileImageUrl})`
+  wrapper.appendChild(inner)
+  wrapper.addEventListener('click', onClick)
+  return wrapper
 }
 
 export const addUserMarker = (map: mapboxgl.Map, user: User, onClick: () => void) =>

@@ -26,6 +26,7 @@ export function Home() {
   const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
   const [pendingBounds, setPendingBounds] = useState<MapBounds | null>(null)
+  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
 
   const lat = parseFloat(searchParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
   const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
@@ -88,6 +89,7 @@ export function Home() {
         onMapReady={handleMapReady}
         onMapMove={handleMapMove}
         onRedoSearch={handleRedoSearch}
+        hoveredUserId={hoveredUserId}
       />
       <SearchSidebar
         users={users ?? []}
@@ -99,6 +101,7 @@ export function Home() {
         onSearchChange={setSearchValue}
         searchedLocation={searchedLocation}
         onSearchLocationChange={setSearchedLocationChange}
+        onSearchResultHover={setHoveredUserId}
       />
     </div>
   )

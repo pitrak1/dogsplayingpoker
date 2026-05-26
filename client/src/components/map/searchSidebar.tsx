@@ -15,6 +15,7 @@ type Props = {
   onSearchChange: (value: string) => void
   searchedLocation: string | null
   onSearchLocationChange: (value: string | null) => void
+  onSearchResultHover: (userId: number | null) => void
 }
 
 export function SearchSidebar({
@@ -27,6 +28,7 @@ export function SearchSidebar({
   onSearchChange,
   searchedLocation,
   onSearchLocationChange,
+  onSearchResultHover,
 }: Props) {
   const accessToken = import.meta.env.VITE_MAPBOX_TOKEN
   const map = mapInstance ?? undefined
@@ -57,7 +59,7 @@ export function SearchSidebar({
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
       <hr className="search-sidebar__divider" />
-      <SearchResults users={users} />
+      <SearchResults users={users} onSearchResultHover={onSearchResultHover} />
       <hr className="search-sidebar__divider" />
       <SearchPagination pageNumber={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
     </div>
