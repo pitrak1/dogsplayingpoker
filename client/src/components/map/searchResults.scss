@@ -4,6 +4,11 @@
   flex-direction: column;
 }
 
+.search-results__empty-text {
+  margin: 30px;
+  font-size: 22px;
+}
+
 .search-result-item {
   display: flex;
   flex-direction: row;

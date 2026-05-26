@@ -56,7 +56,13 @@ export function SearchResults({ users, onSearchResultHover }: Props) {
   ))
 
   if (users === null || users.length === 0) {
-    return <div className="search-results">No results found</div>
+    return (
+      <div className="search-results">
+        <div className="search-results__empty-text">
+          No pets found in search area.
+        </div>
+      </div>
+    )
   }
 
   return <div className="search-results">{userItems}</div>
