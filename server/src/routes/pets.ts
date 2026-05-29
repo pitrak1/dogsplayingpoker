@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as petService from '@/modules/pet/service'
-import type { AppEnv } from '../types'
+import type { AuthedEnv } from '../types'
 
 const reactivitySchema = z.enum(['strong', 'mixed', 'none', 'unknown'])
 const sizeSchema = z.enum(['giant', 'large', 'medium', 'small', 'toy', 'unknown'])
@@ -31,9 +31,8 @@ const idParamSchema = z.object({
   id: z.coerce.number().int(),
 })
 
-export const petRoutes = new Hono<AppEnv>()
+export const petRoutes = new Hono<AuthedEnv>()
   .get('/', zValidator('query', listQuerySchema), async (c) => {
-    if (!c.get('userId')) return c.json({ message: 'Unauthorized' }, 401)
     const { ownerId } = c.req.valid('query')
     return c.json(await petService.listPetsForOwner(ownerId))
   })
@@ -45,9 +44,8 @@ export const petRoutes = new Hono<AppEnv>()
   })
   .post('/', zValidator('json', createPetSchema), async (c) => {
     const userId = c.get('userId')
-    if (!userId) return c.json({ message: 'Unauthorized' }, 401)
     const body = c.req.valid('json')
-    const pet = await petService.createPet(userId, {
+    const pet = await petService.createPet({
       name: body.name,
       age: body.age,
       size: body.size,
@@ -61,6 +59,7 @@ export const petRoutes = new Hono<AppEnv>()
       kidReactivityNotes: body.kidReactivityNotes ?? null,
       peopleReactivity: body.peopleReactivity,
       peopleReactivityNotes: body.peopleReactivityNotes ?? null,
+      ownerId: userId
     })
     return c.json(pet, 201)
   })

@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as userService from '@/modules/user/service'
 import type { AppEnv } from '../types'
+import { requireAuth } from '@/middleware/auth'
 
 const searchSchema = z.object({
   swLat: z.coerce.number(),
@@ -18,16 +19,12 @@ const searchSchema = z.object({
 export type SearchUsersParams = z.infer<typeof searchSchema>
 
 export const userRoutes = new Hono<AppEnv>()
-  .get('/', async (c) => {
-    const userId = c.get('userId')
-    if (!userId) return c.json({ message: 'Unauthorized' }, 401)
-    return c.json(await userService.listUsers())
-  })
   .get('/search', zValidator('query', searchSchema), async (c) => {
     const params = c.req.valid('query')
     const users = await userService.searchUsersNearby(params)
     return c.json(users)
   })
+  .use(requireAuth)
   .get('/by-username/:username', zValidator('param', z.object({ username: z.string() })), async (c) => {
     const { username } = c.req.valid('param')
     const user = await userService.getUserByUsername(username)

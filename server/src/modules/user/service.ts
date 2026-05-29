@@ -5,6 +5,7 @@ import { users, pets, User } from '@/db/schema'
 import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/lib/auth'
 import { transformUser, coordsToLocation } from '@/lib/geo'
 import { SearchUsersParams } from '@/routes/users'
+import { UserWithPets } from '@/types'
 
 const PG_UNIQUE_VIOLATION = '23505'
 
@@ -18,11 +19,6 @@ export class ConflictError extends Error {
 const userWithPets = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
   return { ...transformUser(user), pets: userPets }
-}
-
-export const listUsers = async () => {
-  const rows = await db.select().from(users).where(isNull(users.deletedAt))
-  return Promise.all(rows.map(userWithPets))
 }
 
 export const getUserById = async (id: number) => {
@@ -91,7 +87,7 @@ export const refreshAccessToken = (refreshToken: string) => {
   return { authToken: generateAuthToken(payload.userId) }
 }
 
-export const searchUsersNearby = async (params: SearchUsersParams) => {
+export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ users: UserWithPets[], totalCount: number }> => {
   const pageSize = params.pageSize ?? 25
   const offset = ((params.page ?? 1) - 1) * pageSize
 
@@ -120,7 +116,7 @@ export const searchUsersNearby = async (params: SearchUsersParams) => {
       .then(r => r[0].count)
   ])
 
-  if (userRows.length === 0) return []
+  if (userRows.length === 0) return { users: [], totalCount: 0 }
 
   // Single query for all pets across all returned users
   const userIds = userRows.map((u) => u.id)

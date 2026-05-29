@@ -1,0 +1,11 @@
+services:
+  postgres-test:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: dogsplayingpoker_test
+    ports:
+      - '5433:5432'  # 5433 so it doesn't collide with any local Postgres on 5432
+    tmpfs:
+      - /var/lib/postgresql/data  # in-memory storage, faster, wiped on restart

@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { authMiddleware } from './middleware/auth'
+import { authMiddleware, requireAuth } from './middleware/auth'
 import { mediaRoutes } from './routes/media'
 import { userRoutes } from './routes/users'
 import { authRoutes } from './routes/auth'
@@ -11,6 +11,7 @@ const apiRoutes = new Hono<AppEnv>()
   .get('/health', (c) => c.json({ ok: true }))
   .route('/auth', authRoutes)
   .route('/users', userRoutes)
+  .use(requireAuth)
   .route('/media', mediaRoutes)
   .route('/pets', petRoutes)
 

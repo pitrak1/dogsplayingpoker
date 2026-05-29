@@ -6,13 +6,13 @@ import { setRefreshCookie, getRefreshCookie } from '@/lib/auth'
 import { AppEnv } from '../types'
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(1),
 })
 
 const registerSchema = z.object({
   username: z.string().min(1),
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8),
   profileImageUrl: z.string().nullable().optional(),
   latitude: z.number().nullable().optional(),
