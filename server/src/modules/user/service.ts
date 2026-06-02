@@ -6,15 +6,7 @@ import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/l
 import { transformUser, coordsToLocation } from '@/lib/geo'
 import { SearchUsersParams } from '@/routes/users'
 import { UserWithPets } from '@/types'
-
-const PG_UNIQUE_VIOLATION = '23505'
-
-export class AuthError extends Error {
-  constructor(message: string, public status = 401) { super(message) }
-}
-export class ConflictError extends Error {
-  constructor(message: string) { super(message) }
-}
+import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 
 const userWithPets = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
@@ -75,8 +67,8 @@ export const createUser = async (input: {
     }
   } catch (e: any) {
     if (e.code === PG_UNIQUE_VIOLATION) {
-      if (e.constraint?.includes('email')) throw new ConflictError('That email is already in use')
-      if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken')
+      if (e.constraint?.includes('email')) throw new ConflictError('That email is already in use', 'email')
+      if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken', 'username')
     }
     throw e
   }

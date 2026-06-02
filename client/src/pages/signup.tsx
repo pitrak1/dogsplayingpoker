@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useRegister } from '@/api/users'
+import { ApiError } from '@/api/errors'
+import { ErrorBanner } from '@/components/forms/errorBanner'
 import './signup.scss'
 
 export function Signup() {
@@ -10,7 +12,8 @@ export function Signup() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [profileImage, setProfileImage] = useState<File | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState<string | null>(null)
 
   const { mutateAsync: createUser, isPending, error } = useRegister()
 
@@ -45,20 +48,35 @@ export function Signup() {
       setAuth(authToken, user)
       navigate('/', { replace: true })
     } catch (err) {
-      console.error('Signup failed:', err)
+      if (err instanceof ApiError) {
+        if (err.field) {
+          setFieldErrors({ [err.field]: err.message })
+        } else {
+          setFormError(err.message)
+        }
+      }
     }
   }
 
   return (
     <div className="signup">
+      <ErrorBanner message={formError} />
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />
+        <FormField 
+          name="email" 
+          label="Email" 
+          type="email" 
+          value={email}
+          error={fieldErrors['email']}
+          onChange={onChangeEmail} 
+        />
         <FormField
           name="username"
           label="Username"
           type="text"
           value={username}
+          error={fieldErrors['username']}
           onChange={onChangeUsername}
         />
         <FormField
@@ -66,6 +84,7 @@ export function Signup() {
           label="Password"
           type="password"
           value={password}
+          error={fieldErrors['password']}
           onChange={onChangePassword}
         />
         <FormField

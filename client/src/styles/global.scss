@@ -14,6 +14,10 @@
   --form-field-border: 1px solid #ccc;
   --form-field-background: #f4f4f4;
   --color-primary: #0066cc;
+  --color-error: #ffb0b0;
+  --color-error-text: black;
+  --color-error-border: 1px solid red;
+  --color-field-error-text: red;
 }
 
 $color-primary: var(--color-primary);

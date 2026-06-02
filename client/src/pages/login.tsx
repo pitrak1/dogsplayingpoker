@@ -1,13 +1,16 @@
 import { FormField } from '@/components/forms/formField'
+import { ErrorBanner } from '@/components/forms/errorBanner'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useLogin } from '@/api/users'
+import { ApiError } from '@/api/errors'
 import './login.scss'
 
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [formError, setFormError] = useState<string | null>(null)
 
   const { mutateAsync: loginUser, isPending, error } = useLogin()
 
@@ -33,12 +36,15 @@ export function Login() {
       setAuth(authToken, user)
       navigate('/', { replace: true })
     } catch (err) {
-      console.error('Login failed:', err)
+      if (err instanceof ApiError) {
+        setFormError(err.message)
+      }
     }
   }
 
   return (
     <div className="login">
+      <ErrorBanner message={formError} />
       <h1>Log in</h1>
       <form onSubmit={handleSubmit}>
         <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />

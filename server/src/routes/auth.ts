@@ -4,6 +4,7 @@ import { z } from 'zod'
 import * as userService from '@/modules/user/service'
 import { setRefreshCookie, getRefreshCookie } from '@/lib/auth'
 import { AppEnv } from '../types'
+import { AuthError, ConflictError } from '@/lib/errors'
 
 const loginSchema = z.object({
   email: z.email(),
@@ -28,7 +29,7 @@ export const authRoutes = new Hono<AppEnv>()
       setRefreshCookie(c, refreshToken)
       return c.json({ authToken, user })
     } catch (e) {
-      if (e instanceof userService.AuthError) {
+      if (e instanceof AuthError) {
         return c.json({ message: e.message }, 401)
       }
       throw e
@@ -49,8 +50,8 @@ export const authRoutes = new Hono<AppEnv>()
       setRefreshCookie(c, refreshToken)
       return c.json({ authToken, user })
     } catch (e) {
-      if (e instanceof userService.ConflictError) {
-        return c.json({ message: e.message }, 409)
+      if (e instanceof ConflictError) {
+        return c.json({ message: e.message, field: e.field }, 409)
       }
       throw e
     }

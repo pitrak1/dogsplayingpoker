@@ -1,0 +1,17 @@
+.error-banner {
+  min-height: 2.5rem;
+  background-color: var(--color-error);
+  color: var(--color-error-text);
+  border: var(--color-error-border);
+  border-radius: 4px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  padding: 1rem;
+  margin: 1rem 2.5rem;
+
+  &.visible {
+    display: flex;
+  }
+}

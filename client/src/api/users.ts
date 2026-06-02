@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { rpc } from './rpc'
 import type { InferRequestType } from 'hono/client'
 import type { ActiveSearch } from '@/pages/home'
+import { ApiError } from './errors'
 
 type SearchUsersInput = InferRequestType<typeof rpc.api.users.search.$get>['query']
 
@@ -41,7 +42,10 @@ export const useLogin = () =>
   useMutation({
     mutationFn: async (input: { email: string; password: string }) => {
       const res = await rpc.api.auth.login.$post({ json: input })
-      if (!res.ok) throw new Error((await res.json()).message ?? 'Login failed')
+      if (!res.ok) {
+        const body = (await res.json()) as { message: string; field?: string }
+        throw new ApiError(body.message ?? 'Login failed', body.field)
+      }
       return res.json()
     },
   })
@@ -50,7 +54,10 @@ export const useRegister = () =>
   useMutation({
     mutationFn: async (input: { username: string; email: string; password: string }) => {
       const res = await rpc.api.auth.register.$post({ json: input })
-      if (!res.ok) throw new Error((await res.json()).message ?? 'Signup failed')
+      if (!res.ok) {
+        const body = (await res.json()) as { message: string; field?: string }
+        throw new ApiError(body.message ?? 'Signup failed', body.field)
+      }
       return res.json()
     },
   })
