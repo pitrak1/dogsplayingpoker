@@ -9,7 +9,8 @@ type Props = {
 
 export function SearchPagination({ pageNumber, totalCount, onPageChange }: Props) {
   const pageSize = 25
-  if (totalCount == null) return null
+  if (totalCount == null || totalCount === 0 || totalCount <= pageSize
+  ) return null
   const totalPages = Math.ceil(totalCount / pageSize)
   const prevDisabled = pageNumber <= 1
   const nextDisabled = pageNumber >= totalPages

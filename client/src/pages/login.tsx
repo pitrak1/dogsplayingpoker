@@ -29,8 +29,9 @@ export function Login() {
     setPassword(e.target.value)
   }
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setFormError(null)
     try {
       const { authToken, user } = await loginUser({ email, password })
       setAuth(authToken, user)

@@ -15,11 +15,12 @@ export function Signup() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
 
-  const { mutateAsync: createUser, isPending, error } = useRegister()
+  const { mutateAsync: createUser, isPending } = useRegister()
 
   const isValid =
-    email.includes('@') && username && password.length >= 8 && password == confirmPassword
+    email.includes('@') && username && password.length >= 8 && password === confirmPassword
   const isDisabled = !isValid || isPending
+  const confirmPasswordError = confirmPassword.length > 0 && password !== confirmPassword ? 'Passwords do not match' : null
 
   const { setAuth } = useAuth()
 
@@ -41,8 +42,10 @@ export function Signup() {
     setConfirmPassword(e.target.value)
   }
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setFieldErrors({})
+    setFormError(null)
     try {
       const { authToken, user } = await createUser({ username, email, password })
       setAuth(authToken, user)
@@ -71,6 +74,9 @@ export function Signup() {
           error={fieldErrors['email']}
           onChange={onChangeEmail} 
         />
+        <div>
+          Although you use your email to sign in, your email will NOT be visible to other users.
+        </div>
         <FormField
           name="username"
           label="Username"
@@ -92,11 +98,9 @@ export function Signup() {
           label="Confirm Password"
           type="password"
           value={confirmPassword}
+          error={confirmPasswordError}
           onChange={onChangeConfirmPassword}
         />
-        <div>
-          Although you use your email to sign in, your email will NOT be visible to other users.
-        </div>
         <div>
           To personalize your profile with photos and information about your pets, go to the user
           menu after signup and choose the "Your profile" option.

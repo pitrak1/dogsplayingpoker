@@ -1,5 +1,3 @@
-import { SearchBox } from '@mapbox/search-js-react'
-import mapboxgl from 'mapbox-gl'
 import { User } from '@/types/user'
 import { metersToMiles } from '@/lib/maps'
 import { MapPin, PawPrint, ChevronRight } from 'lucide-react'
@@ -19,7 +17,7 @@ export function SearchResults({ users, onSearchResultHover }: Props) {
   }
 
   const userItems = users?.map((user, index) => (
-    <div
+    <button
       key={user.id}
       className="search-result-item"
       onClick={() => onUserClick(user)}
@@ -52,7 +50,7 @@ export function SearchResults({ users, onSearchResultHover }: Props) {
         </div>
       </div>
       <ChevronRight />
-    </div >
+    </button>
   ))
 
   if (users === null || users.length === 0) {

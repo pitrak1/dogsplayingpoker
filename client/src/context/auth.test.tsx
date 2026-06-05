@@ -1,32 +1,28 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import type { ReactNode } from 'react'
-import { AuthProvider, useAuth, getAuthToken } from '@/context/auth'
+import { useAuth, getAuthToken } from '@/context/auth'
 import { clearAllCookies } from '@/test/vitest.setup'
 import { makeUser } from '@/test/factories'
 import { setCookie } from '@/lib/cookies'
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <AuthProvider>{children}</AuthProvider>
-)
+import { renderHookWithProviders } from '@/test/wrapper'
 
 describe('AuthProvider + useAuth', () => {
   beforeEach(clearAllCookies)
-  const testUser = makeUser()
+  const testUser = makeUser({ username: 'sarah' })
 
   it('starts with no user when no cookie exists', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     expect(result.current.user).toBeNull()
   })
 
   it('hydrates user from cookie on mount', () => {
     setCookie('user', JSON.stringify(testUser), 60)
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     expect(result.current.user?.username).toBe('sarah')
   })
 
   it('setAuth updates user state', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     act(() => {
       result.current.setAuth('token123', testUser)
     })
@@ -34,7 +30,7 @@ describe('AuthProvider + useAuth', () => {
   })
 
   it('setAuth persists the auth token to a cookie', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     act(() => {
       result.current.setAuth('token123', testUser)
     })
@@ -42,7 +38,7 @@ describe('AuthProvider + useAuth', () => {
   })
 
   it('setAuth persists the user to a cookie', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     act(() => {
       result.current.setAuth('token123', testUser)
     })
@@ -50,7 +46,7 @@ describe('AuthProvider + useAuth', () => {
   })
 
   it('clearAuth removes user state', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     act(() => {
       result.current.setAuth('token123', testUser)
     })
@@ -61,7 +57,7 @@ describe('AuthProvider + useAuth', () => {
   })
 
   it('clearAuth removes the auth token cookie', () => {
-    const { result } = renderHook(() => useAuth(), { wrapper })
+    const { result } = renderHookWithProviders(() => useAuth())
     act(() => {
       result.current.setAuth('token123', testUser)
     })

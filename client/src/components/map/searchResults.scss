@@ -15,6 +15,8 @@
   align-items: center;
   padding: 8px;
   cursor: pointer;
+  background-color: transparent;
+  border: none;
 
   &:hover {
     background-color: #f0f0f0;
@@ -32,6 +34,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .search-result-item__profile-image {
@@ -49,6 +52,7 @@
 
 .search-result-item__username {
   font-size: 18px;
+  padding: 0.2rem;
 }
 
 .search-result-item__user-info {
