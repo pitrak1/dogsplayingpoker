@@ -3,7 +3,6 @@ import { act, screen } from '@testing-library/react'
 import { UserMenu } from '@/components/header/userMenu'
 import { renderWithProviders } from '@/test/wrapper'
 import { makeUser } from '@/test/factories'
-import { User } from '@/types/user'
 import * as authContext from '@/context/auth'
 
 const setupHooks = () => {

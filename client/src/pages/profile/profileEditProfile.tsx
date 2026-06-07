@@ -1,23 +1,51 @@
 import { useAuth } from '@/context/auth'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getAvatarFallback, convertImageUrlToSize } from '@/lib/avatar'
+import { ImageUpload } from '@/components/forms/imageUpload'
+import { uploadImage } from '@/lib/upload'
 import './profileEditProfile.scss'
 
 export function ProfileEditProfile() {
   const { user } = useAuth()
+  const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [username, setUsername] = useState<string>(user?.username ?? '')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null
-    console.log('Selected file:', file)
+    setFile(file)
+    setPreviewUrl(file ? URL.createObjectURL(file) : null)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl ?? '')
+    }
+  }, [previewUrl])
+
+  const usernameChanged = username !== user?.username
+
+  const handleUsernameSave = () => {
+    // update username logic here
+  }
+
+  const handleImageSave = async () => {
+    if (!file) return
+    const imageUrl = await uploadImage(file)
+    // update user profile here
+    setFile(null)
+    setPreviewUrl(null)
+  }
+
+  const handleRevert = () => {
+    setFile(null)
+    setPreviewUrl(null)
   }
 
   const getPreviewSrcForSize = (size: number) =>
     previewUrl ||
     convertImageUrlToSize(user?.profileImageUrl ?? null, size) ||
     getAvatarFallback(user?.username ?? null, size)
-
-  console.log(getPreviewSrcForSize(128), getPreviewSrcForSize(40), getPreviewSrcForSize(36))
 
   return (
     <div className="profile-edit-profile">
@@ -31,9 +59,12 @@ export function ProfileEditProfile() {
           <input
             type="text"
             className="profile-edit-profile__input"
-            defaultValue={user?.username}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
-          <button className="profile-edit-profile__submit">Save</button>
+          <button className="profile-edit-profile__submit" disabled={!usernameChanged} onClick={handleUsernameSave}>
+            Save
+          </button>
         </div>
       </div>
       <div className="profile-edit-profile__field">
@@ -42,7 +73,7 @@ export function ProfileEditProfile() {
           Please use a picture of yourself to be displayed on your profile.
         </small>
         <div className="profile-edit-profile__avatar-displays">
-          <div className="profile-edit-profile__avatar-profile">
+          <div className="profile-edit-profile__avatar-preview profile-edit-profile__avatar-profile">
             <img
               src={getPreviewSrcForSize(128)}
               alt="Profile preview"
@@ -50,7 +81,7 @@ export function ProfileEditProfile() {
             />
             <div>Profile preview</div>
           </div>
-          <div className="profile-edit-profile__avatar-user-menu">
+          <div className="profile-edit-profile__avatar-preview profile-edit-profile__avatar-user-menu">
             <img
               src={getPreviewSrcForSize(40)}
               alt="User menu icon preview"
@@ -58,10 +89,21 @@ export function ProfileEditProfile() {
             />
             <div>User menu icon preview</div>
           </div>
-          <div className="profile-edit-profile__avatar-marker">
+          <div className="profile-edit-profile__avatar-preview profile-edit-profile__avatar-marker">
             <img src={getPreviewSrcForSize(36)} alt="Profile preview" className="avatar__marker" />
             <div>Map marker preview</div>
           </div>
+        </div>
+        <div className="profile-edit-profile__image-buttons">
+          <div className="profile-edit-profile__image-upload">
+            <ImageUpload name="profileImage" label="Upload new profile picture" value={null} onChange={onChange} />
+          </div>
+          <button className="profile-edit-profile__image-button" disabled={!file} onClick={handleImageSave}>
+            Save
+          </button>
+          <button className="profile-edit-profile__image-button" disabled={!file} onClick={handleRevert}>
+            Revert
+          </button>
         </div>
       </div>
     </div>

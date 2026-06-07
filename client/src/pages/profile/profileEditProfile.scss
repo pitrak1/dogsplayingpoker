@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin-top: 0px;
 }
 
 .profile-edit-profile__field {
@@ -45,5 +46,55 @@
 
   &:hover {
     background-color: var(--button-active-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.profile-edit-profile__avatar-displays {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+}
+.profile-edit-profile__avatar-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-edit-profile__image-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.profile-edit-profile__image-upload {
+  max-width: 400px;
+}
+
+.profile-edit-profile__image-button {
+  display: inline-block;
+  margin-top: 3rem;
+  width: 150px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  background-color: var(--button-active);
+  color: var(--button-active-text);
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--button-active-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+    cursor: not-allowed;
   }
 }

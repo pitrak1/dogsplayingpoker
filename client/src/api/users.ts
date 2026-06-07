@@ -1,10 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { rpc } from './rpc'
-import type { InferRequestType } from 'hono/client'
 import type { ActiveSearch } from '@/pages/home'
 import { ApiError } from './errors'
-
-type SearchUsersInput = InferRequestType<typeof rpc.api.users.search.$get>['query']
 
 export const useUserByUsername = (username: string) =>
   useQuery({

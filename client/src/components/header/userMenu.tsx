@@ -10,6 +10,11 @@ export function UserMenu() {
 
   const logout = () => {
     clearAuth()
+    setIsOpen(false)
+  }
+
+  const closeMenu = () => {
+    setIsOpen(false)
   }
 
   const renderMenuContents = () => {
@@ -29,8 +34,12 @@ export function UserMenu() {
           </button>
           {isOpen && (
             <div className="user-menu__dropdown">
-              <Link to={`/profile/${user.username}`}>Your profile</Link>
-              <Link to="/profile/edit">Edit profile</Link>
+              <Link to={`/profile/${user.username}`} onClick={closeMenu}>
+                Your profile
+              </Link>
+              <Link to="/profile/edit" onClick={closeMenu}>
+                Edit profile
+              </Link>
               <Link to="/" onClick={logout}>
                 Log out
               </Link>
