@@ -16,6 +16,11 @@ const searchSchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
 })
 
+const updateProfileSchema = z.object({
+  username: z.string().optional(),
+  profileImageUrl: z.string().optional(),
+})
+
 export type SearchUsersParams = z.infer<typeof searchSchema>
 
 export const userRoutes = new Hono<AppEnv>()
@@ -36,4 +41,10 @@ export const userRoutes = new Hono<AppEnv>()
     const user = await userService.getUserById(id)
     if (!user) return c.json({ message: 'Not found' }, 404)
     return c.json(user)
+  })
+  .patch('/update-profile', zValidator('json', updateProfileSchema), async (c) => {
+    const userId = c.get('userId')
+    const body = c.req.valid('json')
+    const updatedUser = await userService.updateUserProfile(userId, body)
+    return c.json(updatedUser)
   })

@@ -59,3 +59,15 @@ export const useRegister = () =>
     },
   })
 
+export const useUpdateProfile = () =>
+  useMutation({
+    mutationFn: async (input: { username?: string; profileImageUrl?: string }) => {
+      const res = await rpc.api.users['update-profile'].$patch({ json: input })
+      if (!res.ok) {
+        const body = (await res.json()) as { message: string; field?: string }
+        throw new ApiError(body.message ?? 'Update profile failed', body.field)
+      }
+      return res.json()
+    },
+  })
+

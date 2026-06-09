@@ -6,9 +6,15 @@ const AUTH_MAX_AGE = 15 * 60
 const AUTH_TOKEN_KEY = 'authToken'
 const USER_KEY = 'user'
 
+let _setUserState: ((user: User | null) => void) | null = null
+
 export const getAuthToken = () => getCookie(AUTH_TOKEN_KEY)
 export const setAuthToken = (token: string) => setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
 export const clearAuth = () => deleteCookie(AUTH_TOKEN_KEY)
+export const setAuthUser = (user: User) => {
+  setCookie(USER_KEY, JSON.stringify(user), AUTH_MAX_AGE)
+  _setUserState?.(user)
+}
 
 type AuthContextType = {
   user: User | null
@@ -23,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = getCookie(USER_KEY)
     return stored ? JSON.parse(stored) : null
   })
+  _setUserState = setUser
 
   const setAuth = (token: string, user: User) => {
     setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)

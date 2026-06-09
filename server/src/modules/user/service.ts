@@ -68,7 +68,7 @@ export const createUser = async (input: {
   } catch (e: any) {
     if (e.code === PG_UNIQUE_VIOLATION) {
       if (e.constraint?.includes('email')) throw new ConflictError('That email is already in use', 'email')
-      if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken', 'username')
+      if (e.constraint?.includes('username')) throw new ConflictError('That username is already in use', 'username')
     }
     throw e
   }
@@ -130,4 +130,31 @@ export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ us
   }))
 
   return { users: usersWithPets, totalCount }
+}
+
+type UpdateUserProfileInput = {
+  username?: string
+  profileImageUrl?: string
+}
+
+export const updateUserProfile = async (userId: number, input: UpdateUserProfileInput) => {
+  const updates: Record<string, any> = {}
+
+  if (input.username) updates.username = input.username
+  if (input.profileImageUrl) updates.profileImageUrl = input.profileImageUrl
+  updates.updatedAt = new Date()
+
+  try {
+    const rows = await db
+      .update(users)
+      .set(updates)
+      .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+      .returning()
+    return userWithPets(rows[0])
+  } catch (e: any) {
+    if (e.code === PG_UNIQUE_VIOLATION) {
+      if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken', 'username')
+    }
+    throw e
+  }
 }

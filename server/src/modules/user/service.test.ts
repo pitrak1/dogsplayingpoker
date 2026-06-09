@@ -184,3 +184,22 @@ describe('userService.searchUsersNearby', () => {
   })
 })
 
+describe('userService.updateUserProfile', () => {
+  it('updates a username', async () => {
+    const user = await userService.createUser(makeUserInput({ username: 'sarah' }))
+    const updatedUser = await userService.updateUserProfile(user.user.id, { username: 'sarah_updated' })
+    expect(updatedUser.username).toBe('sarah_updated')
+  })
+
+  it('updates a profile image url', async () => {
+    const user = await userService.createUser(makeUserInput({ username: 'sarah' }))
+    const updatedUser = await userService.updateUserProfile(user.user.id, { profileImageUrl: 'https://example.com/profile.jpg' })
+    expect(updatedUser.profileImageUrl).toBe('https://example.com/profile.jpg')
+  })
+
+  it('rejects duplicate username', async () => {
+    await userService.createUser(makeUserInput({ username: 'sarah' }))
+    const user = await userService.createUser(makeUserInput({ username: 'john', email: 'john@example.com' }))
+    await expect(userService.updateUserProfile(user.user.id, { username: 'sarah' })).rejects.toThrow()
+  })
+})

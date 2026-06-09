@@ -40,3 +40,10 @@ describe('GET /api/users/:id', () => {
     expect(res.status).toBe(400)
   })
 })
+
+describe('GET /api/users/update-profile', () => {
+  it('returns 401 if not logged in', async () => {
+    const res = await app.request(`/api/users/update-profile`)
+    expect(res.status).toBe(401)
+  })
+})
