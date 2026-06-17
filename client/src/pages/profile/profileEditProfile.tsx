@@ -20,6 +20,7 @@ export function ProfileEditProfile() {
     const file = e.target.files ? e.target.files[0] : null
     setFile(file)
     setPreviewUrl(file ? URL.createObjectURL(file) : null)
+    e.target.value = ''
   }
 
   useEffect(() => {
