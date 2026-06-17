@@ -1,0 +1,23 @@
+.profile-edit-location-distance__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.profile-edit-location-distance__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-edit-location-distance__distance-display {
+  font-size: 22px;
+  display: flex;
+  align-items: end;
+}
+
+.profile-edit-location-distance__distance-input {
+  width: 100%;
+  margin: 0.5rem 0rem;
+}

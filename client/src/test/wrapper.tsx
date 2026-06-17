@@ -27,3 +27,4 @@ export const renderHookWithProviders = <Result, Props>(
   options?: Parameters<typeof renderHook<Result, Props>>[1],
   pathname?: string | null
 ) => renderHook(callback, { wrapper: AppTestWrapper(pathname), ...options })
+

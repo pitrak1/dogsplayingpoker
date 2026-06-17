@@ -135,6 +135,9 @@ export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ us
 type UpdateUserProfileInput = {
   username?: string
   profileImageUrl?: string
+  latitude?: number | null
+  longitude?: number | null
+  radiusMiles?: number | null
 }
 
 export const updateUserProfile = async (userId: number, input: UpdateUserProfileInput) => {
@@ -142,6 +145,10 @@ export const updateUserProfile = async (userId: number, input: UpdateUserProfile
 
   if (input.username) updates.username = input.username
   if (input.profileImageUrl) updates.profileImageUrl = input.profileImageUrl
+  if (input.latitude !== undefined && input.longitude !== undefined && input.radiusMiles !== undefined) {
+    updates.location = coordsToLocation(input.latitude, input.longitude)
+    updates.radiusMiles = input.radiusMiles
+  }
   updates.updatedAt = new Date()
 
   try {

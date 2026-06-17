@@ -19,6 +19,9 @@ const searchSchema = z.object({
 const updateProfileSchema = z.object({
   username: z.string().optional(),
   profileImageUrl: z.string().optional(),
+  latitude: z.coerce.number().nullable().optional(),
+  longitude: z.coerce.number().nullable().optional(),
+  radiusMiles: z.coerce.number().int().min(0).nullable().optional()
 })
 
 export type SearchUsersParams = z.infer<typeof searchSchema>

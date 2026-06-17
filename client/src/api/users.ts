@@ -59,9 +59,17 @@ export const useRegister = () =>
     },
   })
 
+type UpdateProfileInput = {
+  username?: string
+  profileImageUrl?: string
+  latitude?: number | null
+  longitude?: number | null
+  radiusMiles?: number | null
+}
+
 export const useUpdateProfile = () =>
   useMutation({
-    mutationFn: async (input: { username?: string; profileImageUrl?: string }) => {
+    mutationFn: async (input: UpdateProfileInput) => {
       const res = await rpc.api.users['update-profile'].$patch({ json: input })
       if (!res.ok) {
         const body = (await res.json()) as { message: string; field?: string }

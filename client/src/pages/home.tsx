@@ -1,12 +1,12 @@
-import { MapView } from '@/components/map/mapView'
-import { SearchSidebar } from '@/components/map/searchSidebar'
+import { UserMap } from '@/components/userMap'
+import { SearchSidebar } from '@/components/home/searchSidebar'
 import { useCallback, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import './home.scss'
 import { useSearchUsers } from '@/api/users'
 import { boundsFromMap } from '@/lib/maps'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import './home.scss'
 
 type MapBounds = {
   swLat: number
@@ -25,36 +25,16 @@ export function Home() {
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
   const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
-  const [pendingBounds, setPendingBounds] = useState<MapBounds | null>(null)
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
 
   const lat = parseFloat(searchParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
   const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
   const zoom = parseFloat(searchParams.get('zoom') ?? DEFAULT_MAP_CENTER.zoom.toString())
 
-  const handleMapMove = useCallback(
-    (map: mapboxgl.Map) => {
-      const next = boundsFromMap(map)
-      setPendingBounds(next)
-
-      const zoom = map.getZoom()
-      setSearchParams(
-        {
-          lat: Number(next.centerLat).toFixed(6),
-          lng: Number(next.centerLng).toFixed(6),
-          zoom: zoom.toFixed(2),
-        },
-        { replace: true },
-      )
-    },
-    [setSearchParams],
-  )
-
   const handleMapReady = useCallback(
     (map: mapboxgl.Map) => {
       setMapInstance(map)
       const initial = boundsFromMap(map)
-      setPendingBounds(initial)
       setActiveSearch({ ...initial, page: 1 })
     },
     []
@@ -71,26 +51,31 @@ export function Home() {
   const totalCount = data?.totalCount ?? 0
 
   const handleRedoSearch = () => {
-    if (!pendingBounds) return
-    setActiveSearch({ ...pendingBounds, page: 1 })
+    if (!mapInstance) return 
+    const next = boundsFromMap(mapInstance)
+    const zoom = mapInstance.getZoom()
+    setSearchParams(
+      {
+        lat: Number(next.centerLat).toFixed(6),
+        lng: Number(next.centerLng).toFixed(6),
+        zoom: zoom.toFixed(2),
+      },
+      { replace: true },
+    )
+    setActiveSearch({ ...next, page: 1 })
   }
-
-  const hasMapMoved = JSON.stringify({ ...pendingBounds, page: undefined }) !==
-    JSON.stringify({ ...activeSearch, page: undefined })
 
   return (
     <div className="home">
-      <MapView
-        users={users ?? []}
-        initialLat={lat}
-        initialLng={lng}
-        initialZoom={zoom}
-        hasMapMoved={hasMapMoved}
-        onMapReady={handleMapReady}
-        onMapMove={handleMapMove}
-        onRedoSearch={handleRedoSearch}
-        hoveredUserId={hoveredUserId}
-      />
+      <div className="home__map-container">
+        <UserMap
+          users={users ?? []}
+          hoveredUserIds={hoveredUserId ? [hoveredUserId] : []}
+          initialPosition={{ lat, lng, zoom }}
+          onMapReady={handleMapReady}
+          onRedoSearch={handleRedoSearch}
+        />
+      </div>
       <SearchSidebar
         users={users ?? []}
         totalCount={totalCount}

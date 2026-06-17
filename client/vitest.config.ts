@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,  // makes describe, it, expect global like Jest
-    setupFiles: ['./src/test/vitest.setup.ts'],
+    setupFiles: ['./src/test/vitest.setup.tsx'],
     fileParallelism: false,
   },
   resolve: {

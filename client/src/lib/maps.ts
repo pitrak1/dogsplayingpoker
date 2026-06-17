@@ -3,7 +3,7 @@ import { getCssVar } from './cssVars'
 import mapboxgl from 'mapbox-gl'
 
 // At zoom 0, 1 pixel represents this many meters at the equator
-const EARTH_CIRCUMFERENCE_CONSTANT = 156543.03392
+const EARTH_CIRCUMFERENCE_CONSTANT = 78271.51696
 
 const MILES_TO_METERS = 1609.34
 
@@ -31,30 +31,43 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
 export const getCircleStops = (miles: number, latitude: number): [number, number][] =>
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
 
-export const createMarkerElement = (user: User, onClick: () => void) => {
+export const createMarkerElement = (user: User, onClick: () => void, style?: string) => {
   const wrapper = document.createElement('div')
   wrapper.className = 'map-view__marker-avatar'
   const inner = document.createElement('div')
-  inner.className = 'avatar__marker map-view__marker-avatar-inner'
+  inner.className = `avatar__marker map-view__marker-avatar-inner ${style}`
   if (user.profileImageUrl) inner.style.backgroundImage = `url(${user.profileImageUrl})`
   wrapper.appendChild(inner)
   wrapper.addEventListener('click', onClick)
   return wrapper
 }
 
-export const addUserMarker = (map: mapboxgl.Map, user: User, onClick: () => void) =>
-  new mapboxgl.Marker({ element: createMarkerElement(user, onClick) })
-    .setLngLat([user.longitude!, user.latitude!])
+export const addUserMarker = (
+  map: mapboxgl.Map, 
+  user: User, 
+  onClick: () => void, 
+  overrides?: { lat?: number, lng?: number, style?: string }) =>
+{
+  const lat = overrides?.lat ?? user.latitude ?? 0
+  const lng = overrides?.lng ?? user.longitude ?? 0
+  return new mapboxgl.Marker({ element: createMarkerElement(user, onClick, overrides?.style) })
+    .setLngLat([lng, lat])
     .addTo(map)
+}
+  
 
 export const addUserRange = (map: mapboxgl.Map, user: User) => {
-  const sourceId = `range-${user.id}`
-  const color = getCssVar('color-primary')
+  return addRange(map, user.latitude, user.longitude, user.radiusMiles)
+}
+
+export const addRange = (map: mapboxgl.Map, lat: number, lng: number, radius: number, overrides?: { id?: string, color?: string }) => {
+  const sourceId = overrides?.id ?? `range-${lat}+${lng}+${radius}`
+  const color = overrides?.color ?? getCssVar('color-primary')
   map.addSource(sourceId, {
     type: 'geojson',
     data: {
       type: 'Feature',
-      geometry: { type: 'Point', coordinates: [user.longitude!, user.latitude!] },
+      geometry: { type: 'Point', coordinates: [lng, lat] },
       properties: {},
     },
   })
@@ -63,7 +76,7 @@ export const addUserRange = (map: mapboxgl.Map, user: User) => {
     type: 'circle',
     source: sourceId,
     paint: {
-      'circle-radius': { stops: getCircleStops(user.radiusMiles!, user.latitude!), base: 2 },
+      'circle-radius': { stops: getCircleStops(radius, lat), base: 2 },
       'circle-color': color,
       'circle-opacity': 0.2,
       'circle-stroke-color': color,
@@ -93,5 +106,30 @@ export const boundsFromMap = (map: mapboxgl.Map) => {
     neLng: bounds.getEast(),
     centerLat: center.lat,
     centerLng: center.lng,
+  }
+}
+
+const EARTH_RADIUS_MILES = 3958.8
+
+export const randomPointWithin = (
+  lat: number,
+  lng: number,
+  radiusMiles: number,
+) => {
+  // random angle in radians
+  const angle = Math.random() * 2 * Math.PI
+
+  // random distance — sqrt for uniform area distribution
+  const distance = Math.sqrt(Math.random()) * radiusMiles
+
+  // convert distance to lat/lng offset
+  const latOffset = (distance / EARTH_RADIUS_MILES) * (180 / Math.PI)
+  const lngOffset =
+    (distance / EARTH_RADIUS_MILES) * (180 / Math.PI) /
+    Math.cos(lat * Math.PI / 180)
+
+  return {
+    lat: lat + latOffset * Math.cos(angle),
+    lng: lng + lngOffset * Math.sin(angle),
   }
 }

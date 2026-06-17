@@ -1,4 +1,14 @@
+@use '@/styles/variables' as *;
+
 .home {
   display: flex;
   flex-direction: row;
 }
+
+.home__map-container {
+  flex: 1;
+  height: calc(100vh - $header-height);
+  position: relative;
+}
+
+

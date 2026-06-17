@@ -1,0 +1,22 @@
+.profile-edit-location {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-edit-location__change-location {
+  background-color: var(--form-field-background);
+  padding: 25px;
+  border-radius: 6px;
+  border: var(--form-field-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-edit-location__buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 1rem;
+}

@@ -197,6 +197,25 @@ describe('userService.updateUserProfile', () => {
     expect(updatedUser.profileImageUrl).toBe('https://example.com/profile.jpg')
   })
 
+  it('updates location and radiusMiles if lat/lng/rad are provided', async () => {
+    const locationInput = { latitude: 1, longitude: 2, radiusMiles: 3 }
+    const user = await userService.createUser(makeUserInput())
+    const updatedUser = await userService.updateUserProfile(user.user.id, locationInput)
+    expect(updatedUser.latitude).toBe(1)
+    expect(updatedUser.longitude).toBe(2)
+    expect(updatedUser.radiusMiles).toBe(3)
+  })
+
+  it('does not update if any of these three are not provided', async () => {
+    const userInput = makeUserInput()
+    const locationInput = { latitude: 1, longitude: 2 }
+    const user = await userService.createUser(userInput)
+    const updatedUser = await userService.updateUserProfile(user.user.id, locationInput)
+    expect(updatedUser.latitude).toBe(userInput.latitude)
+    expect(updatedUser.longitude).toBe(userInput.longitude)
+    expect(updatedUser.radiusMiles).toBe(userInput.radiusMiles)
+  })
+
   it('rejects duplicate username', async () => {
     await userService.createUser(makeUserInput({ username: 'sarah' }))
     const user = await userService.createUser(makeUserInput({ username: 'john', email: 'john@example.com' }))
