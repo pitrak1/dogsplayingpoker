@@ -9,6 +9,9 @@
 
 .search-sidebar__header {
   flex-shrink: 0;
+  height: $home-search-height;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
 }
 
 .search-sidebar__input-container {
@@ -27,6 +30,5 @@
 }
 
 .search-sidebar__divider {
-  margin-top: 20px;
   border-top: 1px solid #ccc;
 }

@@ -1,7 +1,11 @@
+@use '@/styles/variables' as *;
+
 .search-pagination {
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: $home-search-pagination-height;
+  border-top: 1px solid #ccc;  
 }
 
 .search-pagination__nav-button {

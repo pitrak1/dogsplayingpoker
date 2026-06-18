@@ -18,6 +18,47 @@ const seedUsers = [
   { username: 'tom_h',    email: 'tom@example.com',    fullName: 'Tom H',    bg: 'd7bde2', lat: 41.8388, lng: -87.6531, radius: 4 },  // Bridgeport
   { username: 'rachel_b', email: 'rachel@example.com', fullName: 'Rachel B', bg: 'f5b041', lat: 41.9697, lng: -87.6809, radius: 5 },  // Ravenswood
   { username: 'jake_d',   email: 'jake@example.com',   fullName: 'Jake D',   bg: 'aab7b8', lat: 41.8559, lng: -87.6492, radius: 3 },  // Pilsen
+  { username: 'maria_g',  email: 'maria@example.com',  fullName: 'Maria G',  bg: 'ec7063', lat: 41.8907, lng: -87.6280, radius: 2 },  // River North
+  { username: 'kevin_s',  email: 'kevin@example.com',  fullName: 'Kevin S',  bg: '5dade2', lat: 41.9700, lng: -87.7036, radius: 4 },  // Albany Park
+  { username: 'lisa_o',   email: 'lisa@example.com',   fullName: 'Lisa O',   bg: 'a569bd', lat: 41.7505, lng: -87.6584, radius: 5 },  // Beverly
+  { username: 'nate_f',   email: 'nate@example.com',   fullName: 'Nate F',   bg: '48c9b0', lat: 41.9295, lng: -87.6883, radius: 3 },  // Bucktown
+  { username: 'olivia_r', email: 'olivia@example.com', fullName: 'Olivia R', bg: 'f8c471', lat: 41.8400, lng: -87.6800, radius: 4 },  // McKinley Park
+  { username: 'paul_c',   email: 'paul@example.com',   fullName: 'Paul C',   bg: 'cd6155', lat: 41.9445, lng: -87.6500, radius: 2 },  // Lakeview
+  { username: 'quinn_a',  email: 'quinn@example.com',  fullName: 'Quinn A',  bg: '7fb3d5', lat: 41.7800, lng: -87.5950, radius: 6 },  // Woodlawn
+  { username: 'ravi_m',   email: 'ravi@example.com',   fullName: 'Ravi M',   bg: 'af7ac5', lat: 41.9100, lng: -87.6200, radius: 3 },  // Streeterville
+  { username: 'sofia_j',  email: 'sofia@example.com',  fullName: 'Sofia J',  bg: '58d68d', lat: 41.9580, lng: -87.6660, radius: 5 },  // Uptown
+  { username: 'tyler_p',  email: 'tyler@example.com',  fullName: 'Tyler P',  bg: 'f1c40f', lat: 41.8120, lng: -87.6600, radius: 4 },  // Back of the Yards
+  { username: 'uma_b',    email: 'uma@example.com',    fullName: 'Uma B',    bg: 'e74c3c', lat: 41.9930, lng: -87.6720, radius: 3 },  // Edgewater
+  { username: 'victor_l', email: 'victor@example.com', fullName: 'Victor L', bg: '3498db', lat: 41.8830, lng: -87.6500, radius: 2 },  // West Loop
+  { username: 'wendy_h',  email: 'wendy@example.com',  fullName: 'Wendy H',  bg: '9b59b6', lat: 41.9000, lng: -87.6920, radius: 5 },  // East Village
+  { username: 'xavier_n', email: 'xavier@example.com', fullName: 'Xavier N', bg: '1abc9c', lat: 41.7700, lng: -87.6300, radius: 4 },  // Englewood
+  { username: 'yara_e',   email: 'yara@example.com',   fullName: 'Yara E',   bg: 'e67e22', lat: 41.9398, lng: -87.7240, radius: 3 },  // Avondale
+  { username: 'zach_v',   email: 'zach@example.com',   fullName: 'Zach V',   bg: 'c0392b', lat: 41.8470, lng: -87.6850, radius: 5 },  // Heart of Chicago
+  { username: 'aisha_t',  email: 'aisha@example.com',  fullName: 'Aisha T',  bg: '2980b9', lat: 41.9610, lng: -87.6400, radius: 2 },  // Buena Park
+  { username: 'brian_q',  email: 'brian@example.com',  fullName: 'Brian Q',  bg: '8e44ad', lat: 41.8260, lng: -87.6200, radius: 4 },  // Chinatown
+  { username: 'cara_w',   email: 'cara@example.com',   fullName: 'Cara W',   bg: '16a085', lat: 41.9250, lng: -87.6755, radius: 3 },  // Noble Square
+  { username: 'dylan_i',  email: 'dylan@example.com',  fullName: 'Dylan I',  bg: 'd35400', lat: 41.7900, lng: -87.6720, radius: 5 },  // Marquette Park
+  { username: 'eva_u',    email: 'eva@example.com',    fullName: 'Eva U',    bg: 'd98880', lat: 41.9810, lng: -87.6685, radius: 4 },  // Andersonville
+  { username: 'finn_k',   email: 'finn@example.com',   fullName: 'Finn K',   bg: '7dcea0', lat: 41.8600, lng: -87.6480, radius: 3 },  // University Village
+  { username: 'gina_z',   email: 'gina@example.com',   fullName: 'Gina Z',   bg: 'f5b7b1', lat: 41.9500, lng: -87.6750, radius: 5 },  // North Center
+  { username: 'henry_y',  email: 'henry@example.com',  fullName: 'Henry Y',  bg: 'aed6f1', lat: 41.7610, lng: -87.6710, radius: 4 },  // Auburn Gresham
+  { username: 'isla_x',   email: 'isla@example.com',   fullName: 'Isla X',   bg: 'c39bd3', lat: 41.9020, lng: -87.6650, radius: 2 },  // Old Town
+  { username: 'jamal_w',  email: 'jamal@example.com',  fullName: 'Jamal W',  bg: '76d7c4', lat: 41.7720, lng: -87.6090, radius: 6 },  // Greater Grand Crossing
+  { username: 'kira_v',   email: 'kira@example.com',   fullName: 'Kira V',   bg: 'fad7a0', lat: 41.9430, lng: -87.6900, radius: 3 },  // Roscoe Village
+  { username: 'leo_u',    email: 'leo@example.com',    fullName: 'Leo U',    bg: 'eb984e', lat: 41.8195, lng: -87.7095, radius: 4 },  // Brighton Park
+  { username: 'mia_t',    email: 'mia@example.com',    fullName: 'Mia T',    bg: 'a3e4d7', lat: 41.9740, lng: -87.6925, radius: 5 },  // Lincoln Square
+  { username: 'noah_s',   email: 'noah@example.com',   fullName: 'Noah S',   bg: 'f9e79f', lat: 41.8330, lng: -87.6280, radius: 3 },  // Armour Square
+  { username: 'opal_r',   email: 'opal@example.com',   fullName: 'Opal R',   bg: 'd2b4de', lat: 41.9135, lng: -87.7100, radius: 4 },  // Hermosa
+  { username: 'pete_q',   email: 'pete@example.com',   fullName: 'Pete Q',   bg: 'a9dfbf', lat: 41.8030, lng: -87.6310, radius: 5 },  // Fuller Park
+  { username: 'quincy_p', email: 'quincy@example.com', fullName: 'Quincy P', bg: 'f5cba7', lat: 41.9165, lng: -87.6420, radius: 2 },  // Gold Coast
+  { username: 'rosa_o',   email: 'rosa@example.com',   fullName: 'Rosa O',   bg: 'd5dbdb', lat: 41.7950, lng: -87.6440, radius: 4 },  // Washington Park
+  { username: 'sean_n',   email: 'sean@example.com',   fullName: 'Sean N',   bg: 'ec7063', lat: 41.9085, lng: -87.6360, radius: 3 },  // Near North Side
+  { username: 'tara_m',   email: 'tara@example.com',   fullName: 'Tara M',   bg: '5499c7', lat: 41.8730, lng: -87.6740, radius: 5 },  // Little Italy
+  { username: 'uri_l',    email: 'uri@example.com',    fullName: 'Uri L',    bg: 'ba68c8', lat: 41.9870, lng: -87.6580, radius: 4 },  // Bowmanville
+  { username: 'val_k',    email: 'val@example.com',    fullName: 'Val K',    bg: '4dd0e1', lat: 41.7840, lng: -87.6850, radius: 3 },  // West Lawn
+  { username: 'wes_j',    email: 'wes@example.com',    fullName: 'Wes J',    bg: 'ffb74d', lat: 41.9265, lng: -87.6610, radius: 5 },  // West Town
+  { username: 'xio_i',    email: 'xio@example.com',    fullName: 'Xio I',    bg: 'e57373', lat: 41.8475, lng: -87.6700, radius: 2 },  // Tri-Taylor
+  { username: 'yuri_h',   email: 'yuri@example.com',   fullName: 'Yuri H',   bg: '9575cd', lat: 41.9900, lng: -87.6850, radius: 4 },  // West Ridge
 ]
 
 type Reactivity = 'strong' | 'mixed' | 'none' | 'unknown'

@@ -58,9 +58,7 @@ export function SearchSidebar({
         </div>
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
-      <hr className="search-sidebar__divider" />
       <SearchResults users={users} onSearchResultHover={onSearchResultHover} />
-      <hr className="search-sidebar__divider" />
       <SearchPagination pageNumber={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
     </div>
   )

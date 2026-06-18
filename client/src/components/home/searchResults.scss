@@ -1,7 +1,11 @@
+@use '@/styles/variables' as *;
+
 .search-results {
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - $header-height - $home-search-height - $home-search-pagination-height);
+  overflow-y: scroll;
 }
 
 .search-results__empty-text {
