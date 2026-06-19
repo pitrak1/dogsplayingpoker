@@ -33,9 +33,9 @@ export const getCircleStops = (miles: number, latitude: number): [number, number
 
 export const createMarkerElement = (user: User, onClick: () => void, style?: string) => {
   const wrapper = document.createElement('div')
-  wrapper.className = 'map-view__marker-avatar'
+  wrapper.className = 'user-map__marker-avatar'
   const inner = document.createElement('div')
-  inner.className = `avatar__marker map-view__marker-avatar-inner ${style}`
+  inner.className = `avatar__marker user-map__marker-avatar-inner ${style}`
   if (user.profileImageUrl) inner.style.backgroundImage = `url(${user.profileImageUrl})`
   wrapper.appendChild(inner)
   wrapper.addEventListener('click', onClick)
@@ -45,14 +45,23 @@ export const createMarkerElement = (user: User, onClick: () => void, style?: str
 export const addUserMarker = (
   map: mapboxgl.Map, 
   user: User, 
-  onClick: () => void, 
+  onClick: () => void,
+  onHover?: (userId: number | null) => void,
   overrides?: { lat?: number, lng?: number, style?: string }) =>
 {
   const lat = overrides?.lat ?? user.latitude ?? 0
   const lng = overrides?.lng ?? user.longitude ?? 0
-  return new mapboxgl.Marker({ element: createMarkerElement(user, onClick, overrides?.style) })
+  const marker = new mapboxgl.Marker({ element: createMarkerElement(user, onClick, overrides?.style) })
     .setLngLat([lng, lat])
     .addTo(map)
+
+  if (onHover) {
+    const el = marker.getElement()
+    el.addEventListener('mouseenter', () => onHover(user.id))
+    el.addEventListener('mouseleave', () => onHover(null))
+  }
+
+  return marker
 }
   
 

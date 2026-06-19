@@ -1,10 +1,11 @@
 import { UserMap } from '@/components/userMap'
 import { SearchSidebar } from '@/components/home/searchSidebar'
 import { useCallback, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useSearchUsers } from '@/api/users'
 import { boundsFromMap } from '@/lib/maps'
+import { User } from '@/types/user'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
 
@@ -26,6 +27,8 @@ export function Home() {
   const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
+
+  const navigate = useNavigate()
 
   const lat = parseFloat(searchParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
   const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
@@ -65,6 +68,10 @@ export function Home() {
     setActiveSearch({ ...next, page: 1 })
   }
 
+  const handleClickMarker = useCallback((user: User) => {
+    navigate(`/profile/${user.username}`)
+  }, [navigate])
+
   return (
     <div className="home">
       <div className="home__map-container">
@@ -73,6 +80,7 @@ export function Home() {
           hoveredUserIds={hoveredUserId ? [hoveredUserId] : []}
           initialPosition={{ lat, lng, zoom }}
           onMapReady={handleMapReady}
+          onClickMarker={handleClickMarker}
           onRedoSearch={handleRedoSearch}
         />
       </div>

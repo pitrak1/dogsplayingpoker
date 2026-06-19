@@ -19,6 +19,7 @@ type MapProps = {
   onScroll?: (map: mapboxgl.Map, e: WheelEvent) => void
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
   onClickMarker?: (user: User) => void
+  onHoverMarker?: (user: User) => void
   onRedoSearch?: () => void
   children?: React.ReactNode
 }
@@ -35,6 +36,7 @@ export function UserMap({
   onScroll,
   onDoubleClick,
   onClickMarker,
+  onHoverMarker,
   onRedoSearch,
   children
 }: MapProps) {
@@ -53,7 +55,7 @@ export function UserMap({
   const initialLat = initialPosition?.lat || DEFAULT_MAP_CENTER.latitude
   const initialLng = initialPosition?.lng || DEFAULT_MAP_CENTER.longitude
   const initialZoom = initialPosition?.zoom || DEFAULT_MAP_CENTER.zoom
-  const mapReadyStub = (map: mapboxgl.Map) => {}
+  const mapReadyStub = () => {}
   const mapReadyCallback = onMapReady ?? mapReadyStub
   
   const { mapRef, mapLoaded } = useMapboxMap({
@@ -75,7 +77,7 @@ export function UserMap({
 
     const addMarker = (u: User) => {
       if (!u.longitude || !u.latitude) return
-      const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u))
+      const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), onHoverMarker)
       markersRef.current.set(u.id, el)
 
       if (!u.radiusMiles || u.radiusMiles == 0) return
@@ -91,8 +93,6 @@ export function UserMap({
     return () => {
       markersRef.current.forEach((m) => m.remove())
       markersRef.current.clear()
-
-      if (!map.isStyleLoaded()) return
       sourceIds.forEach((id) => removeUserRange(map, id))
     }
   }, [mapLoaded, users, onClickMarker])
@@ -109,7 +109,7 @@ export function UserMap({
       if (hoveredUserIds) {
         hoveredUserIds.forEach(id => {
           const marker = markersRef.current.get(id)
-          marker?.getElement().classList.remove('map-view__marker-avatar-highlighted')
+          marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
         })
       }
     }

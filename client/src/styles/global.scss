@@ -51,10 +51,6 @@ $color-primary: var(--color-primary);
   @include avatar(36px);
 }
 
-.avatar__marker-hovered {
-  @include avatar(44px);
-}
-
 .avatar__menu {
   @include avatar(40px);
 }
