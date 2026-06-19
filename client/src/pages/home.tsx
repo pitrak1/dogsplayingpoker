@@ -21,18 +21,19 @@ type MapBounds = {
 export type ActiveSearch = MapBounds & { page: number }
 
 export function Home() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [searchValue, setSearchValue] = useState('')
+  const [searchUrlParams, setSearchUrlParams] = useSearchParams()
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
-  const [searchedLocation, setSearchedLocationChange] = useState<string | null>(null)
+  const [searchedLocationName, setSearchedLocationName] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
+  const [hasMapMoved, setHasMapMoved] = useState<boolean>(false)
+  const [searchOnNextMove, setSearchOnNextMove] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
-  const lat = parseFloat(searchParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
-  const lng = parseFloat(searchParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
-  const zoom = parseFloat(searchParams.get('zoom') ?? DEFAULT_MAP_CENTER.zoom.toString())
+  const lat = parseFloat(searchUrlParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
+  const lng = parseFloat(searchUrlParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
+  const zoom = parseFloat(searchUrlParams.get('zoom') ?? DEFAULT_MAP_CENTER.zoom.toString())
 
   const handleMapReady = useCallback(
     (map: mapboxgl.Map) => {
@@ -57,7 +58,7 @@ export function Home() {
     if (!mapInstance) return 
     const next = boundsFromMap(mapInstance)
     const zoom = mapInstance.getZoom()
-    setSearchParams(
+    setSearchUrlParams(
       {
         lat: Number(next.centerLat).toFixed(6),
         lng: Number(next.centerLng).toFixed(6),
@@ -66,20 +67,39 @@ export function Home() {
       { replace: true },
     )
     setActiveSearch({ ...next, page: 1 })
+    setHasMapMoved(false)
   }
 
   const handleClickMarker = useCallback((user: User) => {
     navigate(`/profile/${user.username}`)
   }, [navigate])
 
+  const handleMapMove = useCallback(() => {
+    if (!mapInstance) return
+
+    if (searchOnNextMove) {
+      setActiveSearch({ ...boundsFromMap(mapInstance), page: 1 })
+      setSearchOnNextMove(false)
+    } else {
+      setHasMapMoved(true)
+    }
+  }, [searchOnNextMove, mapInstance])
+
+  const handleSearchLocationChange = (location: string | null) => {
+    setSearchedLocationName(location)
+    if (location) setSearchOnNextMove(true)
+  }
+
   return (
     <div className="home">
       <div className="home__map-container">
+        {hasMapMoved && <button className="home__redo-search-button" onClick={handleRedoSearch}>Redo search in map</button>}
         <UserMap
           users={users ?? []}
           hoveredUserIds={hoveredUserId ? [hoveredUserId] : []}
           initialPosition={{ lat, lng, zoom }}
           onMapReady={handleMapReady}
+          onMapMove={handleMapMove}
           onClickMarker={handleClickMarker}
           onRedoSearch={handleRedoSearch}
         />
@@ -88,12 +108,10 @@ export function Home() {
         users={users ?? []}
         totalCount={totalCount}
         mapInstance={mapInstance}
-        searchValue={searchValue}
         currentPage={currentPage}
         onPageChange={handlePageChange}
-        onSearchChange={setSearchValue}
-        searchedLocation={searchedLocation}
-        onSearchLocationChange={setSearchedLocationChange}
+        searchedLocation={searchedLocationName}
+        onSearchLocationChange={handleSearchLocationChange}
         onSearchResultHover={setHoveredUserId}
       />
     </div>

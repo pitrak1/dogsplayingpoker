@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
 import { User } from '@/types/user'
@@ -27,7 +27,6 @@ export function UserMap({
   users, 
   hoveredUserIds, 
   initialPosition,
-  caption,
   lockMovement,
   isBlocked,
   onMapReady, 
@@ -36,16 +35,14 @@ export function UserMap({
   onDoubleClick,
   onClickMarker,
   onHoverMarker,
-  onRedoSearch,
   children
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const [hasMoved, setHasMoved] = useState<boolean>(false)
+  
   const markersRef = useRef(new Map<number, mapboxgl.Marker>())
 
   const handleMapMove = useCallback(
     (map: mapboxgl.Map) => {
-      setHasMoved(true)
       if (onMapMove) onMapMove(map)
     },
     [onMapMove]
@@ -119,16 +116,12 @@ export function UserMap({
 
   return (
     <div className="user-map">
-      {hasMoved && onRedoSearch && <button className="user-map__button" onClick={onRedoSearch}>Redo search in map</button>}
-      <div className="user-map__container">
-        <div ref={mapContainerRef} className="user-map__map" />
-        {isBlocked && (
-          <div className="map-blocker">
-            {children}
-          </div>
-        )}
-      </div>
-      {caption && <div className="user-map__caption">{caption}</div>}
+      <div ref={mapContainerRef} className="user-map__map" />
+      {isBlocked && (
+        <div className="map-blocker">
+          {children}
+        </div>
+      )}
     </div>
   )
 }

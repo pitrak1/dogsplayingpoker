@@ -11,4 +11,19 @@
   position: relative;
 }
 
+.home__redo-search-button {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 16px;
+  background-color: white;
+  padding: 8px 24px;
+  border: none;
+  border-radius: 6px;
 
+  &:hover {
+    background-color: var(--button-hover);
+  }
+}

@@ -4,16 +4,15 @@ import { SearchPagination } from './searchPagination'
 import { User } from '@/types/user'
 import { SearchResult } from '@/types/searchResult'
 import mapboxgl from 'mapbox-gl'
+import { useState } from 'react'
 import './searchSidebar.scss'
 
 type Props = {
   users: User[] | null
   totalCount: number | null
   mapInstance: mapboxgl.Map | null
-  searchValue: string
   currentPage: number
   onPageChange: (value: number) => void
-  onSearchChange: (value: string) => void
   searchedLocation: string | null
   onSearchLocationChange: (value: string | null) => void
   onSearchResultHover: (userId: number | null) => void
@@ -23,14 +22,14 @@ export function SearchSidebar({
   users,
   totalCount,
   mapInstance,
-  searchValue,
   currentPage,
   onPageChange,
-  onSearchChange,
   searchedLocation,
   onSearchLocationChange,
   onSearchResultHover,
 }: Props) {
+  const [searchValue, setSearchValue] = useState('')
+
   const accessToken = import.meta.env.VITE_MAPBOX_TOKEN
   const map = mapInstance ?? undefined
 
@@ -52,7 +51,7 @@ export function SearchSidebar({
             map={map}
             mapboxgl={mapboxgl}
             value={searchValue}
-            onChange={onSearchChange}
+            onChange={setSearchValue}
             onRetrieve={handleSearchSubmit}
             options={{ language: 'en', country: 'US' }}
           />
