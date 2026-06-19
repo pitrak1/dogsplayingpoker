@@ -2,6 +2,7 @@ import { SearchBox } from '@mapbox/search-js-react'
 import { SearchResults } from './searchResults'
 import { SearchPagination } from './searchPagination'
 import { User } from '@/types/user'
+import { SearchResult } from '@/types/searchResult'
 import mapboxgl from 'mapbox-gl'
 import './searchSidebar.scss'
 
@@ -36,7 +37,7 @@ export function SearchSidebar({
   const labelText = searchedLocation ? `Searching near` : `Search for a location`
   const resultCountText = `${totalCount} total users in search area`
 
-  const handleSearchSubmit = (result: any) => {
+  const handleSearchSubmit = (result: SearchResult) => {
     onSearchLocationChange(result.features[0].properties.name)
   }
 

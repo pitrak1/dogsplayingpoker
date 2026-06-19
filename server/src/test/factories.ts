@@ -1,4 +1,4 @@
-import type { User, Pet } from '@/db/schema'
+import type { User } from '@/db/schema'
 import type { CreateUserInput, CreatePetInput } from '@/types'
 import { db } from '@/db'
 import { users, pets } from '@/db/schema'

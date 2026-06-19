@@ -8,16 +8,16 @@ describe('transformUser', () => {
     const user = makeUser({ location: { x: -87.6298, y: 41.8781 } })
     const result = transformUser(user)
     expect(result).toBeDefined()
-    expect(result!.latitude).toBe(41.8781)
-    expect(result!.longitude).toBe(-87.6298)
+    expect(result.latitude).toBe(41.8781)
+    expect(result.longitude).toBe(-87.6298)
   })
 
   it('returns null lat/lng when location is null', () => {
     const user = makeUser()
     const result = transformUser(user)
     expect(result).toBeDefined()
-    expect(result!.latitude).toBeNull()
-    expect(result!.longitude).toBeNull()
+    expect(result.latitude).toBeNull()
+    expect(result.longitude).toBeNull()
   })
 
   it('preserves other fields', () => {
@@ -28,8 +28,8 @@ describe('transformUser', () => {
     })
     const result = transformUser(user)
     expect(result).toBeDefined()
-    expect(result!.username).toBe('sarah')
-    expect(result!.email).toBe('sarah@example.com')
+    expect(result.username).toBe('sarah')
+    expect(result.email).toBe('sarah@example.com')
   })
 })
 

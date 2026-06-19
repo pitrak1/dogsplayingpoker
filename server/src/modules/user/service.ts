@@ -7,6 +7,9 @@ import { transformUser, coordsToLocation } from '@/lib/geo'
 import { SearchUsersParams } from '@/routes/users'
 import { UserWithPets } from '@/types'
 import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
+import { DatabaseError } from 'pg'
+import type { NewUser } from '@/db/schema'
+import type { SQL } from 'drizzle-orm'
 
 const userWithPets = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
@@ -65,8 +68,8 @@ export const createUser = async (input: {
       refreshToken: generateRefreshToken(user.id),
       user: await userWithPets(user),
     }
-  } catch (e: any) {
-    if (e.code === PG_UNIQUE_VIOLATION) {
+  } catch (e: unknown) {
+    if (e instanceof DatabaseError && e.code === PG_UNIQUE_VIOLATION) {
       if (e.constraint?.includes('email')) throw new ConflictError('That email is already in use', 'email')
       if (e.constraint?.includes('username')) throw new ConflictError('That username is already in use', 'username')
     }
@@ -141,7 +144,7 @@ type UpdateUserProfileInput = {
 }
 
 export const updateUserProfile = async (userId: number, input: UpdateUserProfileInput) => {
-  const updates: Record<string, any> = {}
+  const updates: Omit<Partial<NewUser>, 'location'> & { location?: SQL | null } = {}
 
   if (input.username) updates.username = input.username
   if (input.profileImageUrl) updates.profileImageUrl = input.profileImageUrl
@@ -158,8 +161,8 @@ export const updateUserProfile = async (userId: number, input: UpdateUserProfile
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .returning()
     return userWithPets(rows[0])
-  } catch (e: any) {
-    if (e.code === PG_UNIQUE_VIOLATION) {
+  } catch (e: unknown) {
+    if (e instanceof DatabaseError && e.code === PG_UNIQUE_VIOLATION) {
       if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken', 'username')
     }
     throw e

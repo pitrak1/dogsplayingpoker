@@ -47,7 +47,7 @@ export function Home() {
     setActiveSearch((prev) => prev ? { ...prev, page } : prev)
   }
 
-  const currentPage = Number(activeSearch?.page) ?? 1
+  const currentPage = activeSearch ? Number(activeSearch?.page) : 1
 
   const { data } = useSearchUsers(activeSearch)
   const users = data?.users ?? []

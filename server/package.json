@@ -2,6 +2,7 @@
   "name": "dogsplayingpoker-server",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -12,7 +13,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts",
     "test": "vitest",
-    "test:db:push": "dotenv -e .env.test -- drizzle-kit push"
+    "test:db:push": "dotenv -e .env.test -- drizzle-kit push",
+    "lint": "eslint src"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.3",
@@ -27,14 +29,17 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.15.3",
     "@types/pg": "^8.11.11",
     "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.0",
+    "eslint": "^10.3.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.59.2",
     "vitest": "^4.1.7"
   }
 }

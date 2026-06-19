@@ -6,11 +6,10 @@ import './profile.scss'
 
 export function Profile() {
   const { username } = useParams<{ username: string }>()
-  const { data: user, isPending, error } = useUserByUsername(username!)
+  const { data: user } = useUserByUsername(username!)
   const { user: currentUser } = useAuth()
   const navigate = useNavigate()
 
-  const isProfileOwner = user == null || user?.id === currentUser?.id
   const profileUser = user || currentUser
 
   const src =

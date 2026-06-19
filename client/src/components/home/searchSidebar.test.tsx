@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/wrapper'
 import { SearchSidebar } from './searchSidebar'
-import { userEvent } from '@testing-library/user-event/dist/cjs/setup/index.js'
 
 vi.mock('@mapbox/search-js-react', () => ({
   SearchBox: ({ value, onChange, onRetrieve }: any) => (

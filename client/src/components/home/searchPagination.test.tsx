@@ -2,9 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/wrapper'
 import { SearchPagination } from './searchPagination'
-import { makeUsers } from '@/test/factories'
-import { userEvent } from '@testing-library/user-event/dist/cjs/setup/index.js'
-import * as reactRouter from 'react-router'
 
 describe('SearchPagination', () => {
   it('shows no results when given null totalCount', () => {

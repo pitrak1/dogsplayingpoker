@@ -56,7 +56,7 @@ export const authRoutes = new Hono<AppEnv>()
       throw e
     }
   })
-  .post('/refresh', async (c) => {
+  .post('/refresh', (c) => {
     const token = getRefreshCookie(c)
     if (!token) return c.json({ message: 'No refresh token' }, 401)
     try {

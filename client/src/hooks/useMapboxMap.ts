@@ -53,6 +53,7 @@ export const useMapboxMap = ({
     return () => {
       mapRef.current?.remove()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // move handler

@@ -8,6 +8,7 @@ const USER_KEY = 'user'
 
 let _setUserState: ((user: User | null) => void) | null = null
 
+/* eslint-disable react-refresh/only-export-components */
 export const getAuthToken = () => getCookie(AUTH_TOKEN_KEY)
 export const setAuthToken = (token: string) => setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
 export const clearAuth = () => deleteCookie(AUTH_TOKEN_KEY)

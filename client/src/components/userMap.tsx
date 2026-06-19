@@ -3,7 +3,6 @@ import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
 import { User } from '@/types/user'
 import { addUserMarker, addUserRange, removeUserRange } from '@/lib/maps'
-import mapboxgl from 'mapbox-gl'
 import './userMap.scss'
 
 type MapProps = {
@@ -73,12 +72,13 @@ export function UserMap({
   useEffect(() => {
     if (!mapLoaded) return
     const map = mapRef.current!
+    const markers = markersRef.current
     const sourceIds: string[] = []
 
     const addMarker = (u: User) => {
       if (!u.longitude || !u.latitude) return
       const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), onHoverMarker)
-      markersRef.current.set(u.id, el)
+      markers.set(u.id, el)
 
       if (!u.radiusMiles || u.radiusMiles == 0) return
       sourceIds.push(addUserRange(map, u))
@@ -91,16 +91,18 @@ export function UserMap({
     }
 
     return () => {
-      markersRef.current.forEach((m) => m.remove())
-      markersRef.current.clear()
+      markers.forEach((m) => m.remove())
+      markers.clear()
       sourceIds.forEach((id) => removeUserRange(map, id))
     }
-  }, [mapLoaded, users, onClickMarker])
+  }, [mapRef, mapLoaded, users, onClickMarker, onHoverMarker])
 
   useEffect(() => {
+    const markers = markersRef.current
+    
     if (hoveredUserIds) {
       hoveredUserIds.forEach(id => {
-        const marker = markersRef.current.get(id)
+        const marker = markers.get(id)
         marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
       })
     }
@@ -108,7 +110,7 @@ export function UserMap({
     return () => {
       if (hoveredUserIds) {
         hoveredUserIds.forEach(id => {
-          const marker = markersRef.current.get(id)
+          const marker = markers.get(id)
           marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
         })
       }

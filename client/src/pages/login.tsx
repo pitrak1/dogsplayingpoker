@@ -12,7 +12,7 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
 
-  const { mutateAsync: loginUser, isPending, error } = useLogin()
+  const { mutateAsync: loginUser, isPending } = useLogin()
 
   const { setAuth } = useAuth()
 
