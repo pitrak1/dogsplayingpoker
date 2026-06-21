@@ -6,11 +6,11 @@ import './searchResults.scss'
 
 type Props = {
   users: User[] | null
-  highlightedUserId?: number | null
-  onSearchResultHover: (userId: number | null) => void
+  highlightedUser?: User | null
+  onSearchResultHover: (user: User | null) => void
 }
 
-export function SearchResults({ users, highlightedUserId, onSearchResultHover }: Props) {
+export function SearchResults({ users, highlightedUser, onSearchResultHover }: Props) {
   const navigate = useNavigate()
 
   const onUserClick = (user: User) => {
@@ -20,9 +20,9 @@ export function SearchResults({ users, highlightedUserId, onSearchResultHover }:
   const userItems = users?.map((user, index) => (
     <button
       key={user.id}
-      className={`search-result-item ${user.id === highlightedUserId && 'search-result-item-highlighted'}`}
+      className={`search-result-item ${user.id === highlightedUser?.id && 'search-result-item-highlighted'}`}
       onClick={() => onUserClick(user)}
-      onMouseEnter={() => onSearchResultHover(user.id)}
+      onMouseEnter={() => onSearchResultHover(user)}
       onMouseLeave={() => onSearchResultHover(null)}
     >
       <div className="search-result-item__index">{index + 1}</div>

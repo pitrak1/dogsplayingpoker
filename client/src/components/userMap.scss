@@ -14,11 +14,8 @@
 
 .user-map__marker-avatar-inner {
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
 }
-
-// .user-map__marker-avatar:hover .user-map__marker-avatar-inner {
-//   transform: scale(1.4);
-// }
 
 .user-map__marker-avatar-highlighted .user-map__marker-avatar-inner {
   transform: scale(1.4);

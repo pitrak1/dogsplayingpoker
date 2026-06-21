@@ -66,6 +66,7 @@ export const addUserMarker = (
   
 
 export const addUserRange = (map: mapboxgl.Map, user: User) => {
+  if (!user.radiusMiles || user.radiusMiles === 0) return
   return addRange(map, user.latitude, user.longitude, user.radiusMiles)
 }
 
@@ -96,7 +97,8 @@ export const addRange = (map: mapboxgl.Map, lat: number, lng: number, radius: nu
   return sourceId
 }
 
-export const removeUserRange = (map: mapboxgl.Map, sourceId: string) => {
+export const removeUserRange = (map: mapboxgl.Map, sourceId?: string | null) => {
+  if (!sourceId) return
   if (map.getLayer(`${sourceId}-fill`)) map.removeLayer(`${sourceId}-fill`)
   if (map.getSource(sourceId)) map.removeSource(sourceId)
 }

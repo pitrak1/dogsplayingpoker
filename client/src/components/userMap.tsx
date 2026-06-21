@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect, useState } from 'react'
+import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
 import { User } from '@/types/user'
@@ -7,7 +7,7 @@ import './userMap.scss'
 
 type MapProps = {
   users: User[] | User
-  highlightedUserId?: number | null
+  highlightedUser?: User | null
   initialPosition?: { lat: number, lng: number, zoom: number }
   caption?: string
   /* If you lock movement and do not provide an onScroll/onDoubleClick, zooming is centered */
@@ -25,7 +25,7 @@ type MapProps = {
 
 export function UserMap({ 
   users, 
-  highlightedUserId, 
+  highlightedUser, 
   initialPosition,
   lockMovement,
   isBlocked,
@@ -38,9 +38,10 @@ export function UserMap({
   children
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  
   const markersRef = useRef(new Map<number, mapboxgl.Marker>())
-  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
+  const [hoveredUser, setHoveredUser] = useState<User | null>(null)
+
+  const focusUser = useMemo(() => highlightedUser ?? hoveredUser, [highlightedUser, hoveredUser])
 
   const handleMapMove = useCallback(
     (map: mapboxgl.Map) => {
@@ -67,39 +68,48 @@ export function UserMap({
     onDoubleClick,
   })
 
-  const handleHoverMarker = useCallback((user: User | null) => {
-    if (onHoverMarker) {
-      onHoverMarker(user?.id)
-    } else {
-    }
-  }, [onHoverMarker])
-
   useEffect(() => {
-    if (!hoveredUserId) return
+    if (!mapRef.current) return
+
+    const map = mapRef.current
     const markers = markersRef.current
-    const marker = markers.get(hoveredUserId)
-    marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
+    
+    let sourceId: string | null | undefined = null
+    if (focusUser) {
+      const marker = markers.get(focusUser.id)
+      marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
+      sourceId = addUserRange(map, focusUser)
+    }
+    
 
     return () => {
-      if (!hoveredUserId) return
-      const marker = markers.get(hoveredUserId)
-      marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
+      if (focusUser) {
+        const marker = markers.get(focusUser.id)
+        marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
+      }
+
+      try {
+        removeUserRange(map, sourceId)
+      } catch {
+        // Map is already town down, no cleanup necessary
+      }
     }
-  }, [hoveredUserId])
+  }, [mapRef, focusUser])
+
+  const handleHoverMarker = useCallback((user: User | null) => {
+    if (onHoverMarker) onHoverMarker(user)
+    setHoveredUser(user)
+  }, [onHoverMarker])
 
   useEffect(() => {
     if (!mapLoaded) return
     const map = mapRef.current!
     const markers = markersRef.current
-    const sourceIds: string[] = []
 
     const addMarker = (u: User) => {
       if (!u.longitude || !u.latitude) return
       const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), handleHoverMarker)
       markers.set(u.id, el)
-
-      if (!u.radiusMiles || u.radiusMiles == 0) return
-      sourceIds.push(addUserRange(map, u))
     }
 
     if (Array.isArray(users)) {
@@ -111,25 +121,8 @@ export function UserMap({
     return () => {
       markers.forEach((m) => m.remove())
       markers.clear()
-      sourceIds.forEach((id) => removeUserRange(map, id))
     }
   }, [mapRef, mapLoaded, users, onClickMarker, handleHoverMarker])
-
-  useEffect(() => {
-    const markers = markersRef.current
-    
-    if (highlightedUserId) {
-        const marker = markers.get(highlightedUserId)
-        marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
-    }
-
-    return () => {
-      if (highlightedUserId) {
-        const marker = markers.get(highlightedUserId)
-        marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
-      }
-    }
-  }, [highlightedUserId])
 
   return (
     <div className="user-map">

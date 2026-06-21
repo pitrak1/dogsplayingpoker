@@ -9,7 +9,7 @@ import './searchSidebar.scss'
 
 type Props = {
   users: User[] | null
-  highlightedUserId?: number | null
+  highlightedUser?: User | null
   totalCount: number | null
   mapInstance: mapboxgl.Map | null
   currentPage: number
@@ -21,7 +21,7 @@ type Props = {
 
 export function SearchSidebar({
   users,
-  highlightedUserId,
+  highlightedUser,
   totalCount,
   mapInstance,
   currentPage,
@@ -60,7 +60,7 @@ export function SearchSidebar({
         </div>
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
-      <SearchResults users={users} highlightedUserId={highlightedUserId} onSearchResultHover={onSearchResultHover} />
+      <SearchResults users={users} highlightedUser={highlightedUser} onSearchResultHover={onSearchResultHover} />
       <SearchPagination pageNumber={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
     </div>
   )

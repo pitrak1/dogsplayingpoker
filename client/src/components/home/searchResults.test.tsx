@@ -24,7 +24,7 @@ describe('SearchResults', () => {
     renderWithProviders(<SearchResults users={users} onSearchResultHover={onSearchResultHover} />)
     const buttons = screen.getAllByRole('button')
     await userEvent.hover(buttons[0])
-    expect(onSearchResultHover).toHaveBeenCalledWith(users[0].id)
+    expect(onSearchResultHover).toHaveBeenCalledWith(users[0])
   })
 
   it('calls onSearchResultHover with null when a result is not hovered', async () => {
