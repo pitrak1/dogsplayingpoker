@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react'
+import { useRef, useCallback, useEffect, useState } from 'react'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
 import { User } from '@/types/user'
@@ -7,7 +7,7 @@ import './userMap.scss'
 
 type MapProps = {
   users: User[] | User
-  hoveredUserIds?: number[]
+  highlightedUserId?: number | null
   initialPosition?: { lat: number, lng: number, zoom: number }
   caption?: string
   /* If you lock movement and do not provide an onScroll/onDoubleClick, zooming is centered */
@@ -18,14 +18,14 @@ type MapProps = {
   onScroll?: (map: mapboxgl.Map, e: WheelEvent) => void
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
   onClickMarker?: (user: User) => void
-  onHoverMarker?: (user: User) => void
+  onHoverMarker?: (userId: number | null) => void
   onRedoSearch?: () => void
   children?: React.ReactNode
 }
 
 export function UserMap({ 
   users, 
-  hoveredUserIds, 
+  highlightedUserId, 
   initialPosition,
   lockMovement,
   isBlocked,
@@ -40,6 +40,7 @@ export function UserMap({
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   
   const markersRef = useRef(new Map<number, mapboxgl.Marker>())
+  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
 
   const handleMapMove = useCallback(
     (map: mapboxgl.Map) => {
@@ -66,6 +67,26 @@ export function UserMap({
     onDoubleClick,
   })
 
+  const handleHoverMarker = useCallback((user: User | null) => {
+    if (onHoverMarker) {
+      onHoverMarker(user?.id)
+    } else {
+    }
+  }, [onHoverMarker])
+
+  useEffect(() => {
+    if (!hoveredUserId) return
+    const markers = markersRef.current
+    const marker = markers.get(hoveredUserId)
+    marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
+
+    return () => {
+      if (!hoveredUserId) return
+      const marker = markers.get(hoveredUserId)
+      marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
+    }
+  }, [hoveredUserId])
+
   useEffect(() => {
     if (!mapLoaded) return
     const map = mapRef.current!
@@ -74,7 +95,7 @@ export function UserMap({
 
     const addMarker = (u: User) => {
       if (!u.longitude || !u.latitude) return
-      const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), onHoverMarker)
+      const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), handleHoverMarker)
       markers.set(u.id, el)
 
       if (!u.radiusMiles || u.radiusMiles == 0) return
@@ -92,27 +113,23 @@ export function UserMap({
       markers.clear()
       sourceIds.forEach((id) => removeUserRange(map, id))
     }
-  }, [mapRef, mapLoaded, users, onClickMarker, onHoverMarker])
+  }, [mapRef, mapLoaded, users, onClickMarker, handleHoverMarker])
 
   useEffect(() => {
     const markers = markersRef.current
     
-    if (hoveredUserIds) {
-      hoveredUserIds.forEach(id => {
-        const marker = markers.get(id)
+    if (highlightedUserId) {
+        const marker = markers.get(highlightedUserId)
         marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
-      })
     }
 
     return () => {
-      if (hoveredUserIds) {
-        hoveredUserIds.forEach(id => {
-          const marker = markers.get(id)
-          marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
-        })
+      if (highlightedUserId) {
+        const marker = markers.get(highlightedUserId)
+        marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
       }
     }
-  }, [hoveredUserIds])
+  }, [highlightedUserId])
 
   return (
     <div className="user-map">

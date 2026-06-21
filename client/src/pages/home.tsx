@@ -25,7 +25,7 @@ export function Home() {
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
   const [searchedLocationName, setSearchedLocationName] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
-  const [hoveredUserId, setHoveredUserId] = useState<number | null>(null)
+  const [highlightedUserId, setHighlightedUserId] = useState<number | null>(null)
   const [hasMapMoved, setHasMapMoved] = useState<boolean>(false)
   const [searchOnNextMove, setSearchOnNextMove] = useState<boolean>(false)
 
@@ -96,23 +96,25 @@ export function Home() {
         {hasMapMoved && <button className="home__redo-search-button" onClick={handleRedoSearch}>Redo search in map</button>}
         <UserMap
           users={users ?? []}
-          hoveredUserIds={hoveredUserId ? [hoveredUserId] : []}
+          highlightedUserId={highlightedUserId}
           initialPosition={{ lat, lng, zoom }}
           onMapReady={handleMapReady}
           onMapMove={handleMapMove}
           onClickMarker={handleClickMarker}
           onRedoSearch={handleRedoSearch}
+          onHoverMarker={setHighlightedUserId}
         />
       </div>
       <SearchSidebar
         users={users ?? []}
+        highlightedUserId={highlightedUserId}
         totalCount={totalCount}
         mapInstance={mapInstance}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         searchedLocation={searchedLocationName}
         onSearchLocationChange={handleSearchLocationChange}
-        onSearchResultHover={setHoveredUserId}
+        onSearchResultHover={setHighlightedUserId}
       />
     </div>
   )

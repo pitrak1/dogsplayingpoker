@@ -54,12 +54,12 @@ describe('createMarkerElement', () => {
 
   it('returns a div with the marker class', () => {
     const el = createMarkerElement(testUser, () => {})
-    expect(el.className).toContain('map-view__marker-avatar')
+    expect(el.className).toContain('user-map__marker-avatar')
   })
 
   it('sets background image when user has a profile image', () => {
     const el = createMarkerElement(testUser, () => {})
-    const inner = el.querySelector('.map-view__marker-avatar-inner') as HTMLElement
+    const inner = el.querySelector('.user-map__marker-avatar-inner') as HTMLElement
     expect(inner.style.backgroundImage).toContain('https://example.com/avatar.jpg')
   })
 

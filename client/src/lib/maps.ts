@@ -46,7 +46,7 @@ export const addUserMarker = (
   map: mapboxgl.Map, 
   user: User, 
   onClick: () => void,
-  onHover?: (userId: number | null) => void,
+  onHover?: (user: User | null) => void,
   overrides?: { lat?: number, lng?: number, style?: string }) =>
 {
   const lat = overrides?.lat ?? user.latitude ?? 0
@@ -57,7 +57,7 @@ export const addUserMarker = (
 
   if (onHover) {
     const el = marker.getElement()
-    el.addEventListener('mouseenter', () => onHover(user.id))
+    el.addEventListener('mouseenter', () => onHover(user))
     el.addEventListener('mouseleave', () => onHover(null))
   }
 
