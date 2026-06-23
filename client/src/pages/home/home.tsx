@@ -1,5 +1,5 @@
 import { UserMap } from '@/components/userMap'
-import { SearchSidebar } from '@/components/home/searchSidebar'
+import { SearchSidebar } from '@/pages/home/searchSidebar'
 import { useCallback, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'

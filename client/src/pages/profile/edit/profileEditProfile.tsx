@@ -71,7 +71,7 @@ export function ProfileEditProfile() {
   return (
     <div className="profile-edit-profile">
       <ErrorBanner message={formError} />
-      <div className="profile-edit-profile__field">
+      <div className="settings-block profile-edit-profile__field">
         <label className="profile-edit-profile__label" htmlFor="username">Username</label>
         <small className="profile-edit-profile__description">
           This is your unique username that will be displayed on your profile and used in your
@@ -90,7 +90,7 @@ export function ProfileEditProfile() {
           </button>
         </div>
       </div>
-      <div className="profile-edit-profile__field" data-testid="profile-picture-field">
+      <div className="settings-block profile-edit-profile__field" data-testid="profile-picture-field">
         <label className="profile-edit-profile__label" htmlFor="profileImage">Profile picture</label>
         <small className="profile-edit-profile__description">
           Please use a picture of yourself to be displayed on your profile.

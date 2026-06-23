@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { rpc } from './rpc'
-import type { ActiveSearch } from '@/pages/home'
+import type { ActiveSearch } from '@/pages/home/home'
 import { ApiError } from './errors'
 
 export const useUserByUsername = (username: string) =>

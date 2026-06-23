@@ -1,12 +1,12 @@
 import { Header } from '@/components/header/header'
 import { BrowserRouter, Routes, Route } from 'react-router'
-import { Home } from '@/pages/home'
+import { Home } from '@/pages/home/home'
 import { About } from '@/pages/about'
 import { Login } from '@/pages/login'
 import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
-import { Profile } from './pages/profile/profile'
-import { ProfileEdit } from './pages/profile/profileEdit'
+import { Profile } from '@/pages/profile/profile'
+import { ProfileEdit } from '@/pages/profile/edit/profileEdit'
 
 export function App() {
   return (

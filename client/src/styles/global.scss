@@ -88,6 +88,28 @@ $color-primary: var(--color-primary);
   padding-top: 3px;
 }
 
+.settings-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.settings-subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+
+.settings-block {
+  background-color: var(--form-field-background);
+  padding: 25px;
+  border-radius: 6px;
+  border: var(--form-field-border);
+}
+
+.settings-block-title {
+  font-size: 24px;
+}
+
 .settings-field-name {
   color: var(--text-primary);
   font-size: 22px;

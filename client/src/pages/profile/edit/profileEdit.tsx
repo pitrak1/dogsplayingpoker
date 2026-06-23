@@ -2,8 +2,8 @@ import { useNavigate, useParams } from 'react-router'
 import { UserRound, Wrench, PawPrint, MapPin } from 'lucide-react'
 import { ProfileEditAccount } from './profileEditAccount'
 import { ProfileEditProfile } from './profileEditProfile'
-import { ProfileEditPets } from './profileEditPets'
-import { ProfileEditLocation } from './profileEditLocation'
+import { ProfileEditPets } from './pets/profileEditPets'
+import { ProfileEditLocation } from './location/profileEditLocation'
 import './profileEdit.scss'
 
 export function ProfileEdit() {
