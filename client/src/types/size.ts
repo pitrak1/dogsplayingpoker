@@ -1,0 +1,1 @@
+export type Size = 'giant' | 'large' | 'medium' | 'small' | 'toy' | 'unknown'

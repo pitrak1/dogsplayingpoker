@@ -1,0 +1,1 @@
+export type Reactivity = 'strong' | 'mixed' | 'none' | 'unknown'

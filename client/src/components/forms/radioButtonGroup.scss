@@ -1,0 +1,37 @@
+
+.radio-button-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.radio-button-group__input-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  background-color: var(--button-secondary);
+  cursor: pointer;
+  min-width: 15rem;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--button-secondary-hover);
+  }
+
+  input { 
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:has(input:checked) {
+    background-color: var(--button-active);
+    color: var(--button-active-text)
+  }
+}

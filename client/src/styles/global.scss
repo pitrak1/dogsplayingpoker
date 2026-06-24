@@ -122,6 +122,12 @@ $color-primary: var(--color-primary);
   font-weight: normal;
 }
 
+.settings-text-input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  width: 400px;
+}
+
 .map-blocker {
   position: absolute;
   inset: 0;

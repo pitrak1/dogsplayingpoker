@@ -1,0 +1,42 @@
+.profile-edit-pets-add {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-edit-pets-add__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-edit-pets-add__preview {
+  margin: 1.5rem;
+}
+
+.profile-edit-pets-add__upload-button {
+  width: 20rem;
+}
+
+.profile-edit-pets-add__radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-edit-pets-add__radio-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  width: 7rem;
+}
+
+.profile-edit-pets-add__reactivity-notes {
+  width: 100%;
+}
+
+.profile-edit-pets-add__save-button {
+  margin: 1rem 4rem;
+}
