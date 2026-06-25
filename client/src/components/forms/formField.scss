@@ -1,23 +1,54 @@
-.form-field {
+@mixin form-field() {
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+
+.form-field--default {
+  @include form-field();
   align-items: center;
   gap: 0.25rem;
+}
+
+.form-field--settings {
+  @include form-field();
+  align-items: start;
+  gap: 0.5rem;
+}
+
+@mixin form-field__label() {
+  color: var(--text-primary);
+  font-weight: normal;
+}
+
+.form-field__label--default {
+  @include form-field__label();
+  font-size: 1.2rem;
+}
+
+.form-field__label--settings {
+  @include form-field__label();
+  font-size: 1.4rem;
+}
+
+@mixin form-field__input() {
+  font-size: 1rem;
+  padding: 0.5rem;
   width: 100%;
+}
 
-  label {
-    font-size: 1.2rem;
-  }
+.form-field__input--default {
+  @include form-field__input();
+  width: 100%;
+}
 
-  input {
-    font-size: 1rem;
-    padding: 0.5rem;
-    width: 100%;
-  }
+.form-field__input--settings {
+  @include form-field__input();
+  width: 30rem;
+}
 
-  .form-field__error-text {
-    color: var(--color-field-error-text);
-    font-size: 20px;
-    margin-top: 0.25rem;
-  }
+.form-field__error-text {
+  color: var(--color-field-error-text);
+  font-size: 20px;
+  margin-top: 0.25rem;
 }

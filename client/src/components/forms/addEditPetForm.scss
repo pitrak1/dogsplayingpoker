@@ -1,0 +1,19 @@
+.add-edit-pet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.add-edit-pet-form__form {
+  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-edit-pet-form__preview {
+  margin: 1.5rem;
+}
+
+.add-edit-pet-form__upload-button {
+  width: 20rem;
+}

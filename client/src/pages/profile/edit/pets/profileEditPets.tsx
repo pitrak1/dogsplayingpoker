@@ -1,5 +1,5 @@
 import { useAuth } from '@/context/auth'
-import { ProfileEditPetsAdd } from './profileEditPetsAdd'
+import { AddEditPetForm } from '@/components/forms/addEditPetForm'
 import './profileEditPets.scss'
 
 export function ProfileEditPets() {
@@ -16,7 +16,7 @@ export function ProfileEditPets() {
       <div className="profile-edit-pets__pets-list">
         {!hasPets && <div className="profile-edit-pets__empty">You currently have no pets added</div>}
       </div>
-      <ProfileEditPetsAdd />
+      <AddEditPetForm />
     </div>
   )
 }
