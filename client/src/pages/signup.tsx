@@ -64,8 +64,8 @@ export function Signup() {
   return (
     <div className="signup">
       <ErrorBanner message={formError} />
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className="signup__header">Sign Up</h1>
+      <form onSubmit={handleSubmit} className="signup__form">
         <FormField 
           name="email" 
           label="Email" 
@@ -105,7 +105,7 @@ export function Signup() {
           To personalize your profile with photos and information about your pets, go to the user
           menu after signup and choose the "Your profile" option.
         </div>
-        <button type="submit" disabled={isDisabled}>
+        <button type="submit" disabled={isDisabled} className="signup__button">
           {isPending ? 'Signing up...' : 'Sign up'}
         </button>
       </form>

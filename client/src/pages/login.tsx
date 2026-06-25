@@ -46,8 +46,8 @@ export function Login() {
   return (
     <div className="login">
       <ErrorBanner message={formError} />
-      <h1>Log in</h1>
-      <form onSubmit={handleSubmit}>
+      <h1 className="login__header">Log in</h1>
+      <form className="login__form" onSubmit={handleSubmit}>
         <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />
         <FormField
           name="password"
@@ -56,7 +56,7 @@ export function Login() {
           value={password}
           onChange={onChangePassword}
         />
-        <button type="submit" disabled={isDisabled}>
+        <button className="login__button" type="submit" disabled={isDisabled}>
           {isPending ? 'Logging in...' : 'Log in'}
         </button>
       </form>

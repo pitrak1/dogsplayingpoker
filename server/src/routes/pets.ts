@@ -3,25 +3,8 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as petService from '@/modules/pet/service'
 import type { AuthedEnv } from '../types'
-
-const reactivitySchema = z.enum(['strong', 'mixed', 'none', 'unknown'])
-const sizeSchema = z.enum(['giant', 'large', 'medium', 'small', 'toy', 'unknown'])
-
-const createPetSchema = z.object({
-  name: z.string().min(1),
-  age: z.number().int().nonnegative(),
-  size: sizeSchema,
-  breed: z.string().min(1),
-  pictureUrl: z.string().nullable().optional(),
-  dogReactivity: reactivitySchema,
-  dogReactivityNotes: z.string().nullable().optional(),
-  catReactivity: reactivitySchema,
-  catReactivityNotes: z.string().nullable().optional(),
-  kidReactivity: reactivitySchema,
-  kidReactivityNotes: z.string().nullable().optional(),
-  peopleReactivity: reactivitySchema,
-  peopleReactivityNotes: z.string().nullable().optional(),
-})
+import { createPetSchema } from 'dogsplayingpoker-shared/schemas/pet'
+import { NewPet } from '@/db/schema'
 
 const listQuerySchema = z.object({
   ownerId: z.coerce.number().int(),
@@ -44,22 +27,12 @@ export const petRoutes = new Hono<AuthedEnv>()
   })
   .post('/', zValidator('json', createPetSchema), async (c) => {
     const userId = c.get('userId')
-    const body = c.req.valid('json')
-    const pet = await petService.createPet({
-      name: body.name,
-      age: body.age,
-      size: body.size,
-      breed: body.breed,
-      pictureUrl: body.pictureUrl ?? null,
-      dogReactivity: body.dogReactivity,
-      dogReactivityNotes: body.dogReactivityNotes ?? null,
-      catReactivity: body.catReactivity,
-      catReactivityNotes: body.catReactivityNotes ?? null,
-      kidReactivity: body.kidReactivity,
-      kidReactivityNotes: body.kidReactivityNotes ?? null,
-      peopleReactivity: body.peopleReactivity,
-      peopleReactivityNotes: body.peopleReactivityNotes ?? null,
+    const input = c.req.valid('json')
+
+    const newPet: NewPet = {
+      ...input,
       ownerId: userId
-    })
+    }
+    const pet = await petService.createPet(newPet)
     return c.json(pet, 201)
   })

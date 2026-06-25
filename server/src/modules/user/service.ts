@@ -10,6 +10,7 @@ import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUser } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
+import type { EditUserInput } from 'dogsplayingpoker-shared/schemas/user'
 
 const userWithPets = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
@@ -135,15 +136,7 @@ export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ us
   return { users: usersWithPets, totalCount }
 }
 
-type UpdateUserProfileInput = {
-  username?: string
-  profileImageUrl?: string
-  latitude?: number | null
-  longitude?: number | null
-  radiusMiles?: number | null
-}
-
-export const updateUserProfile = async (userId: number, input: UpdateUserProfileInput) => {
+export const updateUserProfile = async (userId: number, input: EditUserInput) => {
   const updates: Omit<Partial<NewUser>, 'location'> & { location?: SQL | null } = {}
 
   if (input.username) updates.username = input.username

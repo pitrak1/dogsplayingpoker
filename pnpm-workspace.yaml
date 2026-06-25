@@ -1,6 +1,7 @@
 packages:
   - server
   - client
+  - shared
 allowBuilds:
   '0': esbuild
   '1': '@parcel/watcher'

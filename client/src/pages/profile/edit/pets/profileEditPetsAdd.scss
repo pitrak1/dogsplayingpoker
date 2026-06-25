@@ -4,6 +4,12 @@
   gap: 2rem;
 }
 
+.profile-edit-pets-add__form {
+  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
 .profile-edit-pets-add__field {
   display: flex;
   flex-direction: column;

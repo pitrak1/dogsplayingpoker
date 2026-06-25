@@ -12,6 +12,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "dogsplayingpoker-shared": "workspace:*",
     "@mapbox/search-js-react": "^1.5.1",
     "@tanstack/react-query": "^5.100.11",
     "es-toolkit": "^1.46.1",

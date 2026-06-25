@@ -16,6 +16,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.100.11
         version: 5.100.11(react@19.2.6)
+      dogsplayingpoker-shared:
+        specifier: workspace:*
+        version: link:../shared
       es-toolkit:
         specifier: ^1.46.1
         version: 1.46.1
@@ -110,6 +113,9 @@ importers:
       cloudinary:
         specifier: ^2.10.0
         version: 2.10.0
+      dogsplayingpoker-shared:
+        specifier: workspace:*
+        version: link:../shared
       dotenv:
         specifier: ^16.4.7
         version: 16.6.1
@@ -165,6 +171,12 @@ importers:
       vitest:
         specifier: ^4.1.7
         version: 4.1.7(@types/node@22.19.18)(jsdom@29.1.1)(vite@6.4.2(@types/node@22.19.18)(sass@1.99.0)(tsx@4.21.0))
+
+  shared:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
 packages:
 

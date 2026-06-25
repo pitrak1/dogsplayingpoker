@@ -4,6 +4,7 @@ import { z } from 'zod'
 import * as userService from '@/modules/user/service'
 import type { AppEnv } from '../types'
 import { requireAuth } from '@/middleware/auth'
+import { editUserSchema } from 'dogsplayingpoker-shared/schemas/user'
 
 const searchSchema = z.object({
   swLat: z.coerce.number(),
@@ -14,14 +15,6 @@ const searchSchema = z.object({
   centerLng: z.coerce.number(),
   page: z.coerce.number().int().min(1).optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
-})
-
-const updateProfileSchema = z.object({
-  username: z.string().optional(),
-  profileImageUrl: z.string().optional(),
-  latitude: z.coerce.number().nullable().optional(),
-  longitude: z.coerce.number().nullable().optional(),
-  radiusMiles: z.coerce.number().int().min(0).nullable().optional()
 })
 
 export type SearchUsersParams = z.infer<typeof searchSchema>
@@ -45,7 +38,7 @@ export const userRoutes = new Hono<AppEnv>()
     if (!user) return c.json({ message: 'Not found' }, 404)
     return c.json(user)
   })
-  .patch('/update-profile', zValidator('json', updateProfileSchema), async (c) => {
+  .patch('/update-profile', zValidator('json', editUserSchema), async (c) => {
     const userId = c.get('userId')
     const body = c.req.valid('json')
     const updatedUser = await userService.updateUserProfile(userId, body)

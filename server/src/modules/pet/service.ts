@@ -1,7 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { pets, reactivityEnum, sizeEnum } from '@/db/schema'
-import { CreatePetInput } from '@/types'
+import { pets, reactivityEnum, sizeEnum, NewPet } from '@/db/schema'
 
 export type Reactivity = (typeof reactivityEnum.enumValues)[number]
 export type Size = (typeof sizeEnum.enumValues)[number]
@@ -14,7 +13,7 @@ export const getPetById = async (id: number) => {
   return rows[0] ?? null
 }
 
-export const createPet = async (input: CreatePetInput) => {
+export const createPet = async (input: NewPet) => {
   const rows = await db.insert(pets).values(input).returning()
   return rows[0]
 }
