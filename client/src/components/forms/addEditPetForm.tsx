@@ -4,7 +4,7 @@ import { Reactivity } from '@/types/reactivity'
 import { ImageUpload } from '@/components/forms/imageUpload'
 import './addEditPetForm.scss'
 import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
-import { Baby, PersonStanding, Dog, Cat } from 'lucide-react'
+import { Baby, PersonStanding, Dog, Cat, X } from 'lucide-react'
 import { uploadImage } from '@/lib/upload'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
@@ -31,7 +31,12 @@ type PetFormState = {
   peopleReactivityNotes?: string | null
 }
 
-export function AddEditPetForm({ pet }: { pet?: Pet | null }) {
+type Props = {
+  pet?: Pet | null
+  onClose?: () => void
+}
+
+export function AddEditPetForm({ pet, onClose }: Props) {
   const emptyFormState = {
     size: 'unknown',
     dogReactivity: 'unknown',
@@ -81,11 +86,12 @@ export function AddEditPetForm({ pet }: { pet?: Pet | null }) {
         if (field && !fieldErrors[field]) fieldErrors[field] = issue.message
       })
       setFieldErrors(fieldErrors)
+      console.log(result.error)
       return
     }
     setFieldErrors({})
     
-    let pictureUrl: string | null = null
+    let pictureUrl: string | undefined = null
     if (values.file) {
       try {
         pictureUrl = await uploadImage(values.file)
@@ -97,8 +103,7 @@ export function AddEditPetForm({ pet }: { pet?: Pet | null }) {
     }
 
     try {
-      await createPet({ ...result.data, pictureUrl })
-      // setAuthUser(updatedUser)
+      await createPet({ ...result.data, pictureUrl  })
       setFormValue('file', null)
       setFormValue('fileUrl', null)
     } catch (err) {
@@ -111,7 +116,16 @@ export function AddEditPetForm({ pet }: { pet?: Pet | null }) {
   return (
     <div className="settings-block add-edit-pet-form">
       <ErrorBanner message={formError} />
-      <h3 className="settings-block-title">Add a new pet</h3>
+      <div className="settings-block-header add-edit-pet-form__header">
+        <h3 className="settings-block-title add-edit-pet-form__title">
+          {pet ? 'Edit Pet' : 'Add a new pet'}
+        </h3>
+        {onClose && (
+          <button className="add-edit-pet-form__close-button" onClick={onClose}>
+            <X size={24} />
+          </button>
+        )}
+      </div>
       <form onSubmit={handleSave} className="add-edit-pet-form__form">
         <FormField
           name="name"

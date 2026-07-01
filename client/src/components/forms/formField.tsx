@@ -33,7 +33,7 @@ export function FormField({
   children 
 }: Props) {
   return (
-    <div className={`form-field--${variant}`}>
+    <div className={`form-field form-field--${variant}`}>
       <label
         className={`form-field__label--${variant}`} 
         htmlFor={name} 

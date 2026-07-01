@@ -4,6 +4,32 @@
   gap: 2rem;
 }
 
+.add-edit-pet-form__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.add-edit-pet-form__title {
+  display: inline-block;
+}
+
+.add-edit-pet-form__close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.add-edit-pet-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .add-edit-pet-form__form {
   gap: 2rem;
   display: flex;

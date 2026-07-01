@@ -6,7 +6,7 @@
 
 :root {
   --text-primary: black;
-  --text-secondary: gray;
+  --text-secondary: #606060;
   --button-hover: #f0f0f0;
   --button-active: #0066cc;
   --button-active-text: white;
@@ -21,6 +21,19 @@
   --color-error-text: black;
   --color-error-border: 1px solid red;
   --color-field-error-text: red;
+  
+
+  --display-panel-background: #f4f4f4;
+  --display-panel-border: 1px solid #ccc;
+
+  --button-primary: #0066cc;
+  --button-primary-text: white;
+  --button-primary-hover: #005bb5;
+
+  --button-secondary: #cccccc;
+  --button-secondary-text: black;
+  --button-secondary-hover: #b3b3b3;
+
   --button-disabled: #cccccc;
 }
 
@@ -35,6 +48,76 @@ $color-primary: var(--color-primary);
   background-size: cover;
   background-position: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+@mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary)) {
+  font-size: $font-size;
+  color: $font-color;
+}
+
+@mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary)) {
+  font-size: $font-size;
+  color: $font-color;
+}
+
+%display-button {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@mixin primary-button($font-size: 1rem) {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  font-size: $font-size;
+  background-color: var(--button-primary);
+  color: var(--button-primary-text);
+  
+  &:hover {
+    background: var(--button-primary-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+  }
+}
+
+@mixin primary-button($font-size: 1rem) {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  font-size: $font-size;
+  background-color: var(--button-primary);
+  color: var(--button-primary-text);
+
+  &:hover {
+    background: var(--button-primary-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+  }
+}
+
+@mixin flex-display($direction: row, $gap: 0, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+%display-panel {
+  width: 100%;
+  background-color: var(--display-panel-background);
+  padding: 25px;
+  border-radius: 6px;
+  border: var(--display-panel-border);
 }
 
 .avatar__current {
@@ -152,4 +235,16 @@ $color-primary: var(--color-primary);
   color: var(--text-primary);
   font-size: 16px;
   font-weight: normal;
+}
+
+.divider__vert {
+  width: 1px;
+  background-color: #a0a0a0;
+  align-self: stretch;
+}
+
+.divider__hor {
+  height: 1px;
+  background-color: #a0a0a0;
+  width: 100%;
 }
