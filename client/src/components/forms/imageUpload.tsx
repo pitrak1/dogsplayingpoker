@@ -13,7 +13,7 @@ export function ImageUpload({ name, label, onChange }: Props) {
       <label htmlFor={name} className="image-upload__button">
         {label}
       </label>
-      <input id={name} type="file" accept="image/*" onChange={onChange} />
+      <input className="image-upload__input" id={name} type="file" accept="image/*" onChange={onChange} />
     </div>
   )
 }

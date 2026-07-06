@@ -6,8 +6,24 @@ export type reactivity = z.infer<typeof reactivitySchema>
 export const reactivityTypeSchema = z.enum(['Dogs', 'Cats', 'Kids', 'People'])
 export type reactivityType = z.infer<typeof reactivityTypeSchema>
 
+export const displayReactivityMap: Record<reactivity, string> = {
+  unknown: 'Unknown',
+  none: 'None',
+  mixed: 'Mixed',
+  strong: 'Strong',
+}
+
 export const sizeSchema = z.enum(['toy', 'small', 'medium', 'large', 'giant', 'unknown'])
 export type size = z.infer<typeof sizeSchema>
+
+export const displaySizeMap: Record<size, string> = {
+  toy: 'Toy (0 - 10 lbs)',
+  small: 'Small (10 - 35 lbs)',
+  medium: 'Medium (35 - 55 lbs)',
+  large: 'Large (55 - 85 lbs)',
+  giant: 'Giant (85+ lbs)',
+  unknown: 'Unknown size'
+}
 
 export const petSchema = z.object({
   id: z.number().int().positive(),
@@ -28,6 +44,7 @@ export const petSchema = z.object({
 })
 
 export type Pet = z.infer<typeof petSchema>
+
 
 export const createPetSchema = petSchema.omit({
   id: true,

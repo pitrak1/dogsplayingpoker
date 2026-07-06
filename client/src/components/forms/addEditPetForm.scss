@@ -1,45 +1,59 @@
+@use '@/styles/global' as *;
+
 .add-edit-pet-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  @include flex-display(column, 2rem);
+  @extend %display-panel;
+  width: 100%;
 }
 
 .add-edit-pet-form__header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  @include flex-display();
+  width: 100%;
 }
 
 .add-edit-pet-form__title {
-  display: inline-block;
+  @include primary-text(1.6rem);
+  text-align: center;
+  flex: 1
 }
 
 .add-edit-pet-form__close-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.add-edit-pet-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  @include borderless-button();
 }
 
 .add-edit-pet-form__form {
-  gap: 2rem;
-  display: flex;
-  flex-direction: column;
+  @include flex-display(column, 2rem, start, start);
+  width: 100%;
+}
+
+.add-edit-pet-form__non-radio-inputs {
+  @include flex-display(row, 5rem, start, start);
+  width: 100%;
+}
+
+.add-edit-pet-form__text-inputs {
+  @include flex-display(column, 2rem, start, start);
 }
 
 .add-edit-pet-form__preview {
+  @include avatar(128px);
   margin: 1.5rem;
 }
 
-.add-edit-pet-form__upload-button {
-  width: 20rem;
+.add-edit-pet-form__reactivity-header {
+  @include primary-text();
+}
+
+.add-edit-pet-form__reactivity-subtitle {
+  @include secondary-text(1.1rem);
+}
+
+.add-edit-pet-form__save-button-wrapper {
+  @include flex-display(column, 0rem, center, center);
+  width: 100%;
+}
+
+.add-edit-pet-form__save-button {
+  @include primary-button(1.25rem);
+  width: 80%;
 }

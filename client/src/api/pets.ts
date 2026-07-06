@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { rpc } from './rpc'
-import { InferRequestType } from 'hono'
+import { CreatePetInput } from 'dogsplayingpoker-shared/schemas/pet'
 
-type CreatePetInput = InferRequestType<typeof rpc.api.pets.$post>['json']
 
 export const usePetsForOwner = (ownerId: number | undefined) =>
   useQuery({
@@ -36,6 +35,24 @@ export const useCreatePet = () => {
     },
     onSuccess: (pet) => {
       queryClient.invalidateQueries({ queryKey: ['pets', { ownerId: pet.ownerId }] })
+    },
+  })
+}
+
+export const useEditPet = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, input }: { id: number, input: CreatePetInput }) => {
+      const res = await rpc.api.pets[':id'].$put({ 
+        param: { id: String(id) }, 
+        json: input 
+      })
+      if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to edit pet')
+      return res.json()
+    },
+    onSuccess: (pet) => {
+      queryClient.invalidateQueries({ queryKey: ['pets', { ownerId: pet.ownerId }] })
+      queryClient.invalidateQueries({ queryKey: ['pet', pet.id] })
     },
   })
 }

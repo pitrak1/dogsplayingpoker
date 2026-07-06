@@ -36,3 +36,15 @@ export const petRoutes = new Hono<AuthedEnv>()
     const pet = await petService.createPet(newPet)
     return c.json(pet, 201)
   })
+  .put('/:id', zValidator('param', idParamSchema), zValidator('json', createPetSchema), async (c) => {
+    const userId = c.get('userId')
+    const { id } = c.req.valid('param')
+    const input = c.req.valid('json')
+
+    const existing = await petService.getPetById(id)
+    if (!existing) return c.json({ message: 'Not found' }, 404)
+    if (existing.ownerId !== userId) return c.json({ message: 'Forbidden' }, 403)
+
+    const pet = await petService.editPet(id, input)
+    return c.json(pet, 201)
+  })

@@ -1,4 +1,4 @@
-import type { User } from '@/db/schema'
+import type { Pet, User } from '@/db/schema'
 import type { CreateUserInput, CreatePetInput } from '@/types'
 import { db } from '@/db'
 import { users, pets } from '@/db/schema'
@@ -49,6 +49,11 @@ export const setupUsers = async (count: number, overrides: Partial<CreateUserInp
   }
   return await db.insert(users).values(input).returning()
 }
+
+export const makePet = (petId: number, ownerId: number, overrides: Partial<CreatePetInput> = {}): Pet => ({
+  ...makePetInput(ownerId, overrides),
+  id: petId,
+})
 
 export const makePetInput = (ownerId: number, overrides: Partial<CreatePetInput> = {}): CreatePetInput => ({
   name: 'testuser',

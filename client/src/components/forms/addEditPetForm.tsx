@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import { Size } from '@/types/size'
 import { Reactivity } from '@/types/reactivity'
 import { ImageUpload } from '@/components/forms/imageUpload'
@@ -8,11 +7,14 @@ import { Baby, PersonStanding, Dog, Cat, X } from 'lucide-react'
 import { uploadImage } from '@/lib/upload'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { Pet, createPetSchema, reactivitySchema, sizeSchema } from 'dogsplayingpoker-shared/schemas/pet'
-import { useCreatePet } from '@/api/pets'
+import { Pet, createPetSchema, reactivitySchema, sizeSchema, displaySizeMap } from 'dogsplayingpoker-shared/schemas/pet'
+import { useCreatePet, useEditPet } from '@/api/pets'
 import { FormField } from '@/components/forms/formField'
 import { z } from 'zod'
 import { ReactivityInput } from './reactivityInput'
+import { useImageInput } from '@/hooks/useImageInput'
+import { getAvatarFallback } from '@/lib/avatar'
+import { useFormValidation } from '@/hooks/useFormValidation'
 
 type PetFormState = {
   name?: string | null
@@ -31,81 +33,58 @@ type PetFormState = {
   peopleReactivityNotes?: string | null
 }
 
+const emptyFormState = {
+  name: null,
+  age: null,
+  breed: null,
+  file: null,
+  fileUrl: null,
+  size: 'unknown',
+  dogReactivity: 'unknown',
+  catReactivity: 'unknown',
+  kidReactivity: 'unknown',
+  peopleReactivity: 'unknown'
+} as const
+
 type Props = {
   pet?: Pet | null
   onClose?: () => void
 }
 
 export function AddEditPetForm({ pet, onClose }: Props) {
-  const emptyFormState = {
-    size: 'unknown',
-    dogReactivity: 'unknown',
-    catReactivity: 'unknown',
-    kidReactivity: 'unknown',
-    peopleReactivity: 'unknown'
-  } as const
-  const [values, setValues] = useState<PetFormState>(pet ?? emptyFormState)
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
-  const [formError, setFormError] = useState<string | null>(null)
+  const initialState = pet ?? emptyFormState
+  // Because we always submit the whole pet shape, even on edit, we can validate against createPetSchema
+  const { 
+    values, 
+    setValues, 
+    fieldErrors, 
+    formError,
+    setFormError,
+    setFormValue,
+    validate
+  } = useFormValidation<PetFormState, typeof createPetSchema>(initialState, createPetSchema)
+  const { file, fileUrl, onChange: onPictureChange } = useImageInput(values.fileUrl)
 
-  const { mutateAsync: createPet, isPending } = useCreatePet()
-
-  const sizeRadioFields = {
-    toy: 'Toy (0 - 10 lbs)',
-    small: 'Small (10 - 35 lbs)',
-    medium: 'Medium (35 - 55 lbs)',
-    large: 'Large (55 - 85 lbs)',
-    giant: 'Giant (85+ lbs)'
-  }
-
-  useEffect(() => {
-    return () => {
-      if (values.fileUrl) URL.revokeObjectURL(values.fileUrl ?? '')
-    }
-  }, [values.fileUrl])
-
-  const setFormValue = <K extends keyof PetFormState>(field: K, value: PetFormState[K]) => {
-    setValues((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const onPictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null
-    setFormValue('file', file)
-    setFormValue('fileUrl', file ? URL.createObjectURL(file) : null)
-    e.target.value = ''
-  }
+  const { mutateAsync: createPet, isPending: isCreating } = useCreatePet()
+  const { mutateAsync: editPet, isPending: isEditing } = useEditPet()
+  const isPending = isCreating || isEditing
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const result = createPetSchema.safeParse(values)
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {}
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0]?.toString()
-        if (field && !fieldErrors[field]) fieldErrors[field] = issue.message
-      })
-      setFieldErrors(fieldErrors)
-      console.log(result.error)
-      return
-    }
-    setFieldErrors({})
-    
-    let pictureUrl: string | undefined = null
-    if (values.file) {
-      try {
-        pictureUrl = await uploadImage(values.file)
-      } catch (err) {
-        if (err instanceof ApiError) {
-          setFormError(err.message)
-        }
-      }
-    }
+    setValues((prev: PetFormState) => ({ ...prev, file, fileUrl }))
 
+    const result = validate()
+    if (!result.success) return
+    
     try {
-      await createPet({ ...result.data, pictureUrl  })
-      setFormValue('file', null)
-      setFormValue('fileUrl', null)
+      const pictureUrl = values.file ? await uploadImage(values.file) : null
+      if (pet) {
+        await editPet({ id: pet.id, input: { ...result.data, pictureUrl }})
+      } else {
+        await createPet({ ...result.data, pictureUrl  })
+      }
+      if (onClose) onClose()
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message)
@@ -113,73 +92,87 @@ export function AddEditPetForm({ pet, onClose }: Props) {
     }
   }
 
+  const pictureSrc = fileUrl ?? pet?.pictureUrl ?? getAvatarFallback(values.name ?? 'test', 128)
+
   return (
-    <div className="settings-block add-edit-pet-form">
+    <div className="add-edit-pet-form">
       <ErrorBanner message={formError} />
-      <div className="settings-block-header add-edit-pet-form__header">
-        <h3 className="settings-block-title add-edit-pet-form__title">
+      <div className="add-edit-pet-form__header">
+        <h3 className="add-edit-pet-form__title">
           {pet ? 'Edit Pet' : 'Add a new pet'}
         </h3>
         {onClose && (
-          <button className="add-edit-pet-form__close-button" onClick={onClose}>
+          <button 
+            className="add-edit-pet-form__close-button" 
+            onClick={onClose}
+            aria-label="close add/edit pet form"
+          >
             <X size={24} />
           </button>
         )}
       </div>
       <form onSubmit={handleSave} className="add-edit-pet-form__form">
-        <FormField
-          name="name"
-          label="Name"
-          variant="settings"
-          type="text"
-          value={values.name ?? ''}
-          onChange={(e) => setFormValue('name', e.target.value)}
-        />
-        <FormField
-          name="age"
-          label="Age"
-          variant="settings"
-          type="text"
-          value={String(values.age ?? '')}
-          onChange={(e) => setFormValue('age', Number(e.target.value))}
-        />
-        <FormField
-          name="breed"
-          label="Breed"
-          variant="settings"
-          type="text"
-          value={values.breed ?? ''}
-          onChange={(e) => setFormValue('breed', e.target.value)}
-        />
-        <FormField
-          name="picture"
-          label="Upload a picture"
-          variant="settings"
-        >
-          <img
-            src={values.fileUrl ?? undefined}
-            alt="Picture preview"
-            className="avatar__profile add-edit-pet-form__preview"
-          />
-          <div className="add-edit-pet-form__upload-button">
-            <ImageUpload name="picture" label="Upload" value={null} onChange={onPictureChange} />
+        <div className="add-edit-pet-form__non-radio-inputs">
+          <div className="add-edit-pet-form__text-inputs">
+            <FormField
+              name="name"
+              label="Name"
+              variant="settings"
+              type="text"
+              value={values.name ?? ''}
+              onChange={(e) => setFormValue('name', e.target.value)}
+              error={fieldErrors['name']}
+            />
+            <FormField
+              name="age"
+              label="Age"
+              variant="settings"
+              type="text"
+              value={String(values.age ?? '')}
+              onChange={(e) => setFormValue('age', Number(e.target.value))}
+              error={fieldErrors['age']}
+            />
+            <FormField
+              name="breed"
+              label="Breed"
+              variant="settings"
+              type="text"
+              value={values.breed ?? ''}
+              onChange={(e) => setFormValue('breed', e.target.value)}
+              error={fieldErrors['breed']}
+            />
           </div>
-        </FormField>
+          <FormField
+            name="picture"
+            label="Upload a picture"
+            variant="settings"
+            error={fieldErrors['picture']}
+          >
+            <img
+              src={pictureSrc}
+              alt="Picture preview"
+              className="add-edit-pet-form__preview"
+            />
+            <ImageUpload name="picture" label="Upload" value={null} onChange={onPictureChange} />
+          </FormField>
+        </div>
         <FormField
           name="size"
           label="Size"
           variant="settings"
+          error={fieldErrors['size']}
         >
           <RadioButtonGroup
             name="size"
             value={values.size}
             onChange={(value) => setFormValue('size', value as Size)}
-            fields={sizeRadioFields}
+            fields={displaySizeMap}
+            ariaLabel='size'
           />
         </FormField>
-        <div className="profile-edit-pets-add__reactivity-header">
-          <div className="settings-field-name">Reactivity</div>
-          <small className="settings-field-description">You can choose to add notes about your pet's reactivity in the field below each reactivity type.</small>
+        <div>
+          <div className="add-edit-pet-form__reactivity-header">Reactivity</div>
+          <small className="add-edit-pet-form__reactivity-subtitle">You can choose to add notes about your pet's reactivity in the field below each reactivity type.</small>
         </div>
         <ReactivityInput
           label="Dogs"
@@ -190,6 +183,8 @@ export function AddEditPetForm({ pet, onClose }: Props) {
           textName="dogReactivityNotes"
           textValue={values.dogReactivityNotes ?? ''}
           onTextChange={(value) => setFormValue('dogReactivityNotes', value)}
+          radioError={fieldErrors['dogReactivity']}
+          textError={fieldErrors['dogReactivityNotes']}
         />
         <ReactivityInput
           label="Cats"
@@ -200,6 +195,8 @@ export function AddEditPetForm({ pet, onClose }: Props) {
           textName="catReactivityNotes"
           textValue={values.catReactivityNotes ?? ''}
           onTextChange={(value) => setFormValue('catReactivityNotes', value)}
+          radioError={fieldErrors['catReactivity']}
+          textError={fieldErrors['catReactivityNotes']}
         />
         <ReactivityInput
           label="Kids"
@@ -210,6 +207,8 @@ export function AddEditPetForm({ pet, onClose }: Props) {
           textName="kidReactivityNotes"
           textValue={values.kidReactivityNotes ?? ''}
           onTextChange={(value) => setFormValue('kidReactivityNotes', value)}
+          radioError={fieldErrors['kidReactivity']}
+          textError={fieldErrors['kidReactivityNotes']}
         />
         <ReactivityInput
           label="People"
@@ -220,14 +219,18 @@ export function AddEditPetForm({ pet, onClose }: Props) {
           textName="peopleReactivityNotes"
           textValue={values.peopleReactivityNotes ?? ''}
           onTextChange={(value) => setFormValue('peopleReactivityNotes', value)}
+          radioError={fieldErrors['peopleReactivity']}
+          textError={fieldErrors['peopleReactivityNotes']}
         />
-        <button 
-          type="submit"
-          disabled={isPending}
-          className="primary-button profile-edit-pets-add__save-button" 
-        >
-          Save
-        </button>
+        <div className="add-edit-pet-form__save-button-wrapper">
+          <button 
+            type="submit"
+            disabled={isPending}
+            className="add-edit-pet-form__save-button" 
+          >
+            Save
+          </button>
+        </div>
       </form>
     </div>
   )

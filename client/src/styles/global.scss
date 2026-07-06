@@ -7,6 +7,8 @@
 :root {
   --text-primary: black;
   --text-secondary: #606060;
+  --text-field-error: red;
+
   --button-hover: #f0f0f0;
   --button-active: #0066cc;
   --button-active-text: white;
@@ -34,6 +36,8 @@
   --button-secondary-text: black;
   --button-secondary-hover: #b3b3b3;
 
+  --button-borderless-hover: #cccccc;
+
   --button-disabled: #cccccc;
 }
 
@@ -54,16 +58,22 @@ $color-primary: var(--color-primary);
 @mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary)) {
   font-size: $font-size;
   color: $font-color;
+  font-weight: normal;
 }
 
 @mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary)) {
   font-size: $font-size;
   color: $font-color;
+  font-weight: normal;
+}
+
+@mixin field-error-text($font-size: 1.25rem) {
+  font-size: $font-size;
+  color: var(--text-field-error);
+  font-weight: normal;
 }
 
 %display-button {
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
   border: none;
   cursor: pointer;
 
@@ -75,6 +85,8 @@ $color-primary: var(--color-primary);
 @mixin primary-button($font-size: 1rem) {
   @include flex-display(row, 0.5rem, center, center);
   @extend %display-button;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
   font-size: $font-size;
   background-color: var(--button-primary);
   color: var(--button-primary-text);
@@ -88,15 +100,35 @@ $color-primary: var(--color-primary);
   }
 }
 
-@mixin primary-button($font-size: 1rem) {
+@mixin secondary-button($font-size: 1rem) {
   @include flex-display(row, 0.5rem, center, center);
   @extend %display-button;
   font-size: $font-size;
-  background-color: var(--button-primary);
-  color: var(--button-primary-text);
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  background-color: var(--button-secondary);
+  color: var(--button-secondary-text);
 
   &:hover {
-    background: var(--button-primary-hover);
+    background: var(--button-secondary-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+  }
+}
+
+@mixin borderless-button($font-size: 1rem) {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  font-size: $font-size;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+
+  &:hover {
+    background: var(--button-borderless-hover);
   }
 
   &:disabled {
@@ -113,7 +145,6 @@ $color-primary: var(--color-primary);
 }
 
 %display-panel {
-  width: 100%;
   background-color: var(--display-panel-background);
   padding: 25px;
   border-radius: 6px;
@@ -166,6 +197,8 @@ $color-primary: var(--color-primary);
     cursor: not-allowed;
   }
 }
+
+
 
 .button-text {
   padding-top: 3px;

@@ -1,4 +1,4 @@
-import { Pet, reactivityType, reactivityTypeSchema } from 'dogsplayingpoker-shared/schemas/pet'
+import { Pet, reactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/schemas/pet'
 import { 
   Baby, 
   PersonStanding, 
@@ -24,15 +24,6 @@ const iconMap: Record<reactivityType, LucideIcon> = {
   Cats: Cat,
   Kids: Baby,
   People: PersonStanding
-}
-
-const displaySizeMap = {
-  toy: 'Toy (0 - 10 lbs)',
-  small: 'Small (10 - 35 lbs)',
-  medium: 'Medium (35 - 55 lbs)',
-  large: 'Large (55 - 85 lbs)',
-  giant: 'Giant (85+ lbs)',
-  unknown: 'Unknown size'
 }
 
 const reactivitySchemaMap: Record<reactivityType, { value: keyof Pet, notes: keyof Pet}> = {
