@@ -1,25 +1,34 @@
+@use '@/styles/global' as *;
+
 .profile-edit-location-current {
-  background-color: var(--form-field-background);
-  padding: 25px;
-  border-radius: 6px;
-  border: var(--form-field-border);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  @extend %display-panel;
+  @include flex-display(column, 1.5rem);
+  width: 100%;
 }
 
 .profile-edit-location-current__header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  @include flex-display(row, 0rem, space-between);
+  width: 100%;
 }
 
 .profile-edit-location-current__text {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  gap: 0.25rem;
+  @include flex-display(column, 0.25rem, start, start);
+}
+
+.profile-edit-location-current__title {
+  @include primary-text(1.4rem)
+}
+
+.profile-edit-location-current__description {
+  @include primary-text(1rem)
+}
+
+.profile-edit-location-current__clear-button {
+  @include primary-button(1.25rem)
+}
+
+.profile-edit-location-current__clear-button-text {
+  padding-top: 3px;
 }
 
 .profile-edit-location-current__map-container {

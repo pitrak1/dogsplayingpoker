@@ -3,6 +3,7 @@ import { UserMap } from '@/components/userMap'
 import { SearchBox } from '@mapbox/search-js-react'
 import { useAuth } from '@/context/auth'
 import { SearchResult } from '@/types/searchResult'
+import { MapBlocker } from '@/components/mapBlocker'
 import './profileEditLocationNew.scss'
 
 type Props = {
@@ -42,8 +43,13 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
   return (
     <div className="profile-edit-location-new">
       <div className="profile-edit-location-new__header">
-        <label id="location-search-box-label" className="settings-field-name">Enter a new location</label>
-        <small className="settings-field-description">This location will be obscured using the distance range entered below.</small>
+        <label 
+          id="location-search-box-label" 
+          className="profile-edit-location-new__title"
+        >
+          Enter a new location
+        </label>
+        <small className="profile-edit-location-new__description">This location will be obscured using the distance range entered below.</small>
         <div className="profile-edit-location-new__searchbox-container">
           <SearchBox
             aria-labelledby="location-search-box-label"
@@ -62,7 +68,9 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
           isBlocked={!coordinates} 
           onMapReady={handleMapReady}
         >
-          <div className="map-blocker-title">Search above to select a location</div>
+          <MapBlocker>
+            <MapBlocker.Title>Search above to select a location</MapBlocker.Title>
+          </MapBlocker>
         </UserMap>
       </div>
     </div>

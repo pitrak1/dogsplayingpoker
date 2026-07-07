@@ -2,6 +2,7 @@ import { useAuth } from '@/context/auth'
 import { UserMap } from '@/components/userMap'
 import { MapPin, Trash } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
+import { MapBlocker } from '@/components/mapBlocker'
 import './profileEditLocationCurrent.scss'
 
 type Props = {
@@ -16,11 +17,11 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
   
   const handleMapReady = useCallback(
-      (map: mapboxgl.Map) => {
-        setMapInstance(map)
-      },
-      []
-    )
+    (map: mapboxgl.Map) => {
+      setMapInstance(map)
+    },
+    []
+  )
 
   useEffect(() => {
     if (!mapInstance || !user || !user.latitude || !user.longitude) return
@@ -34,16 +35,16 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
     <div className="profile-edit-location-current">
       <div className="profile-edit-location-current__header">
         <div className="profile-edit-location-current__text">
-          <label className="settings-field-name">Your current location</label>
-          <small className="settings-field-description">This is how your location appears to other users.</small>
+          <label className="profile-edit-location-current__title">Your current location</label>
+          <small className="profile-edit-location-current__description">This is how your location appears to other users.</small>
         </div>
         <button 
-          className="primary-button" 
+          className="profile-edit-location-current__clear-button"
           disabled={clearButtonDisabled} 
           onClick={onClearClick}
         >
           <Trash size={20} />
-          <div className="button-text">Clear</div>
+          <div className="profile-edit-location-current__clear-button-text">Clear</div>
         </button>
       </div>
       <div className="profile-edit-location-current__map-container">
@@ -54,9 +55,11 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
           lockMovement={true}
           onMapReady={handleMapReady}
         >
-          <MapPin size={26} />
-          <div className="map-blocker-title">No location set yet</div>
-          <div className="map-blocker-text">Add a location below so nearby members can discover you and your pets.</div>
+          <MapBlocker>
+            <MapPin size={26} />
+            <MapBlocker.Title>No location set yet</MapBlocker.Title>
+            <MapBlocker.Description>Add a location below so nearby members can discover you and your pets.</MapBlocker.Description>
+          </MapBlocker>
         </UserMap>
       </div>
     </div>

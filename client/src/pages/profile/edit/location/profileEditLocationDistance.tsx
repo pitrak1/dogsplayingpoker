@@ -2,6 +2,7 @@ import { useAuth } from '@/context/auth'
 import { UserMap } from '@/components/userMap'
 import { Shuffle } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
+import { MapBlocker } from '@/components/mapBlocker'
 import './profileEditLocationDistance.scss'
 
 type Props = {
@@ -38,8 +39,8 @@ export function ProfileEditLocationDistance({generatedCoordinates, distance, onD
     <div className="profile-edit-location-distance">
       <div className="profile-edit-location-distance__header">
         <div className="profile-edit-location-distance__text">
-          <label className="settings-field-name">Privacy range</label>
-          <small className="settings-field-description">Other users see your location as a point within this distance of the location given above.</small>
+          <label className="profile-edit-location-distance__title">Privacy range</label>
+          <small className="profile-edit-location-distance__description">Other users see your location as a point within this distance of the location given above.</small>
         </div>
         <div className="profile-edit-location-distance__distance-display">{distance} miles</div>
       </div>
@@ -58,8 +59,10 @@ export function ProfileEditLocationDistance({generatedCoordinates, distance, onD
           lockMovement={true}
           onMapReady={handleMapReady}
         >
-          <Shuffle size={26} />
-          <div className="map-blocker-title">Generate a location to preview</div>
+          <MapBlocker>
+            <Shuffle size={26} />
+            <MapBlocker.Title>Generate a location to preview</MapBlocker.Title>
+          </MapBlocker>
         </UserMap>
       </div>
     </div>

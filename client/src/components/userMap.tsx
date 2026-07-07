@@ -68,24 +68,32 @@ export function UserMap({
     onDoubleClick,
   })
 
+  const highlightMarker = (markers: Map<number, mapboxgl.Marker>, user: User) => {
+    const marker = markers.get(user.id)
+    marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
+  }
+
+  const unhighlightMarker = (markers: Map<number, mapboxgl.Marker>, user: User) => {
+    const marker = markers.get(user.id)
+    marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
+  }
+
   useEffect(() => {
     if (!mapRef.current) return
 
     const map = mapRef.current
     const markers = markersRef.current
     
-    let sourceId: string | null | undefined = null
+    let sourceId: string | undefined
     if (focusUser) {
-      const marker = markers.get(focusUser.id)
-      marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
+      highlightMarker(markers, focusUser)
       sourceId = addUserRange(map, focusUser)
     }
     
 
     return () => {
       if (focusUser) {
-        const marker = markers.get(focusUser.id)
-        marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
+        unhighlightMarker(markers, focusUser)
       }
 
       try {
@@ -101,21 +109,28 @@ export function UserMap({
     setHoveredUser(user)
   }, [onHoverMarker])
 
+  
+
   useEffect(() => {
     if (!mapLoaded) return
     const map = mapRef.current!
     const markers = markersRef.current
 
-    const addMarker = (u: User) => {
-      if (!u.longitude || !u.latitude) return
-      const el = addUserMarker(map, u, () => onClickMarker && onClickMarker(u), handleHoverMarker)
-      markers.set(u.id, el)
+    const registerUserMarker = (user: User) => {
+      if (!user.longitude || !user.latitude) return
+      const el = addUserMarker(
+        map, 
+        user, 
+        () => onClickMarker && onClickMarker(user), 
+        handleHoverMarker
+      )
+      markers.set(user.id, el)
     }
 
     if (Array.isArray(users)) {
-      users.forEach(addMarker)
+      users.forEach(registerUserMarker)
     } else {
-      addMarker(users)
+      registerUserMarker(users)
     }
 
     return () => {
@@ -127,11 +142,7 @@ export function UserMap({
   return (
     <div className="user-map">
       <div ref={mapContainerRef} className="user-map__map" />
-      {isBlocked && (
-        <div className="map-blocker">
-          {children}
-        </div>
-      )}
+      {isBlocked && children}
     </div>
   )
 }

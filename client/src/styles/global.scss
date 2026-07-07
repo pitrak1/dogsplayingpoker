@@ -39,6 +39,8 @@
   --button-borderless-hover: #cccccc;
 
   --button-disabled: #cccccc;
+
+  --map-blocker-color: lightgrey;
 }
 
 $color-primary: var(--color-primary);
@@ -242,32 +244,6 @@ $color-primary: var(--color-primary);
   font-size: 1rem;
   padding: 0.5rem;
   width: 400px;
-}
-
-.map-blocker {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  background-color: lightgray;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.map-blocker-title {
-  color: var(--text-primary);
-  font-size: 20px;
-  font-weight: normal;
-}
-
-.map-blocker-text {
-  color: var(--text-primary);
-  font-size: 16px;
-  font-weight: normal;
 }
 
 .divider__vert {

@@ -1,20 +1,28 @@
+@use '@/styles/global' as *;
+
+.profile-edit-location-distance {
+  width: 100%;
+}
+
 .profile-edit-location-distance__header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-content: center;
+  @include flex-display(row, 0, space-between);
 }
 
 .profile-edit-location-distance__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  @include flex-display(column, 0.25rem, start, start);
+}
+
+.profile-edit-location-distance__title {
+  @include primary-text(1.4rem);
+}
+
+.profile-edit-location-distance__description {
+  @include primary-text(1rem);
 }
 
 .profile-edit-location-distance__distance-display {
-  font-size: 22px;
-  display: flex;
-  align-items: end;
+  @include primary-text(1.4rem);
+  @include flex-display(row, 0, center, end);
 }
 
 .profile-edit-location-distance__distance-input {
