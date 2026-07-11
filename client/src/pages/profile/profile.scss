@@ -1,63 +1,35 @@
+@use '@/styles/global' as *;
+
 .profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px;
+  @include flex-display(column, 1.25rem, center, center);
+  padding: 3rem 20rem;
 }
 
 .profile__profile-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  margin-right: 0.5rem;
+  @include avatar(128px);
 }
 
 .profile__user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.profile__user-subtitle {
-  display: flex;
-  flex-direction: row;
-  font-size: 16px;
-  align-items: center;
-  color: grey;
-}
-
-.profile__icon {
-  margin-right: 6px;
-}
-
-.profile__user-subtitle-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  @include flex-display(column, 0, center, center);
 }
 
 .profile__username {
-  font-size: 32px;
-  margin-top: 16px;
-  padding: 0px;
+  @include primary-text(2rem, black, bold);
+}
+
+.profile__user-subtitle {
+  @include flex-display(row, 0, center, center);
+  @include secondary-text(1.1rem);
+}
+
+.profile__icon {
+  margin-right: 0.25rem;
+}
+
+.profile__user-subtitle-item {
+  @include flex-display(row, 0, center, center);
 }
 
 .profile__message-button {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border: none;
-  background-color: #0066cc;
-  color: white;
-  font-size: 16px;
-  padding: 12px 24px;
-  margin-top: 18px;
-  border-radius: 18px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #005bb5;
-  }
+  @include primary-button();
 }

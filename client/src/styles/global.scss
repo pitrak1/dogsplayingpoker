@@ -41,6 +41,8 @@
   --button-disabled: #cccccc;
 
   --map-blocker-color: lightgrey;
+
+  --modal-border: 1px solid #ccc;
 }
 
 $color-primary: var(--color-primary);
@@ -57,10 +59,10 @@ $color-primary: var(--color-primary);
   flex-shrink: 0;
 }
 
-@mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary)) {
+@mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary), $font-weight: normal) {
   font-size: $font-size;
   color: $font-color;
-  font-weight: normal;
+  font-weight: $font-weight;
 }
 
 @mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary)) {

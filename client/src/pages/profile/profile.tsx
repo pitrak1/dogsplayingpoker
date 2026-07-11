@@ -1,29 +1,36 @@
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { Dot, Calendar, MapPin, MessageCircle } from 'lucide-react'
 import { useUserByUsername } from '@/api/users'
+import { useRef } from 'react'
+import { InviteModal } from './inviteModal'
+import { getAvatarFallback } from '@/lib/avatar'
+import { PetDisplay } from '@/components/petDisplay'
+import { Pet } from 'dogsplayingpoker-shared/schemas/pet'
 import './profile.scss'
 
 export function Profile() {
   const { username } = useParams<{ username: string }>()
   const { data: user } = useUserByUsername(username!)
   const { user: currentUser } = useAuth()
-  const navigate = useNavigate()
+  const inviteModalRef = useRef<HTMLDialogElement>(null)
 
-  const profileUser = user || currentUser
+  // const isProfileOwner = user?.username && user?.username === currentUser?.username
+  const isProfileOwner = false
+  const src = user?.profileImageUrl ?? getAvatarFallback(user?.username, 128)
 
-  const src =
-    profileUser?.profileImageUrl ??
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser?.username || '')}&background=e8a87c&color=fff&size=128`
   const onMessageClick = () => {
-    navigate('/profile/edit', { replace: true })
+    handleOpenInviteModal()
   }
+
+  const handleOpenInviteModal = () => inviteModalRef.current?.showModal()
+  const handleCloseInviteModal = () => inviteModalRef.current?.close()
 
   return (
     <div className="profile">
-      <img src={src} alt={profileUser?.username} className="profile__profile-image" />
+      <img src={src} alt={user?.username} className="profile__profile-image" />
       <div className="profile__user-info">
-        <h1 className="profile__username">{profileUser?.username}</h1>
+        <h1 className="profile__username">{user?.username}</h1>
         <h2 className="profile__user-subtitle">
           <div className="profile__user-subtitle-item">
             <Calendar size={20} className="profile__icon" />
@@ -37,10 +44,12 @@ export function Profile() {
         </h2>
       </div>
 
-      <button className="profile__message-button" onClick={onMessageClick}>
-        <MessageCircle size={20} className="profile__icon" />
+      <button className="profile__message-button" onClick={onMessageClick} disabled={isProfileOwner}>
+        <MessageCircle size={20} />
         Send message
       </button>
+      <InviteModal ref={inviteModalRef} user={user} onClose={handleCloseInviteModal} />
+      {user?.pets?.map((pet: Pet) => <PetDisplay pet={pet} />)}
     </div>
   )
 }

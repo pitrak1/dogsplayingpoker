@@ -1,0 +1,44 @@
+@use '@/styles/global' as *;
+
+dialog[open] {
+  @include flex-display(column, 0.75rem, center, start);
+  margin: auto;
+  width: 80%;
+  border: var(--modal-border);
+  border-radius: 6px;
+  padding: 2rem;
+  
+}
+
+.invite-modal__header {
+  @include flex-display(row, 0, space-between, center);
+  width: 100%;
+}
+
+.invite-modal__title {
+  @include primary-text(1.4rem, black, bold);
+}
+
+.invite-modal__close-button {
+  @include borderless-button();
+}
+
+.invite-modal__label {
+  @include primary-text(1.1rem);
+}
+
+.invite-modal__input {
+  @include primary-text(1rem);
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.invite-modal__send-button-container {
+  @include flex-display(row, 0, end);
+  width: 100%;
+}
+
+.invite-modal__send-button {
+  @include primary-button();
+  margin-top: 1rem;
+}
