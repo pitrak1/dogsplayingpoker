@@ -4,3 +4,13 @@ For entities like Pets, there are four types:
 2. CreatePetInput (shared) - the validated fields required to create a pet.  This is the shape that's actually sent over the wire to the backend.  It's very similar to the PetFormState, but these aren't nullable.  They're actually required or optional depending on what's valid for the db schema.
 3. Pet (shared) - the shape of a Pet object sent back from the server.  When fetching a pet, this is what it actually looks like.  it might have fields like ownerId or updatedAt, depending on hwat you want.
 4. PetRow (server) - the shape of a row in the pets table of the database.  This is inferred by drizzle, and it keeps things in the form associated with the database.  Like instead of date time columns being a string (like they are for the Pet type) to be sent to the frontend, they are a proper Date object.
+
+
+Message Routes:
+- Create Invite
+- Reject Invite
+- Accept Invite/Create Chat and Message
+- Block user
+- Get messages/users for chat
+- Get Chats
+- Get Pending/Received Invites

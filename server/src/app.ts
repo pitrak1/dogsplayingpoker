@@ -4,6 +4,7 @@ import { mediaRoutes } from './routes/media'
 import { userRoutes } from './routes/users'
 import { authRoutes } from './routes/auth'
 import { petRoutes } from './routes/pets'
+import { inviteRoutes } from './routes/invites'
 import type { AppEnv } from './types'
 
 const apiRoutes = new Hono<AppEnv>()
@@ -14,6 +15,7 @@ const apiRoutes = new Hono<AppEnv>()
   .use(requireAuth)
   .route('/media', mediaRoutes)
   .route('/pets', petRoutes)
+  .route('/invites', inviteRoutes)
 
 
 export const app = new Hono<AppEnv>().route('/api', apiRoutes)

@@ -17,11 +17,12 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "dogsplayingpoker-shared": "workspace:*",
     "@hono/node-server": "^2.0.3",
     "@hono/zod-validator": "^0.8.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
+    "date-fns": "^4.4.0",
+    "dogsplayingpoker-shared": "workspace:*",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.12.21",

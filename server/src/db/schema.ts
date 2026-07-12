@@ -20,6 +20,10 @@ export type ChatMembership = typeof chatMemberships.$inferSelect
 export type NewChatMembership = typeof chatMemberships.$inferInsert
 export type Message = typeof messages.$inferSelect
 export type NewMessage = typeof messages.$inferInsert
+export type ChatInvite = typeof chatInvites.$inferSelect
+export type NewChatInvite = typeof chatInvites.$inferInsert
+export type UserBlock = typeof userBlocks.$inferSelect
+export type NewUserBlock = typeof userBlocks.$inferInsert
 
 export const reactivityEnum = pgEnum('reactivity', ['strong', 'mixed', 'none', 'unknown'])
 export const sizeEnum = pgEnum('size', ['giant', 'large', 'medium', 'small', 'toy', 'unknown'])
