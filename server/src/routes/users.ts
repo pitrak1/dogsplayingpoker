@@ -2,20 +2,23 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as userService from '@/modules/user/service'
-import type { AppEnv } from '../types'
+import { paginationInputSchema, type AppEnv } from '../types'
 import { requireAuth } from '@/middleware/auth'
 import { editUserSchema } from 'dogsplayingpoker-shared/schemas/user'
 
-const searchSchema = z.object({
-  swLat: z.coerce.number(),
-  swLng: z.coerce.number(),
-  neLat: z.coerce.number(),
-  neLng: z.coerce.number(),
-  centerLat: z.coerce.number(),
-  centerLng: z.coerce.number(),
-  page: z.coerce.number().int().min(1).optional(),
-  pageSize: z.coerce.number().int().min(1).max(100).optional(),
-})
+const searchSchema = z.intersection(
+  z.object({
+    swLat: z.coerce.number(),
+    swLng: z.coerce.number(),
+    neLat: z.coerce.number(),
+    neLng: z.coerce.number(),
+    centerLat: z.coerce.number(),
+    centerLng: z.coerce.number(),
+    page: z.coerce.number().int().min(1).optional(),
+    pageSize: z.coerce.number().int().min(1).max(100).optional(),
+  }),
+  paginationInputSchema
+)
 
 export type SearchUsersParams = z.infer<typeof searchSchema>
 

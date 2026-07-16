@@ -7,6 +7,8 @@ import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
 import { Profile } from '@/pages/profile/profile'
 import { ProfileEdit } from '@/pages/profile/edit/profileEdit'
+import { Messages } from '@/pages/messages'
+import { Invites } from '@/pages/invites'
 
 export function App() {
   return (
@@ -21,6 +23,8 @@ export function App() {
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/profile/edit/:tab" element={<ProfileEdit />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/invites" element={<Invites />} />
         </Routes>
       </main>
     </BrowserRouter>

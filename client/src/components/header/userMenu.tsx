@@ -40,6 +40,12 @@ export function UserMenu() {
               <Link to="/profile/edit" onClick={closeMenu}>
                 Edit profile
               </Link>
+              <Link to={`/messages`} onClick={closeMenu}>
+                Your messages
+              </Link>
+              <Link to={`/invites`} onClick={closeMenu}>
+                Your invites
+              </Link>
               <Link to="/" onClick={logout}>
                 Log out
               </Link>

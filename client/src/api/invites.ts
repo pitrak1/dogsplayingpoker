@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { rpc } from './rpc'
 import { CreateInviteInput } from 'dogsplayingpoker-shared/schemas/invite'
+import { PaginationInput } from '@server/types'
 
 
 // export const usePetsForOwner = (ownerId: number | undefined) =>
@@ -24,6 +25,49 @@ import { CreateInviteInput } from 'dogsplayingpoker-shared/schemas/invite'
 //     },
 //     enabled: !!id,
 //   })
+
+// export const usePetsForOwner = (ownerId: number | undefined) =>
+//   useQuery({
+//     queryKey: ['pets', { ownerId }],
+//     queryFn: async () => {
+//       const res = await rpc.api.pets.$get({ query: { ownerId: String(ownerId) } })
+//       if (!res.ok) throw new Error('Failed to fetch pets')
+//       return res.json()
+//     },
+//     enabled: !!ownerId,
+//   })
+
+export const useSentInvites = (userId: number | undefined, params: PaginationInput) =>
+  useQuery({
+    queryKey: ['invites', { senderId: userId }],
+    queryFn: async () => {
+      const query = {
+        userId: String(userId),
+        page: String(params.page),
+        pageSize: String(params.pageSize)
+      }
+      const res = await rpc.api.invites['sent'].$get({ query })
+      if (!res.ok) throw new Error('Failed to fetch invites')
+      return res.json()
+    },
+    enabled: !!userId,
+  })
+
+export const useReceivedInvites = (userId: number | undefined, params: PaginationInput) =>
+  useQuery({
+    queryKey: ['invites', { receiverId: userId }],
+    queryFn: async () => {
+      const query = {
+        userId: String(userId),
+        page: String(params.page),
+        pageSize: String(params.pageSize)
+      }
+      const res = await rpc.api.invites['received'].$get({ query })
+      if (!res.ok) throw new Error('Failed to fetch invites')
+      return res.json()
+    },
+    enabled: !!userId,
+  })
 
 export const useCreateInvite = () => {
   const queryClient = useQueryClient()
