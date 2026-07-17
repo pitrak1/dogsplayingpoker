@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
-import { User } from '@/types/user'
+import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
 import { addUserMarker, addUserRange, removeUserRange } from '@/lib/maps'
 import './userMap.scss'
 
@@ -105,7 +105,7 @@ export function UserMap({
   }, [mapRef, focusUser])
 
   const handleHoverMarker = useCallback((user: User | null) => {
-    if (onHoverMarker) onHoverMarker(user)
+    if (onHoverMarker) onHoverMarker(user!.id)
     setHoveredUser(user)
   }, [onHoverMarker])
 

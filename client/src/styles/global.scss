@@ -36,6 +36,14 @@
   --button-secondary-text: black;
   --button-secondary-hover: #b3b3b3;
 
+  --button-success: green;
+  --button-success-text: white;
+  --button-success-hover: darkgreen;
+
+  --button-failure: red;
+  --button-failure-text: white;
+  --button-failure-hover: darkred;
+
   --button-borderless-hover: #cccccc;
 
   --button-disabled: #cccccc;
@@ -86,17 +94,17 @@ $color-primary: var(--color-primary);
   }
 }
 
-@mixin primary-button($font-size: 1rem) {
+@mixin custom-button($font-size: 1rem, $background, $color, $hover) {
   @include flex-display(row, 0.5rem, center, center);
   @extend %display-button;
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   font-size: $font-size;
-  background-color: var(--button-primary);
-  color: var(--button-primary-text);
+  background-color: $background;
+  color: $color;
   
   &:hover {
-    background: var(--button-primary-hover);
+    background: $hover;
   }
 
   &:disabled {
@@ -104,22 +112,20 @@ $color-primary: var(--color-primary);
   }
 }
 
+@mixin primary-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-primary), var(--button-primary-text), var(--button-primary-hover));
+}
+
 @mixin secondary-button($font-size: 1rem) {
-  @include flex-display(row, 0.5rem, center, center);
-  @extend %display-button;
-  font-size: $font-size;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  background-color: var(--button-secondary);
-  color: var(--button-secondary-text);
+  @include custom-button($font-size, var(--button-secondary), var(--button-secondary-text), var(--button-secondary-hover));
+}
 
-  &:hover {
-    background: var(--button-secondary-hover);
-  }
+@mixin success-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-success), var(--button-success-text), var(--button-success-hover));
+}
 
-  &:disabled {
-    background-color: var(--button-disabled);
-  }
+@mixin failure-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-failure), var(--button-failure-text), var(--button-failure-hover));
 }
 
 @mixin borderless-button($font-size: 1rem) {

@@ -1,4 +1,4 @@
-import { Pet, reactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/schemas/pet'
+import { Pet, reactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/pet'
 import { 
   Baby, 
   PersonStanding, 

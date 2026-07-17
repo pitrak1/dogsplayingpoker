@@ -4,7 +4,7 @@ import { z } from 'zod'
 import * as userService from '@/modules/user/service'
 import { paginationInputSchema, type AppEnv } from '../types'
 import { requireAuth } from '@/middleware/auth'
-import { editUserSchema } from 'dogsplayingpoker-shared/schemas/user'
+import { editUserSchema } from 'dogsplayingpoker-shared/user'
 
 const searchSchema = z.intersection(
   z.object({

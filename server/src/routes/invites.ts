@@ -10,7 +10,7 @@ import {
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { createInviteSchema } from 'dogsplayingpoker-shared/schemas/invite'
+import { createInviteSchema } from 'dogsplayingpoker-shared/invite'
 import { paginationInputWithUserIdSchema } from '../types'
 
 const idParamSchema = z.object({

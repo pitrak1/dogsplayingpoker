@@ -1,5 +1,5 @@
 import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
-import { reactivity, displayReactivityMap } from 'dogsplayingpoker-shared/schemas/pet'
+import { reactivity, displayReactivityMap } from 'dogsplayingpoker-shared/pet'
 import './reactivityInput.scss'
 
 type Props = {

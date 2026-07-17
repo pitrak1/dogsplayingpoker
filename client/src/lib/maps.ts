@@ -1,4 +1,4 @@
-import { User } from '@/types/user'
+import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
 import { getCssVar } from './cssVars'
 import mapboxgl from 'mapbox-gl'
 

@@ -10,7 +10,7 @@ import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUser } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
-import type { EditUserInput } from 'dogsplayingpoker-shared/schemas/user'
+import type { EditUserInput } from 'dogsplayingpoker-shared/user'
 
 const userWithPets = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))

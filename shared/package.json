@@ -5,9 +5,9 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
-    "./schemas/*": {
-      "types": "./src/schemas/*.ts",
-      "default": "./src/schemas/*.ts"
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
     }
   },
   "dependencies": {

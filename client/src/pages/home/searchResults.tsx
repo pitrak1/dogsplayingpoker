@@ -1,4 +1,4 @@
-import { User } from '@/types/user'
+import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
 import { metersToMiles } from '@/lib/maps'
 import { MapPin, PawPrint, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router'

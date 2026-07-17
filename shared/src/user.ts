@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { Pet } from './pet'
 
 export const userSchema = z.object({
   id: z.number().int().positive(),
@@ -21,3 +22,15 @@ export const editUserSchema = z.object({
 })
 
 export type EditUserInput = z.infer<typeof editUserSchema>
+
+export type UserWithPets = User & { pets: Pet[] }
+
+export type AuthResponse = {
+  authToken: string
+  user: UserWithPets
+}
+
+export type UploadSignature = {
+  timestamp: number
+  signature: string
+}

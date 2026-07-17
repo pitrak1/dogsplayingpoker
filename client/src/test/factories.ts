@@ -1,5 +1,5 @@
-import type { User } from '@/types/user'
-import type { Pet } from 'dogsplayingpoker-shared/schemas/pet'
+import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { Pet } from 'dogsplayingpoker-shared/pet'
 
 export const makeUser = (overrides: Partial<User> = {}): User => ({
   id: 1,

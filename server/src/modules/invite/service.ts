@@ -1,7 +1,7 @@
 import { and, eq, gt, sql, inArray } from 'drizzle-orm'
 import { db } from '@/db'
 import { chatInvites, NewChatInvite, User, users, ChatInvite } from '@/db/schema'
-import { CreateInviteInput, status } from 'dogsplayingpoker-shared/schemas/invite'
+import { CreateInviteInput, status } from 'dogsplayingpoker-shared/invite'
 import { add } from 'date-fns'
 import { PaginationInputWithUserId, InviteWithUsers } from '@/types'
 import { transformUser } from '@/lib/geo'

@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/auth'
 import { AddEditPetForm } from '@/components/forms/addEditPetForm'
 import { usePetsForOwner } from '@/api/pets'
-import { Pet } from 'dogsplayingpoker-shared/schemas/pet'
+import { Pet } from 'dogsplayingpoker-shared/pet'
 import { PetDisplay } from '@/components/petDisplay'
 import { useState } from 'react'
 import './profileEditPets.scss'

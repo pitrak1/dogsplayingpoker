@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { userSchema } from './user'
+import { userSchema, User } from './user'
 
 export const statusSchema = z.enum(['pending', 'accepted', 'declined'])
 export type status = z.infer<typeof statusSchema>
@@ -18,3 +18,24 @@ export const inviteSchema = z.object({
 })
 
 export type Invite = z.infer<typeof inviteSchema>
+
+export type ChatInvite = {
+  id: number
+  message: string | null
+  senderId: number
+  receiverId: number
+  status: status
+  createdAt: string
+  updatedAt: string
+  expiredAt: string
+}
+
+export type ChatInviteWithUsers = ChatInvite & {
+  sender?: User | null
+  receiver?: User | null
+}
+
+export type InviteListResponse = {
+  invites: ChatInviteWithUsers[]
+  totalCount: number
+}

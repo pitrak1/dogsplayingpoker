@@ -4,7 +4,7 @@ import * as authContext from '@/context/auth'
 import { makeUser } from '@/test/factories'
 import { useEffect } from 'react'
 import { vi } from 'vitest'
-import { User } from '@/types/user'
+import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
 
 vi.mock('@/components/userMap', () => ({
   UserMap: ({ children, onMapReady, isBlocked }: any) => {

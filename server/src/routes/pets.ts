@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as petService from '@/modules/pet/service'
 import type { AuthedEnv } from '../types'
-import { createPetSchema } from 'dogsplayingpoker-shared/schemas/pet'
+import { createPetSchema } from 'dogsplayingpoker-shared/pet'
 import { NewPet } from '@/db/schema'
 
 const listQuerySchema = z.object({

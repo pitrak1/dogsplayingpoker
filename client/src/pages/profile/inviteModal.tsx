@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react'
-import { User } from 'dogsplayingpoker-shared/schemas/user'
+import { User } from 'dogsplayingpoker-shared/user'
 import { X, Send } from 'lucide-react'
 import './inviteModal.scss'
 

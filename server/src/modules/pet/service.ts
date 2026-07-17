@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { pets, reactivityEnum, sizeEnum, NewPet, Pet } from '@/db/schema'
-import { CreatePetInput } from 'dogsplayingpoker-shared/schemas/pet'
+import { CreatePetInput } from 'dogsplayingpoker-shared/pet'
 
 export type Reactivity = (typeof reactivityEnum.enumValues)[number]
 export type Size = (typeof sizeEnum.enumValues)[number]
