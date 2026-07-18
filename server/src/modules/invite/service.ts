@@ -1,7 +1,7 @@
 import { and, eq, gt, sql, inArray } from 'drizzle-orm'
 import { db } from '@/db'
 import { chatInvites, NewChatInvite, User, users, ChatInvite } from '@/db/schema'
-import { CreateInviteInput, status } from 'dogsplayingpoker-shared/invite'
+import { CreateInviteInput, UpdateInviteStatusInput } from 'dogsplayingpoker-shared/invite'
 import { add } from 'date-fns'
 import { PaginationInputWithUserId, InviteWithUsers } from '@/types'
 import { transformUser } from '@/lib/geo'
@@ -92,13 +92,13 @@ export const getReceivedInvitesForUser = async (input: PaginationInputWithUserId
   return { invites: invitesWithUsers, totalCount }
 }
 
-export const getInvite = async (id: number) => {
+export const getInviteById = async (id: number): Promise<ChatInvite | null> => {
   const rows = await db.select().from(chatInvites)
     .where(and(
       eq(chatInvites.id, id), 
       gt(chatInvites.expiredAt, sql`NOW()`),
     ))
-  return rows[0]
+  return rows[0] ?? null
 }
 
 export const getInviteBySenderAndReceiver = async (senderId: number, receiverId: number) => {
@@ -107,10 +107,11 @@ export const getInviteBySenderAndReceiver = async (senderId: number, receiverId:
       eq(chatInvites.senderId, senderId),
       eq(chatInvites.receiverId, receiverId)
     ))
-  return rows[0]
+  return rows[0] ?? null
 }
 
-export const updateInviteStatus = async (id: number, status: status) => {
+export const updateInviteStatus = async (input: UpdateInviteStatusInput) => {
+  const { id, status } = input;
   const rows = await db.update(chatInvites)
         .set({ status })
         .where(and(
@@ -121,7 +122,7 @@ export const updateInviteStatus = async (id: number, status: status) => {
   // TODO: add lots of logic here for accepted invites
   // accepted invites should then trigger a creation of a chat with the invite message
   // as the first message
-  return rows[0]
+  return rows[0] ?? null
 }
 
 export const createInvite = async (senderId: number, input: CreateInviteInput) => {

@@ -1,16 +1,15 @@
-For entities like Pets, there are four types:
+Type Naming Conventions:
 
-1. PetFormState (client) - name isn't important, but the Zod shape (to make validation easier) and type (for use in the React component state) for actually storing the values of the controlled inputs.  These are nullable because we want them to be able to be empty on page load, and they are actually the shape of the input (for example, we store a File and local file url instead of a Cloudinary file url).
-2. CreatePetInput (shared) - the validated fields required to create a pet.  This is the shape that's actually sent over the wire to the backend.  It's very similar to the PetFormState, but these aren't nullable.  They're actually required or optional depending on what's valid for the db schema.
-3. Pet (shared) - the shape of a Pet object sent back from the server.  When fetching a pet, this is what it actually looks like.  it might have fields like ownerId or updatedAt, depending on hwat you want.
-4. PetRow (server) - the shape of a row in the pets table of the database.  This is inferred by drizzle, and it keeps things in the form associated with the database.  Like instead of date time columns being a string (like they are for the Pet type) to be sent to the frontend, they are a proper Date object.
+Shared types/zod schemas will be in the shared directory so they can be used on the client and the server.
 
+There will (probably) be a matching zod schema for each type, making pairs.  The zod schema will be camel-case and end in 'Schema', and the type will be pascal-case and will have the 'Schema' suffix removed.
 
-Message Routes:
-- Create Invite
-- Reject Invite
-- Accept Invite/Create Chat and Message
-- Block user
-- Get messages/users for chat
-- Get Chats
-- Get Pending/Received Invites
+Ex: Zod schema => `createUserInputSchema`, type => `CreateUserInput`
+
+For each database entity, there will be four groups of types.  Some groups may have only one type in it.
+
+1. `<Entity>Row` - This is the representation in Javascript of the row in the database.  This should almost always be generated from Drizzle.
+2. `<Entity>` - This is the representation of the entity that's returned from the backend and shared with the frontend.  This will be similar but not always match the `<Entity>Row`.  For example, the `UserRow` would have the PostGIS location and the `User` would have the latitude and longitude.  Or more commonly, timestamps will be strings coming out of the database, but for this type, they should be converted to proper Javascript `Date`s.
+3. `Full<Entity>` - This will be the `<Entity>` type with any directly related data attached.  Like a `User` will have their `Pet`s attached.  I hope this will be intuitive and not required a lot of different use cases, but I'll see how this one works.
+4. `<Function><Entity>Input` - This is the data passed to the backend to do a particular operation.  For example, creating a user would required `CreateUserInput`.
+5. `<Function><Entity>Form` - This is the type for the frontend to use for form components.  These will be very similar to the `<Function><Entity>Input` types with a couple exceptions.  All fields in this type will be nullable because we want the form to be empty on page load.  Also, more complex data types may differ, like we generally store a Javascript `File` and a generated file URL for a file form input, but the `<Function><Entity>Input` type uses a Cloudinary file URL.  This change is going to happen during validation/save where the data in the `Form` type is converted into the `Input` type.

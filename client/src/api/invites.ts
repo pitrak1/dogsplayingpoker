@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
-import { CreateInviteInput, ChatInvite, InviteListResponse } from 'dogsplayingpoker-shared/invite'
+import { CreateInviteInput, ChatInvite, InviteListResponse, UpdateInviteStatusInput } from 'dogsplayingpoker-shared/invite'
 import { PaginationInput } from '@server/types'
 
 export const useSentInvites = (userId: number | undefined, params: PaginationInput) =>
@@ -43,6 +43,20 @@ export const useCreateInvite = () => {
     },
     onSuccess: (invite) => {
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
+    },
+  })
+}
+
+export const useUpdateInviteStatus = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: UpdateInviteStatusInput) => {
+      const res = await api.patch('/invites', input)
+      if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
+      return res.json() as Promise<ChatInvite>
+    },
+    onSuccess: (invite) => {
+      queryClient.invalidateQueries({ queryKey: ['invites', { id: invite.id }] })
     },
   })
 }

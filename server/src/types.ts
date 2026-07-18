@@ -27,7 +27,7 @@ export type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'del
   longitude: number | null
 }
 
-export type CreatePetInput = Omit<Pet, 'id' | 'createdAt' | 'updatedAt'>
+export type CreatePetInput = Omit<Pet, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
 
 export const paginationInputSchema = z.object({
   page: z.coerce.number().int().min(1).optional(),

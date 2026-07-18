@@ -1,9 +1,11 @@
-import type { Pet, User } from '@/db/schema'
+import type { Pet, User, ChatInvite } from '@/db/schema'
 import type { CreateUserInput, CreatePetInput } from '@/types'
 import { db } from '@/db'
-import { users, pets } from '@/db/schema'
+import { users, pets, chatInvites } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { coordsToLocation } from '@/lib/geo'
+import { CreateInviteInput, Status, UpdateInviteStatusInput } from 'dogsplayingpoker-shared/invite'
+import { add } from 'date-fns'
 
 export const makeUser = (overrides: Partial<User> = {}): User => ({
   id: 1,
@@ -53,6 +55,9 @@ export const setupUsers = async (count: number, overrides: Partial<CreateUserInp
 export const makePet = (petId: number, ownerId: number, overrides: Partial<CreatePetInput> = {}): Pet => ({
   ...makePetInput(ownerId, overrides),
   id: petId,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
 })
 
 export const makePetInput = (ownerId: number, overrides: Partial<CreatePetInput> = {}): CreatePetInput => ({
@@ -77,5 +82,40 @@ export const setupPetForUser = async (ownerId: number, overrides: Partial<Create
   const petInput = makePetInput(ownerId, overrides)
   const [pet] = await db.insert(pets).values(petInput).returning()
   return pet
+}
+
+export const makeUpdateInviteStatusInput = (overrides: Partial<UpdateInviteStatusInput> = {}): UpdateInviteStatusInput => ({
+  id: 1,
+  status: 'pending',
+  ...overrides
+})
+
+export const makeInvite = (overrides: Partial<CreateInviteInput> = {}) => ({
+  id: 1,
+  message: 'some fake message',
+  senderId: 2,
+  receiverId: 3,
+  status: 'pending' as Status,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  expiredAt: new Date(),
+  ...overrides
+})
+
+export const setupInvite = async (
+  senderId: number, 
+  receiverId: number, 
+  message?: string | null, 
+  status?: Status | null
+) => {
+  const input = {
+    senderId,
+    receiverId,
+    message,
+    status: status ?? 'pending',
+    expiredAt: add(new Date(), { weeks: 2 })
+  }
+  const [invite] = await db.insert(chatInvites).values(input).returning()
+  return invite
 }
 
