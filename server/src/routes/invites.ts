@@ -3,14 +3,16 @@ import {
   getSentInvitesForUser,
   getReceivedInvitesForUser,
   getInviteById,
-  updateInviteStatus,
+  acceptInvite,
+  declineInvite,
   createInvite,
   getInviteBySenderAndReceiver
 } from '@/modules/invite/service'
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
-import { createInviteInputSchema, updateInviteStatusInputSchema } from 'dogsplayingpoker-shared/invite'
+import { createInviteInputSchema } from 'dogsplayingpoker-shared/invite'
 import { paginationInputWithUserIdSchema } from '../types'
+import { idInputSchema } from 'dogsplayingpoker-shared/common'
 
 export const inviteRoutes = new Hono<AuthedEnv>()
   .get('/sent', zValidator('query', paginationInputWithUserIdSchema), async (c) => {
@@ -28,16 +30,29 @@ export const inviteRoutes = new Hono<AuthedEnv>()
     return c.json(received)
   })
   .patch(
-    '/',
-    zValidator('json', updateInviteStatusInputSchema),
+    '/accept',
+    zValidator('json', idInputSchema),
     async (c) => {
       const userId = c.get('userId')
-      const input = c.req.valid('json')
+      const { id } = c.req.valid('json')
 
-      const invite = await getInviteById(input.id)
+      const invite = await getInviteById(id)
       if (!invite || invite.receiverId !== userId) return c.json({ message: 'Not found' }, 404)
       if (invite.status !== 'pending') return c.json({ message: 'Invite is already accepted or declined' }, 400)
-      return c.json(await updateInviteStatus(input))
+      return c.json(await acceptInvite(id))
+    }
+  )
+  .patch(
+    '/decline',
+    zValidator('json', idInputSchema),
+    async (c) => {
+      const userId = c.get('userId')
+      const { id } = c.req.valid('json')
+
+      const invite = await getInviteById(id)
+      if (!invite || invite.receiverId !== userId) return c.json({ message: 'Not found' }, 404)
+      if (invite.status !== 'pending') return c.json({ message: 'Invite is already accepted or declined' }, 400)
+      return c.json(await declineInvite(id))
     }
   )
   .post(
@@ -45,14 +60,14 @@ export const inviteRoutes = new Hono<AuthedEnv>()
     zValidator('json', createInviteInputSchema),
     async (c) => {
       const userId = c.get('userId')
-      const { receiverId, message } = c.req.valid('json')
+      const { senderId, receiverId, message } = c.req.valid('json')
 
       if (userId === receiverId) return c.json({ message: 'User cannot send an invite to themselves' }, 400)
 
-      const existingInvite = await getInviteBySenderAndReceiver(userId, receiverId)
+      const existingInvite = await getInviteBySenderAndReceiver(senderId, receiverId)
       if (existingInvite) return c.json({ message: 'User has already sent an invite' }, 400)
 
-      const invite = await createInvite(userId, { receiverId, message })
+      const invite = await createInvite({ senderId, receiverId, message })
       return c.json(invite, 201)
     }
   )

@@ -20,7 +20,7 @@ export function Profile() {
   const [formError, setFormError] = useState<string | null>(null)
   const { mutateAsync: createInvite, isPending } = useCreateInvite()
 
-  const isProfileOwner = user?.username && user?.username === currentUser?.username
+  const isProfileOwner = !!user?.username && user?.username === currentUser?.username
   const src = user?.profileImageUrl ?? getAvatarFallback(user?.username, 128)
 
   const onMessageClick = () => {
@@ -31,8 +31,9 @@ export function Profile() {
   const handleCloseInviteModal = () => inviteModalRef.current?.close()
 
   const handleSendInviteClick = async (message: string) => {
+    if (!user || !currentUser) return
     try {
-      await createInvite({ receiverId: user?.id, message })
+      await createInvite({ senderId: currentUser.id, receiverId: user.id, message })
       handleCloseInviteModal()
     } catch (err) {
       if (err instanceof ApiError) {
@@ -64,7 +65,7 @@ export function Profile() {
         <MessageCircle size={20} />
         Send message
       </button>
-      <InviteModal ref={inviteModalRef} user={user} onClose={handleCloseInviteModal} onSend={handleSendInviteClick} isSendDisabled={isPending}/>
+      {user && <InviteModal ref={inviteModalRef} user={user} onClose={handleCloseInviteModal} onSend={handleSendInviteClick} isSendDisabled={isPending}/>}
       {user?.pets?.map((pet: Pet) => <PetDisplay key={pet.id} pet={pet} />)}
     </div>
   )

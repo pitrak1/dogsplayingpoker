@@ -11,7 +11,7 @@ const hashString = (str: string): number => {
   return Math.abs(hash)
 }
 
-export const getAvatarFallback = (username: string | null, size: number) => {
+export const getAvatarFallback = (username: string | null | undefined, size: number) => {
   if (!username) return
   const color = COLORS[hashString(username) % COLORS.length]
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=${color}&color=fff&size=${size}`

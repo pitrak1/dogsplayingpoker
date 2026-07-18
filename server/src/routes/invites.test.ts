@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
-import { makeUpdateInviteStatusInput, setupInvite, makeInvite } from '@/test/factories'
+import { makeUpdateInviteStatusInput, makeCreateInviteInput, makeInvite } from '@/test/factories'
 import * as inviteService from '@/modules/invite/service'
-import { Status } from 'dogsplayingpoker-shared/invite'
 
 describe('GET /api/invites/sent', () => {
   it('returns 400 if authenticated user is not requested user', async () => {
@@ -25,12 +24,12 @@ describe('GET /api/invites/received', () => {
   })
 })
 
-describe('PATCH /api/invites/', () => {
+describe('PATCH /api/invites/accept', () => {
   it('returns 404 if invite does not exist', async () => {
     vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(null)
     const token = generateAuthToken(1)
     const body = JSON.stringify(makeUpdateInviteStatusInput())
-    const res = await app.request(`/api/invites`, {
+    const res = await app.request(`/api/invites/accept`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body
@@ -42,7 +41,7 @@ describe('PATCH /api/invites/', () => {
     vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(makeInvite({ receiverId: 2 }))
     const token = generateAuthToken(1)
     const body = JSON.stringify(makeUpdateInviteStatusInput())
-    const res = await app.request(`/api/invites`, {
+    const res = await app.request(`/api/invites/accept`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body
@@ -56,7 +55,47 @@ describe('PATCH /api/invites/', () => {
     vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(foundInvite)
     const token = generateAuthToken(1)
     const body = JSON.stringify(makeUpdateInviteStatusInput({ id: 3 }))
-    const res = await app.request(`/api/invites`, {
+    const res = await app.request(`/api/invites/accept`, {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'PATCH',
+      body
+    })
+    expect(res.status).toBe(400)
+  })
+})
+
+describe('PATCH /api/invites/decline', () => {
+  it('returns 404 if invite does not exist', async () => {
+    vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(null)
+    const token = generateAuthToken(1)
+    const body = JSON.stringify(makeUpdateInviteStatusInput())
+    const res = await app.request(`/api/invites/decline`, {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'PATCH',
+      body
+    })
+    expect(res.status).toBe(404)
+  })
+
+  it('returns 404 if receiver of invite is not authed user', async () => {
+    vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(makeInvite({ receiverId: 2 }))
+    const token = generateAuthToken(1)
+    const body = JSON.stringify(makeUpdateInviteStatusInput())
+    const res = await app.request(`/api/invites/decline`, {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      method: 'PATCH',
+      body
+    })
+    expect(res.status).toBe(404)
+  })
+
+  it('returns 400 if invite status is not pending', async () => {
+    const foundInvite = makeInvite({ receiverId: 1 })
+    foundInvite.status = 'declined'
+    vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(foundInvite)
+    const token = generateAuthToken(1)
+    const body = JSON.stringify(makeUpdateInviteStatusInput({ id: 3 }))
+    const res = await app.request(`/api/invites/decline`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body
@@ -68,7 +107,7 @@ describe('PATCH /api/invites/', () => {
 describe('POST /api/invites', () => {
   it('returns 400 if receiver is authed user', async () => {
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeUpdateInviteStatusInput({ id: 1 }))
+    const body = JSON.stringify(makeCreateInviteInput({ senderId: 1, receiverId: 1 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',
@@ -78,10 +117,10 @@ describe('POST /api/invites', () => {
   })
 
   it('returns 400 if invite between users already exists', async () => {
-    const existingInvite = makeInvite({ receiverId: 2 })
+    const existingInvite = makeInvite({ senderId: 1, receiverId: 2 })
     vi.spyOn(inviteService, 'getInviteBySenderAndReceiver').mockResolvedValue(existingInvite)
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeUpdateInviteStatusInput({ id: 2 }))
+    const body = JSON.stringify(makeCreateInviteInput({ senderId: 1, receiverId: 2 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',

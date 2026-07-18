@@ -1,4 +1,4 @@
-import { useSentInvites, useReceivedInvites, useUpdateInviteStatus } from '@/api/invites'
+import { useSentInvites, useReceivedInvites, useAcceptInvite, useDeclineInvite } from '@/api/invites'
 import { useAuth } from '@/context/auth'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -16,7 +16,8 @@ export function Invites() {
   const { data: sentInvites } = useSentInvites(user?.id, { page, pageSize })
   const { data: receivedInvites } = useReceivedInvites(user?.id, { page, pageSize })
   const navigate = useNavigate();
-  const { mutateAsync: updateInviteStatus, isPending } = useUpdateInviteStatus()
+  const { mutateAsync: acceptInvite, isPending: isAcceptPending } = useAcceptInvite()
+  const { mutateAsync: declineInvite, isPending: isDeclinePending } = useDeclineInvite()
   const [pageError, setPageError]= useState<string | null>(null)
 
   console.log(sentInvites)
@@ -31,7 +32,7 @@ export function Invites() {
 
   const handleInviteAccept = async (inviteId: number) => {
     try {
-      await updateInviteStatus({ id: inviteId, status: 'accepted' })
+      await acceptInvite(inviteId)
     } catch (err) {
       if (err instanceof ApiError) {
         setPageError(err.message)
@@ -41,7 +42,7 @@ export function Invites() {
 
   const handleInviteDecline = async (inviteId: number) => {
     try {
-      await updateInviteStatus({ id: inviteId, status: 'declined' })
+      await declineInvite(inviteId)
     } catch (err) {
       if (err instanceof ApiError) {
         setPageError(err.message)

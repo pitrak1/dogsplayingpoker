@@ -1,19 +1,13 @@
 import { and, eq, gt, sql, inArray } from 'drizzle-orm'
 import { db } from '@/db'
-import { chatInvites, NewChatInvite, User, users, ChatInvite } from '@/db/schema'
-import { CreateInviteInput, UpdateInviteStatusInput } from 'dogsplayingpoker-shared/invite'
+import { chatInvites, NewChatInvite, User, users, ChatInvite, chats, chatMemberships, messages } from '@/db/schema'
+import { CreateInviteInput } from 'dogsplayingpoker-shared/invite'
 import { add } from 'date-fns'
 import { PaginationInputWithUserId, InviteWithUsers } from '@/types'
 import { transformUser } from '@/lib/geo'
 
 
 type InviteListResult = { invites: InviteWithUsers[], totalCount: number }
-
-
-// const invitesForUserWithUsers = async (userId: number, invite: ChatInvite) => {
-//   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
-//   return { ...transformUser(user), pets: userPets }
-// }
 
 const attachUsersToInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender') => {
   const userIds = invites.map(i => i[`${key}Id`])
@@ -110,24 +104,42 @@ export const getInviteBySenderAndReceiver = async (senderId: number, receiverId:
   return rows[0] ?? null
 }
 
-export const updateInviteStatus = async (input: UpdateInviteStatusInput) => {
-  const { id, status } = input;
+export const declineInvite = async (id: number) => {
   const rows = await db.update(chatInvites)
-        .set({ status })
-        .where(and(
-          eq(chatInvites.id, id),
-          gt(chatInvites.expiredAt, sql`NOW()`)
-        ))
-        .returning()
-  // TODO: add lots of logic here for accepted invites
-  // accepted invites should then trigger a creation of a chat with the invite message
-  // as the first message
+    .set({ status: 'declined' })
+    .where(and(
+      eq(chatInvites.id, id),
+      gt(chatInvites.expiredAt, sql`NOW()`)
+    ))
+    .returning()
   return rows[0] ?? null
 }
 
-export const createInvite = async (senderId: number, input: CreateInviteInput) => {
+export const acceptInvite = async (id: number) => {
+  return await db.transaction(async (tx) => {
+    const inviteRows = await tx.update(chatInvites)
+      .set({ status: 'accepted' })
+      .where(and(
+        eq(chatInvites.id, id),
+        gt(chatInvites.expiredAt, sql`NOW()`)
+      ))
+      .returning()
+    const invite = inviteRows[0] ?? null
+    if (!invite) return null
+    const chatRows = await tx.insert(chats).values({ hostId: invite.senderId }).returning()
+    const chat = chatRows[0] ?? null
+    await tx.insert(chatMemberships).values({ chatId: chat.id, userId: invite.senderId })
+    await tx.insert(chatMemberships).values({ chatId: chat.id, userId: invite.receiverId })
+    if (invite.message) {
+      await tx.insert(messages).values({ chatId: chat.id, content: invite.message, createdBy: invite.senderId })
+    }
+    return chat
+  })
+}
+
+export const createInvite = async (input: CreateInviteInput) => {
   const expiredAt = add(new Date(), { weeks: 2 })
-  const data = { senderId, status: 'pending', expiredAt, ...input } as NewChatInvite
+  const data = { status: 'pending', expiredAt, ...input } as NewChatInvite
   const rows = await db.insert(chatInvites).values(data).returning()
   return rows[0]
 }

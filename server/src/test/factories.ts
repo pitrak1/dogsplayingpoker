@@ -84,6 +84,13 @@ export const setupPetForUser = async (ownerId: number, overrides: Partial<Create
   return pet
 }
 
+export const makeCreateInviteInput = (overrides: Partial<CreateInviteInput> = {}): CreateInviteInput => ({
+  senderId: 1,
+  receiverId: 2,
+  message: 'fake-message',
+  ...overrides
+})
+
 export const makeUpdateInviteStatusInput = (overrides: Partial<UpdateInviteStatusInput> = {}): UpdateInviteStatusInput => ({
   id: 1,
   status: 'pending',
