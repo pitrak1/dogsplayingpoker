@@ -1,19 +1,21 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import './searchPagination.scss'
+import './pagination.scss'
 
 type Props = {
   pageNumber: number
-  totalCount: number | null
+  pageSize: number
+  totalCount: number
   onPageChange: (value: number) => void
+  className?: string | null
 }
 
-export function SearchPagination({ pageNumber, totalCount, onPageChange }: Props) {
-  const pageSize = 25
-  if (totalCount == null || totalCount === 0 || totalCount <= pageSize
-  ) return null
+export function Pagination({ pageNumber, pageSize, totalCount, onPageChange, className }: Props) {
+  const noPagination = totalCount <= pageSize
   const totalPages = Math.ceil(totalCount / pageSize)
   const prevDisabled = pageNumber <= 1
   const nextDisabled = pageNumber >= totalPages
+
+  if (noPagination) return null
 
   const pageButtonNumbers = () => {
     if (totalPages <= 5) {
@@ -32,7 +34,7 @@ export function SearchPagination({ pageNumber, totalCount, onPageChange }: Props
     return (
       <button
         key={num}
-        className={`search-pagination__page-button${isActivePage ? '-active' : ''}`}
+        className={`pagination__page-button${isActivePage ? '-active' : ''}`}
         disabled={isActivePage}
         onClick={() => onPageChange(num)}
       >
@@ -42,23 +44,23 @@ export function SearchPagination({ pageNumber, totalCount, onPageChange }: Props
   })
 
   return (
-    <div className="search-pagination">
+    <div className={`pagination ${className ?? ''}`}>
       <button
-        className="search-pagination__nav-button"
+        className="pagination__nav-button"
         disabled={prevDisabled}
         onClick={() => onPageChange(pageNumber - 1)}
+        aria-label="previous page"
       >
-        <ChevronLeft />
-        Prev
+        <ChevronLeft size={20}/>
       </button>
-      <div className="search-pagination__page-buttons">{pageButtons}</div>
+      <div className="pagination__page-buttons">{pageButtons}</div>
       <button
-        className="search-pagination__nav-button"
+        className="pagination__nav-button"
         disabled={nextDisabled}
         onClick={() => onPageChange(pageNumber + 1)}
+        aria-label="next page"
       >
-        Next
-        <ChevronRight />
+        <ChevronRight size={20}/>
       </button>
     </div>
   )

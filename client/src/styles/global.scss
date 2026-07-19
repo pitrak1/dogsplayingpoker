@@ -136,6 +136,7 @@ $color-primary: var(--color-primary);
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem;
+  cursor: pointer;
 
   &:hover {
     background: var(--button-borderless-hover);

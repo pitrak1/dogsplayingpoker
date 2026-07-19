@@ -1,6 +1,6 @@
 import { SearchBox } from '@mapbox/search-js-react'
 import { SearchResults } from './searchResults'
-import { SearchPagination } from './searchPagination'
+import { Pagination } from '@/components/pagination'
 import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
 import { SearchResult } from '@/types/searchResult'
 import mapboxgl from 'mapbox-gl'
@@ -61,7 +61,7 @@ export function SearchSidebar({
         <div className="search-sidebar__result-count">{resultCountText}</div>
       </div>
       <SearchResults users={users} highlightedUser={highlightedUser} onSearchResultHover={onSearchResultHover} />
-      <SearchPagination pageNumber={currentPage} totalCount={totalCount} onPageChange={onPageChange} />
+      <Pagination pageNumber={currentPage} pageSize={25} totalCount={totalCount ?? 0} onPageChange={onPageChange} className={"search-sidebar__pagination"}/>
     </div>
   )
 }
