@@ -30,8 +30,7 @@ export function ProfileEditLocationDistance({generatedCoordinates, distance, onD
 
   const userAtLocationAsArray = (generatedCoordinates && distance != null && user) ? [{
     ...user,
-    latitude: generatedCoordinates.lat,
-    longitude: generatedCoordinates.lng,
+    location: { x: generatedCoordinates.lng, y: generatedCoordinates.lat },
     radiusMiles: distance
   }] : []
 

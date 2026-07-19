@@ -14,9 +14,9 @@ export const displayReactivityMap: Record<Reactivity, string> = {
 }
 
 export const sizeSchema = z.enum(['toy', 'small', 'medium', 'large', 'giant', 'unknown'])
-export type size = z.infer<typeof sizeSchema>
+export type Size = z.infer<typeof sizeSchema>
 
-export const displaySizeMap: Record<size, string> = {
+export const displaySizeMap: Record<Size, string> = {
   toy: 'Toy (0 - 10 lbs)',
   small: 'Small (10 - 35 lbs)',
   medium: 'Medium (35 - 55 lbs)',

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 
 const AUTH_MAX_AGE = 15 * 60

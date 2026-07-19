@@ -5,7 +5,7 @@ import { Baby, PersonStanding, Dog, Cat, X } from 'lucide-react'
 import { uploadImage } from '@/lib/upload'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { Pet, createPetSchema, reactivitySchema, sizeSchema, displaySizeMap, Size, Reactivity } from 'dogsplayingpoker-shared/pet'
+import { Pet, createPetInputSchema, reactivitySchema, sizeSchema, displaySizeMap, Size, Reactivity } from 'dogsplayingpoker-shared/pet'
 import { useCreatePet, useEditPet } from '@/api/pets'
 import { FormField } from '@/components/forms/formField'
 import { z } from 'zod'
@@ -60,7 +60,7 @@ export function AddEditPetForm({ pet, onClose }: Props) {
     setFormError,
     setFormValue,
     validate
-  } = useFormValidation<PetFormState, typeof createPetSchema>(initialState, createPetSchema)
+  } = useFormValidation<PetFormState, typeof createPetInputSchema>(initialState, createPetInputSchema)
   const { file, fileUrl, onChange: onPictureChange } = useImageInput(values.fileUrl)
 
   const { mutateAsync: createPet, isPending: isCreating } = useCreatePet()

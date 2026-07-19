@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { addUserMarker, addUserRange, removeUserRange } from '@/lib/maps'
 import './userMap.scss'
 
@@ -117,7 +117,7 @@ export function UserMap({
     const markers = markersRef.current
 
     const registerUserMarker = (user: User) => {
-      if (!user.longitude || !user.latitude) return
+      if (!user.location) return
       const el = addUserMarker(
         map, 
         user, 

@@ -15,3 +15,11 @@ export type PaginationInput = z.infer<typeof paginationInputSchema>
 
 export const paginationWithIdInputSchema = z.intersection(idInputSchema, paginationInputSchema)
 export type PaginationWithIdInput = z.infer<typeof paginationWithIdInputSchema>
+
+export type MapboxSearchResult = {
+  features: {
+    geometry: {
+      coordinates: number[]
+    }
+  }[]
+}

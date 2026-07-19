@@ -35,8 +35,7 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
 
   const userAtLocationAsArray = (user && coordinates) ? [{
     ...user,
-    latitude: coordinates.lat,
-    longitude: coordinates.lng,
+    location: { x: coordinates.lng, y: coordinates.lat },
     radiusMiles: 0
   }] : []
   

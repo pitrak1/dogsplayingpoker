@@ -25,7 +25,7 @@ export function ProfileEditLocation() {
 
   const handleClearClick = async () => {
     try {
-      const updatedUser = await updateProfile({ latitude: null, longitude: null, radiusMiles: null })
+      const updatedUser = await updateProfile({ location: null, radiusMiles: null })
       setAuthUser(updatedUser)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -44,8 +44,10 @@ export function ProfileEditLocation() {
     if (!generatedCoordinates || distance == null) return
     try {
       const updatedUser = await updateProfile({ 
-        latitude: generatedCoordinates.lat, 
-        longitude: generatedCoordinates.lng, 
+        location: {
+          x: generatedCoordinates.lng,
+          y: generatedCoordinates.lat
+        },
         radiusMiles: distance 
       })
       setAuthUser(updatedUser)

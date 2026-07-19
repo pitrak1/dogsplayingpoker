@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
 import { ApiError } from './errors'
-import { AuthResponse, UserWithPets } from 'dogsplayingpoker-shared/user'
+import { AuthResponse, EditUserInput, FullUser } from 'dogsplayingpoker-shared/user'
 
 export const useUserByUsername = (username: string) =>
   useQuery({
@@ -10,7 +10,7 @@ export const useUserByUsername = (username: string) =>
     queryFn: async () => {
       const res = await api.get(`/api/users/by-username/${username}`)
       if (!res.ok) throw new Error('Failed to fetch user')
-      return res.json() as Promise<UserWithPets>
+      return res.json() as Promise<FullUser>
     },
     enabled: !!username,
   })
@@ -29,7 +29,7 @@ export const useSearchUsers = (input: ActiveSearch | null) =>
         page: String(input!.page),
       })
       if (!res.ok) throw new Error('Failed to search users')
-      return res.json() as Promise<UserWithPets[]>
+      return res.json() as Promise<FullUser[]>
     },
     enabled: !!input
   })
@@ -58,22 +58,14 @@ export const useRegister = () =>
     },
   })
 
-type UpdateProfileInput = {
-  username?: string
-  profileImageUrl?: string
-  latitude?: number | null
-  longitude?: number | null
-  radiusMiles?: number | null
-}
-
 export const useUpdateProfile = () =>
   useMutation({
-    mutationFn: async (input: UpdateProfileInput) => {
+    mutationFn: async (input: EditUserInput) => {
       const res = await api.patch('/users/update-profile', input)
       if (!res.ok) {
         const body = (await res.json()) as { message: string; field?: string }
         throw new ApiError(body.message ?? 'Update profile failed', body.field)
       }
-      return res.json() as Promise<UserWithPets>
+      return res.json() as Promise<FullUser>
     },
   })

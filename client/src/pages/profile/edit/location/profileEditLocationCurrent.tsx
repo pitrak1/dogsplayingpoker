@@ -24,12 +24,19 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
   )
 
   useEffect(() => {
-    if (!mapInstance || !user || !user.latitude || !user.longitude) return
-    mapInstance.easeTo({ center: [user.longitude, user.latitude], duration: 1000 })
+    if (!mapInstance || !user || !user.location) return
+    mapInstance.easeTo({ center: [user.location.x, user.location.y], duration: 1000 })
   }, [mapInstance, user])
 
-  const hasCurrentLocation = user && user.latitude && user.longitude
+  const hasCurrentLocation = user && user.location
   const clearButtonDisabled = !hasCurrentLocation || isPending
+
+  const getInitialPosition = () => {
+    if (user && user.location) {
+      return { lat: user.location.y, lng: user?.location.x, zoom: 10 }
+    }
+  }
+
     
   return (
     <div className="profile-edit-location-current">
@@ -50,7 +57,7 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
       <div className="profile-edit-location-current__map-container">
         <UserMap 
           users={users} 
-          initialPosition={{ lat: user?.latitude, lng: user?.longitude, zoom: 10 }}
+          initialPosition={getInitialPosition()}
           isBlocked={!hasCurrentLocation}
           lockMovement={true}
           onMapReady={handleMapReady}

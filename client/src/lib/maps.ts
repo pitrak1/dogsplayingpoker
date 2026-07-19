@@ -1,4 +1,4 @@
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { getCssVar } from './cssVars'
 import mapboxgl from 'mapbox-gl'
 
@@ -49,8 +49,8 @@ export const addUserMarker = (
   onHover?: (user: User | null) => void,
   overrides?: { lat?: number, lng?: number, style?: string }) =>
 {
-  const lat = overrides?.lat ?? user.latitude ?? 0
-  const lng = overrides?.lng ?? user.longitude ?? 0
+  const lat = overrides?.lat ?? user.location?.y ?? 0
+  const lng = overrides?.lng ?? user.location?.x ?? 0
   const marker = new mapboxgl.Marker({ element: createMarkerElement(user, onClick, overrides?.style) })
     .setLngLat([lng, lat])
     .addTo(map)
@@ -66,8 +66,8 @@ export const addUserMarker = (
   
 
 export const addUserRange = (map: mapboxgl.Map, user: User) => {
-  if (!user.radiusMiles || user.radiusMiles === 0) return
-  return addRange(map, user.latitude, user.longitude, user.radiusMiles)
+  if (!user.radiusMiles || user.radiusMiles === 0 || !user.location) return
+  return addRange(map, user.location.y, user.location.x, user.radiusMiles)
 }
 
 export const addRange = (map: mapboxgl.Map, lat: number, lng: number, radius: number, overrides?: { id?: string, color?: string }) => {
