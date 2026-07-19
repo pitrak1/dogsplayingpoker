@@ -2,7 +2,7 @@ import { SearchBox } from '@mapbox/search-js-react'
 import { SearchResults } from './searchResults'
 import { Pagination } from '@/components/pagination'
 import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
-import { SearchResult } from '@/types/searchResult'
+import type { MapboxSearchResult } from 'dogsplayingpoker-shared/common'
 import mapboxgl from 'mapbox-gl'
 import { useState } from 'react'
 import './searchSidebar.scss'
@@ -38,7 +38,7 @@ export function SearchSidebar({
   const labelText = searchedLocation ? `Searching near` : `Search for a location`
   const resultCountText = `${totalCount} total users in search area`
 
-  const handleSearchSubmit = (result: SearchResult) => {
+  const handleSearchSubmit = (result: MapboxSearchResult) => {
     onSearchLocationChange(result.features[0].properties.name)
   }
 

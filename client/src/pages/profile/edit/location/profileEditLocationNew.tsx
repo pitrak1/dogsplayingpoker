@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { UserMap } from '@/components/userMap'
 import { SearchBox } from '@mapbox/search-js-react'
 import { useAuth } from '@/context/auth'
-import { SearchResult } from '@/types/searchResult'
+import { MapboxSearchResult } from 'dogsplayingpoker-shared/common'
 import { MapBlocker } from '@/components/mapBlocker'
 import './profileEditLocationNew.scss'
 
@@ -26,7 +26,7 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
     []
   )
 
-  const handleSearchSubmit = (result: SearchResult) => {
+  const handleSearchSubmit = (result: MapboxSearchResult) => {
     if (!user || !mapInstance) return
     const [lng, lat] = result.features[0].geometry.coordinates
     mapInstance.easeTo({ center: [lng, lat], duration: 1000 })
