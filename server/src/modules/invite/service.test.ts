@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, chatInvites, chats, chatMemberships, messages, messages } from '@/db/schema'
+import { users, chatInvites, chats, chatMemberships, messages } from '@/db/schema'
 import * as inviteService from '@/modules/invite/service'
 import { setupInvite, setupUsers } from '@/test/factories'
 
@@ -16,7 +16,7 @@ describe('inviteService.getSentInvitesForUser', () => {
   it('returns invites where user is sender', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getSentInvitesForUser({ userId: user1.id })
+    const result = await inviteService.getSentInvitesForUser({ id: user1.id })
     expect(result.totalCount).toBe(1)
     expect(result.invites[0].receiverId).toBe(user2.id)
   })
@@ -24,7 +24,7 @@ describe('inviteService.getSentInvitesForUser', () => {
   it('does not return invites where user is receiver', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user2.id, user1.id)
-    const result = await inviteService.getSentInvitesForUser({ userId: user1.id })
+    const result = await inviteService.getSentInvitesForUser({ id: user1.id })
     expect(result.totalCount).toBe(0)
   })
 })
@@ -33,7 +33,7 @@ describe('inviteService.getReceivedInvitesForUser', () => {
   it('returns invites where user is receiver', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getReceivedInvitesForUser({ userId: user2.id })
+    const result = await inviteService.getReceivedInvitesForUser({ id: user2.id })
     expect(result.totalCount).toBe(1)
     expect(result.invites[0].senderId).toBe(user1.id)
   })
@@ -41,7 +41,7 @@ describe('inviteService.getReceivedInvitesForUser', () => {
   it('does not return invites where user is sender', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user2.id, user1.id)
-    const result = await inviteService.getReceivedInvitesForUser({ userId: user2.id })
+    const result = await inviteService.getReceivedInvitesForUser({ id: user2.id })
     expect(result.totalCount).toBe(0)
   })
 })

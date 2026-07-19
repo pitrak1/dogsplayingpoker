@@ -1,10 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { pets, reactivityEnum, sizeEnum, NewPet, Pet } from '@/db/schema'
-import { CreatePetInput } from 'dogsplayingpoker-shared/pet'
-
-export type Reactivity = (typeof reactivityEnum.enumValues)[number]
-export type Size = (typeof sizeEnum.enumValues)[number]
+import { pets } from '@/db/schema'
+import { CreatePetInput, Pet } from 'dogsplayingpoker-shared/pet'
 
 export const listPetsForOwner = (ownerId: number) =>
   db.select().from(pets).where(eq(pets.ownerId, ownerId))
@@ -14,11 +11,12 @@ export const getPetById = async (id: number): Promise<Pet | null> => {
   return pet ?? null
 }
 
-export const createPet = async (input: NewPet) => {
+export const createPet = async (input: CreatePetInput) => {
   const rows = await db.insert(pets).values(input).returning()
   return rows[0]
 }
 
+// CreatePetInput is fine to use here because the current form sends back all form data, not just changes
 export const editPet = async (id: number, input: CreatePetInput): Promise<Pet | null> => {
   const [pet] = await db.update(pets).set(input).where(eq(pets.id, id)).returning()
   return pet ?? null

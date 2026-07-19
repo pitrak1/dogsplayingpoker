@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
-import { makePet } from '@/test/factories'
+import { makePet, makePetInput } from '@/test/factories'
 import * as petService from '@/modules/pet/service'
 
 describe('GET /api/pets', () => {
@@ -48,7 +48,7 @@ describe('POST /api/pets/', () => {
 describe('PUT /api/pets/:id', () => {
   it('returns 404 if pet does not exist', async () => {
     vi.spyOn(petService, 'getPetById').mockResolvedValue(null)
-    const body = JSON.stringify(makePet(1, 1))
+    const body = JSON.stringify(makePetInput(1))
     const token = generateAuthToken(1)
     const res = await app.request(`/api/pets/11`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -61,7 +61,7 @@ describe('PUT /api/pets/:id', () => {
   it('returns 401 if pet does not belong to the user', async () => {
     const pet = makePet(1, 2)
     vi.spyOn(petService, 'getPetById').mockResolvedValue(pet)
-    const body = JSON.stringify(pet)
+    const body = JSON.stringify(makePetInput(1))
     const token = generateAuthToken(1)
     const res = await app.request(`/api/pets/11`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },

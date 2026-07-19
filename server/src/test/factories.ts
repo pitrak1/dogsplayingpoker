@@ -1,13 +1,13 @@
-import type { Pet, User, ChatInvite } from '@/db/schema'
-import type { CreateUserInput, CreatePetInput } from '@/types'
+import type { PetRow, UserRow } from '@/db/schema'
 import { db } from '@/db'
 import { users, pets, chatInvites } from '@/db/schema'
 import bcrypt from 'bcrypt'
-import { coordsToLocation } from '@/lib/geo'
-import { CreateInviteInput, Status, UpdateInviteStatusInput } from 'dogsplayingpoker-shared/invite'
+import { CreateInviteInput, Status } from 'dogsplayingpoker-shared/invite'
+import { CreateUserInput } from 'dogsplayingpoker-shared/user'
+import { CreatePetInput } from 'dogsplayingpoker-shared/pet'
 import { add } from 'date-fns'
 
-export const makeUser = (overrides: Partial<User> = {}): User => ({
+export const makeUser = (overrides: Partial<UserRow> = {}): UserRow => ({
   id: 1,
   username: 'testuser',
   email: 'test@example.com',
@@ -26,8 +26,10 @@ export const makeUserInput = (overrides: Partial<CreateUserInput> = {}): CreateU
   email: 'test@example.com',
   password: 'hashed',
   profileImageUrl: null,
-  latitude: 41.8781,
-  longitude: -87.6298,
+  location: {
+    x: -87.6298,
+    y: 41.8781
+  },
   radiusMiles: 5,
   ...overrides,
 })
@@ -35,7 +37,7 @@ export const makeUserInput = (overrides: Partial<CreateUserInput> = {}): CreateU
 export const setupUser = async (overrides: Partial<CreateUserInput> = {}) => {
   const userInput = makeUserInput(overrides)
   const hashed = await bcrypt.hash(userInput.password, 12)
-  const convertedUserInput = {...userInput, password: hashed, location: coordsToLocation(overrides.latitude ?? null, overrides.longitude ?? null) }
+  const convertedUserInput = {...userInput, password: hashed }
   const [user] = await db.insert(users).values(convertedUserInput).returning()
   return user
 }
@@ -43,8 +45,7 @@ export const setupUser = async (overrides: Partial<CreateUserInput> = {}) => {
 export const setupUsers = async (count: number, overrides: Partial<CreateUserInput> = {}) => {
   const base = makeUserInput(overrides)
   const hashed = await bcrypt.hash(base.password, 12)
-  const location = coordsToLocation(base.latitude, base.longitude)
-  const userInput = { ...base, password: hashed, location }
+  const userInput = { ...base, password: hashed }
   const input: CreateUserInput[] = []
   for (let i = 0; i < count; i++) {
     input.push({...userInput, username: `user${i}`, email: `user${i}@example.com` })
@@ -52,12 +53,26 @@ export const setupUsers = async (count: number, overrides: Partial<CreateUserInp
   return await db.insert(users).values(input).returning()
 }
 
-export const makePet = (petId: number, ownerId: number, overrides: Partial<CreatePetInput> = {}): Pet => ({
-  ...makePetInput(ownerId, overrides),
+export const makePet = (petId: number, ownerId: number, overrides: Partial<PetRow> = {}): PetRow => ({
   id: petId,
+  name: 'testuser',
+  age: 1,
+  size: 'medium',
+  breed: 'husky',
+  pictureUrl: null,
+  dogReactivity: 'unknown',
+  dogReactivityNotes: null,
+  catReactivity: 'unknown',
+  catReactivityNotes: null,
+  kidReactivity: 'unknown',
+  kidReactivityNotes: null,
+  peopleReactivity: 'unknown',
+  peopleReactivityNotes: null,
+  ownerId,
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
+  ...overrides
 })
 
 export const makePetInput = (ownerId: number, overrides: Partial<CreatePetInput> = {}): CreatePetInput => ({
@@ -88,12 +103,6 @@ export const makeCreateInviteInput = (overrides: Partial<CreateInviteInput> = {}
   senderId: 1,
   receiverId: 2,
   message: 'fake-message',
-  ...overrides
-})
-
-export const makeUpdateInviteStatusInput = (overrides: Partial<UpdateInviteStatusInput> = {}): UpdateInviteStatusInput => ({
-  id: 1,
-  status: 'pending',
   ...overrides
 })
 

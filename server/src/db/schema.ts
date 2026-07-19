@@ -10,20 +10,20 @@ import {
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
-export type User = typeof users.$inferSelect
-export type NewUser = typeof users.$inferInsert
-export type Pet = typeof pets.$inferSelect
-export type NewPet = typeof pets.$inferInsert
-export type Chat = typeof chats.$inferSelect
-export type NewChat = typeof chats.$inferInsert
-export type ChatMembership = typeof chatMemberships.$inferSelect
-export type NewChatMembership = typeof chatMemberships.$inferInsert
-export type Message = typeof messages.$inferSelect
-export type NewMessage = typeof messages.$inferInsert
-export type ChatInvite = typeof chatInvites.$inferSelect
-export type NewChatInvite = typeof chatInvites.$inferInsert
-export type UserBlock = typeof userBlocks.$inferSelect
-export type NewUserBlock = typeof userBlocks.$inferInsert
+export type UserRow = typeof users.$inferSelect
+export type NewUserRow = typeof users.$inferInsert
+export type PetRow = typeof pets.$inferSelect
+export type NewPetRow = typeof pets.$inferInsert
+export type ChatRow = typeof chats.$inferSelect
+export type NewChatRow = typeof chats.$inferInsert
+export type ChatMembershipRow = typeof chatMemberships.$inferSelect
+export type NewChatMembershipRow = typeof chatMemberships.$inferInsert
+export type MessageRow = typeof messages.$inferSelect
+export type NewMessageRow = typeof messages.$inferInsert
+export type ChatInviteRow = typeof chatInvites.$inferSelect
+export type NewChatInviteRow = typeof chatInvites.$inferInsert
+export type UserBlockRow = typeof userBlocks.$inferSelect
+export type NewUserBlockRow = typeof userBlocks.$inferInsert
 
 export const reactivityEnum = pgEnum('reactivity', ['strong', 'mixed', 'none', 'unknown'])
 export const sizeEnum = pgEnum('size', ['giant', 'large', 'medium', 'small', 'toy', 'unknown'])

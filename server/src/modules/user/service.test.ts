@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, pets, User, Pet } from '@/db/schema'
+import { users, pets, UserRow, PetRow } from '@/db/schema'
 import * as userService from '@/modules/user/service'
 import { makeUserInput, setupPetForUser, setupUser, setupUsers } from '@/test/factories'
 import { verifyAuthToken, verifyRefreshToken } from '@/lib/auth'
@@ -11,8 +11,8 @@ beforeEach(async () => {
 })
 
 describe('userService.getUserById', () => {
-  let testUser: User
-  let testPet: Pet
+  let testUser: UserRow
+  let testPet: PetRow
 
   beforeEach(async () => {
     testUser = await setupUser()
@@ -37,8 +37,8 @@ describe('userService.getUserById', () => {
 })
 
 describe('userService.getUserByUsername', () => {
-  let testUser: User
-  let testPet: Pet
+  let testUser: UserRow
+  let testPet: PetRow
 
   beforeEach(async () => {
     testUser = await setupUser()
@@ -63,7 +63,7 @@ describe('userService.getUserByUsername', () => {
 })
 
 describe('userService.loginUser', () => {
-  let testUser: User
+  let testUser: UserRow
   const password = 'fake-password'
 
   beforeEach(async () => {
@@ -129,45 +129,45 @@ describe('userService.searchUsersNearby', () => {
   }
 
   it('includes users inside the envelope', async () => {
-    await setupUser({ latitude: 41.88, longitude: -87.63 })  // Chicago Loop
+    await setupUser({ location: { y: 41.88, x: -87.63 } })  // Chicago Loop
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users).toHaveLength(1)
   })
 
   it('excludes users outside the envelope', async () => {
-    await setupUser({ latitude: 40.7128, longitude: -74.0060 })  // NYC
+    await setupUser({ location: { y: 40.7128, x: -74.0060 } })  // NYC
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users).toHaveLength(0)
   })
 
   it('includes users exactly on the southern boundary', async () => {
-    await setupUser({ latitude: 41.85, longitude: -87.63 })  // exactly at swLat
+    await setupUser({ location: { y: 41.85, x: -87.63 } })  // exactly at swLat
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users).toHaveLength(1)  // ST_MakeEnvelope includes boundary
   })
 
   it('sorts results by distance from center', async () => {
-    await setupUser({ username: 'far', email: 'far@example.com', latitude: 41.95, longitude: -87.55 })
-    await setupUser({ username: 'near', email: 'near@example.com', latitude: 41.881, longitude: -87.629 })
+    await setupUser({ username: 'far', email: 'far@example.com', location: { y: 41.95, x: -87.55 } })
+    await setupUser({ username: 'near', email: 'near@example.com', location: { y: 41.881, x: -87.629 } })
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users[0].username).toBe('near')
     expect(result.users[1].username).toBe('far')
   })
 
   it('defaults to page 1 and pageSize 25', async () => {
-    await setupUsers(30, { latitude: 41.88, longitude: -87.63 })
+    await setupUsers(30, { location: { y: 41.88, x: -87.63 } })
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users).toHaveLength(25)
   })
 
   it('returns totalCount independent of page size', async () => {
-    await setupUsers(30, { latitude: 41.88, longitude: -87.63 })
+    await setupUsers(30, { location: { y: 41.88, x: -87.63 } })
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.totalCount).toBe(30)
   })
 
   it('respects pagination', async () => {
-    await setupUsers(30, { latitude: 41.88, longitude: -87.63 })
+    await setupUsers(30, { location: { y: 41.88, x: -87.63 } })
     const page1 = await userService.searchUsersNearby({ ...chicagoEnvelope, page: 1 })
     const page2 = await userService.searchUsersNearby({ ...chicagoEnvelope, page: 2 })
     expect(page1.users).toHaveLength(25)
@@ -176,7 +176,7 @@ describe('userService.searchUsersNearby', () => {
   })
 
   it('embeds pets in results', async () => {
-    const user = await setupUser({ latitude: 41.88, longitude: -87.63 })
+    const user = await setupUser({ location: { y: 41.88, x: -87.63 } })
     await setupPetForUser(user.id)
     const result = await userService.searchUsersNearby(chicagoEnvelope)
     expect(result.users).toHaveLength(1)
@@ -198,22 +198,20 @@ describe('userService.updateUserProfile', () => {
   })
 
   it('updates location and radiusMiles if lat/lng/rad are provided', async () => {
-    const locationInput = { latitude: 1, longitude: 2, radiusMiles: 3 }
+    const locationInput = { location: { y: 1, x: 2 }, radiusMiles: 3 }
     const user = await userService.createUser(makeUserInput())
     const updatedUser = await userService.updateUserProfile(user.user.id, locationInput)
-    expect(updatedUser.latitude).toBe(1)
-    expect(updatedUser.longitude).toBe(2)
+    expect(updatedUser.location!.y).toBe(1)
+    expect(updatedUser.location!.x).toBe(2)
     expect(updatedUser.radiusMiles).toBe(3)
   })
 
   it('does not update if any of these three are not provided', async () => {
     const userInput = makeUserInput()
-    const locationInput = { latitude: 1, longitude: 2 }
+    const locationInput = { location: { y: 1, x: 2 } }
     const user = await userService.createUser(userInput)
     const updatedUser = await userService.updateUserProfile(user.user.id, locationInput)
-    expect(updatedUser.latitude).toBe(userInput.latitude)
-    expect(updatedUser.longitude).toBe(userInput.longitude)
-    expect(updatedUser.radiusMiles).toBe(userInput.radiusMiles)
+    expect(updatedUser.location).toBeNull()
   })
 
   it('rejects duplicate username', async () => {

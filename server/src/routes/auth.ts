@@ -42,10 +42,6 @@ export const authRoutes = new Hono<AppEnv>()
         username: body.username,
         email: body.email,
         password: body.password,
-        profileImageUrl: body.profileImageUrl ?? null,
-        latitude: body.latitude ?? null,
-        longitude: body.longitude ?? null,
-        radiusMiles: body.radiusMiles ?? null,
       })
       setRefreshCookie(c, refreshToken)
       return c.json({ authToken, user })

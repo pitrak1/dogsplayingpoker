@@ -11,32 +11,23 @@ export const createInviteInputSchema = z.object({
 })
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>
 
-export const inviteSchema = z.object({
+export const chatInviteSchema = z.object({
   message: z.string().nullish(),
+  receiverId: z.number().int().positive(),
   receiver: userSchema.nullish(),
+  senderId: z.number().int().positive(),
   sender: userSchema.nullish(),
   createdAt: z.date(),
 })
 
-export type Invite = z.infer<typeof inviteSchema>
+export type ChatInvite = z.infer<typeof chatInviteSchema>
 
-export type ChatInvite = {
-  id: number
-  message: string | null
-  senderId: number
-  receiverId: number
-  status: Status
-  createdAt: string
-  updatedAt: string
-  expiredAt: string
-}
-
-export type ChatInviteWithUsers = ChatInvite & {
+export type FullChatInvite = ChatInvite & {
   sender?: User | null
   receiver?: User | null
 }
 
-export type InviteListResponse = {
-  invites: ChatInviteWithUsers[]
+export type InvitePaginationResponse = {
+  invites: FullChatInvite[]
   totalCount: number
 }

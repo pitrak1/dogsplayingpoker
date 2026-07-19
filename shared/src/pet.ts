@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const reactivitySchema = z.enum(['none', 'mixed', 'strong', 'unknown'])
-export type reactivity = z.infer<typeof reactivitySchema>
+export type Reactivity = z.infer<typeof reactivitySchema>
 
 export const reactivityTypeSchema = z.enum(['Dogs', 'Cats', 'Kids', 'People'])
-export type reactivityType = z.infer<typeof reactivityTypeSchema>
+export type ReactivityType = z.infer<typeof reactivityTypeSchema>
 
-export const displayReactivityMap: Record<reactivity, string> = {
+export const displayReactivityMap: Record<Reactivity, string> = {
   unknown: 'Unknown',
   none: 'None',
   mixed: 'Mixed',
@@ -46,9 +46,8 @@ export const petSchema = z.object({
 export type Pet = z.infer<typeof petSchema>
 
 
-export const createPetSchema = petSchema.omit({
+export const createPetInputSchema = petSchema.omit({
   id: true,
-  ownerId: true,
 })
 
-export type CreatePetInput = z.infer<typeof createPetSchema>
+export type CreatePetInput = z.infer<typeof createPetInputSchema>

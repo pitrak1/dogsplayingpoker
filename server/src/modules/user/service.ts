@@ -1,32 +1,29 @@
 import { and, eq, isNull, sql, getTableColumns, inArray } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { db } from '@/db'
-import { users, pets, User } from '@/db/schema'
+import { users, pets } from '@/db/schema'
 import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/lib/auth'
-import { transformUser, coordsToLocation } from '@/lib/geo'
-import { SearchUsersParams } from '@/routes/users'
-import { UserWithPets } from '@/types'
 import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
-import type { NewUser } from '@/db/schema'
+import type { NewUserRow } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
-import type { EditUserInput } from 'dogsplayingpoker-shared/user'
+import type { CreateUserInput, EditUserInput, User, FullUser, SearchUsersInput } from 'dogsplayingpoker-shared/user'
 
-const userWithPets = async (user: User) => {
+const getFullUser = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
-  return { ...transformUser(user), pets: userPets }
+  return { ...user, pets: userPets }
 }
 
 export const getUserById = async (id: number) => {
   const rows = await db.select().from(users)
     .where(and(eq(users.id, id), isNull(users.deletedAt)))
-  return rows[0] ? userWithPets(rows[0]) : null
+  return rows[0] ? await getFullUser(rows[0]) : null
 }
 
 export const getUserByUsername = async (username: string) => {
   const rows = await db.select().from(users)
     .where(and(eq(users.username, username), isNull(users.deletedAt)))
-  return rows[0] ? userWithPets(rows[0]) : null
+  return rows[0] ? await getFullUser(rows[0]) : null
 }
 
 export const loginUser = async (email: string, password: string) => {
@@ -40,34 +37,23 @@ export const loginUser = async (email: string, password: string) => {
   return {
     authToken: generateAuthToken(user.id),
     refreshToken: generateRefreshToken(user.id),
-    user: await userWithPets(user),
+    user: await getFullUser(user),
   }
 }
 
-export const createUser = async (input: {
-  username: string
-  email: string
-  password: string
-  profileImageUrl: string | null
-  latitude: number | null
-  longitude: number | null
-  radiusMiles: number | null
-}) => {
+export const createUser = async (input: CreateUserInput) => {
   try {
     const hashed = await bcrypt.hash(input.password, 12)
     const rows = await db.insert(users).values({
       username: input.username,
       email: input.email,
       password: hashed,
-      profileImageUrl: input.profileImageUrl,
-      location: coordsToLocation(input.latitude, input.longitude),
-      radiusMiles: input.radiusMiles,
     }).returning()
     const user = rows[0]
     return {
       authToken: generateAuthToken(user.id),
       refreshToken: generateRefreshToken(user.id),
-      user: await userWithPets(user),
+      user: await getFullUser(user),
     }
   } catch (e: unknown) {
     if (e instanceof DatabaseError && e.code === PG_UNIQUE_VIOLATION) {
@@ -83,7 +69,7 @@ export const refreshAccessToken = (refreshToken: string) => {
   return { authToken: generateAuthToken(payload.userId) }
 }
 
-export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ users: UserWithPets[], totalCount: number }> => {
+export const searchUsersNearby = async (params: SearchUsersInput): Promise<{ users: FullUser[], totalCount: number }> => {
   const pageSize = params.pageSize ?? 25
   const offset = ((params.page ?? 1) - 1) * pageSize
 
@@ -127,23 +113,29 @@ export const searchUsersNearby = async (params: SearchUsersParams): Promise<{ us
   }
 
   // Combine
-  const usersWithPets = userRows.map((row) => ({
-    ...transformUser(row),
+  const fullUsers = userRows.map((row) => ({
+    ...row,
     distanceMeters: row.distanceMeters,
     pets: petsByOwner.get(row.id) ?? [],
   }))
 
-  return { users: usersWithPets, totalCount }
+  return { users: fullUsers, totalCount }
 }
 
 export const updateUserProfile = async (userId: number, input: EditUserInput) => {
-  const updates: Omit<Partial<NewUser>, 'location'> & { location?: SQL | null } = {}
+  const updates: Omit<Partial<NewUserRow>, 'location'> & { location?: SQL | null } = {}
 
   if (input.username) updates.username = input.username
   if (input.profileImageUrl) updates.profileImageUrl = input.profileImageUrl
-  if (input.latitude !== undefined && input.longitude !== undefined && input.radiusMiles !== undefined) {
-    updates.location = coordsToLocation(input.latitude, input.longitude)
+
+  // This handles setting and clearing a user's location
+  if (input.location !== undefined && input.radiusMiles !== undefined) {
     updates.radiusMiles = input.radiusMiles
+    if (input.location && input.radiusMiles) {
+      updates.location = sql`ST_MakePoint(${input.location.x}, ${input.location.y})`
+    } else {
+      updates.location = null
+    }
   }
   updates.updatedAt = new Date()
 
@@ -153,7 +145,7 @@ export const updateUserProfile = async (userId: number, input: EditUserInput) =>
       .set(updates)
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .returning()
-    return userWithPets(rows[0])
+    return getFullUser(rows[0])
   } catch (e: unknown) {
     if (e instanceof DatabaseError && e.code === PG_UNIQUE_VIOLATION) {
       if (e.constraint?.includes('username')) throw new ConflictError('That username is already taken', 'username')

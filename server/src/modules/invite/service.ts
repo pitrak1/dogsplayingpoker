@@ -1,38 +1,34 @@
 import { and, eq, gt, sql, inArray } from 'drizzle-orm'
 import { db } from '@/db'
-import { chatInvites, NewChatInvite, User, users, ChatInvite, chats, chatMemberships, messages } from '@/db/schema'
-import { CreateInviteInput } from 'dogsplayingpoker-shared/invite'
+import { chatInvites, NewChatInviteRow, UserRow, users, ChatInviteRow, chats, chatMemberships, messages } from '@/db/schema'
+import { CreateInviteInput, InvitePaginationResponse, ChatInvite } from 'dogsplayingpoker-shared/invite'
+import { PaginationWithIdInput } from 'dogsplayingpoker-shared/common'
 import { add } from 'date-fns'
-import { PaginationInputWithUserId, InviteWithUsers } from '@/types'
-import { transformUser } from '@/lib/geo'
 
-
-type InviteListResult = { invites: InviteWithUsers[], totalCount: number }
-
-const attachUsersToInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender') => {
+const getFullInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender') => {
   const userIds = invites.map(i => i[`${key}Id`])
   const allUsers = await db.select().from(users).where(inArray(users.id, userIds))
 
-  const usersById = new Map<number, User>()
+  const usersById = new Map<number, UserRow>()
   for (const user of allUsers) {
     usersById.set(user.id, user)
   }
 
   return invites.map((row) => ({
     ...row,
-    [key]: transformUser(usersById.get(row[`${key}Id`])!)
+    [key]: usersById.get(row[`${key}Id`])!
   }))
 }
 
-export const getSentInvitesForUser = async (input: PaginationInputWithUserId): Promise<InviteListResult> => {
-  const { page, pageSize, userId } = input
+export const getSentInvitesForUser = async (input: PaginationWithIdInput): Promise<InvitePaginationResponse> => {
+  const { page, pageSize, id } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
 
   const [invites, totalCount] = await Promise.all([
     db.select().from(chatInvites)
       .where(and(
-        eq(chatInvites.senderId, userId), 
+        eq(chatInvites.senderId, id), 
         gt(chatInvites.expiredAt, sql`NOW()`)
       )) 
       .orderBy(sql`created_at`)
@@ -41,7 +37,7 @@ export const getSentInvitesForUser = async (input: PaginationInputWithUserId): P
     db.select({ count: sql<number>`count(*)::int` })
       .from(chatInvites)
       .where(and(
-        eq(chatInvites.senderId, userId),
+        eq(chatInvites.senderId, id),
         gt(chatInvites.expiredAt, sql`NOW()`)
       ))
       .then(r => r[0].count)
@@ -49,20 +45,20 @@ export const getSentInvitesForUser = async (input: PaginationInputWithUserId): P
 
   if (invites.length === 0) return { invites: [], totalCount: 0 }
 
-  const invitesWithUsers = await attachUsersToInvites(invites, 'receiver')
+  const fullInvites = await getFullInvites(invites, 'receiver')
   
-  return { invites: invitesWithUsers, totalCount }
+  return { invites: fullInvites, totalCount }
 }
 
-export const getReceivedInvitesForUser = async (input: PaginationInputWithUserId): Promise<InviteListResult> => {
-  const { page, pageSize, userId } = input
+export const getReceivedInvitesForUser = async (input: PaginationWithIdInput): Promise<InvitePaginationResponse> => {
+  const { page, pageSize, id } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
 
   const [invites, totalCount] = await Promise.all([
     db.select().from(chatInvites)
       .where(and(
-        eq(chatInvites.receiverId, userId),
+        eq(chatInvites.receiverId, id),
         gt(chatInvites.expiredAt, sql`NOW()`),
         eq(chatInvites.status, "pending")
       ))
@@ -72,7 +68,7 @@ export const getReceivedInvitesForUser = async (input: PaginationInputWithUserId
     db.select({ count: sql<number>`count(*)::int` })
       .from(chatInvites)
       .where(and(
-        eq(chatInvites.receiverId, userId),
+        eq(chatInvites.receiverId, id),
         gt(chatInvites.expiredAt, sql`NOW()`),
         eq(chatInvites.status, "pending")
       ))
@@ -81,12 +77,12 @@ export const getReceivedInvitesForUser = async (input: PaginationInputWithUserId
   
   if (invites.length === 0) return { invites: [], totalCount: 0 }
 
-  const invitesWithUsers = await attachUsersToInvites(invites, 'sender')
+  const fullInvites = await getFullInvites(invites, 'sender')
   
-  return { invites: invitesWithUsers, totalCount }
+  return { invites: fullInvites, totalCount }
 }
 
-export const getInviteById = async (id: number): Promise<ChatInvite | null> => {
+export const getInviteById = async (id: number): Promise<ChatInviteRow | null> => {
   const rows = await db.select().from(chatInvites)
     .where(and(
       eq(chatInvites.id, id), 
@@ -139,7 +135,7 @@ export const acceptInvite = async (id: number) => {
 
 export const createInvite = async (input: CreateInviteInput) => {
   const expiredAt = add(new Date(), { weeks: 2 })
-  const data = { status: 'pending', expiredAt, ...input } as NewChatInvite
+  const data = { status: 'pending', expiredAt, ...input } as NewChatInviteRow
   const rows = await db.insert(chatInvites).values(data).returning()
   return rows[0]
 }

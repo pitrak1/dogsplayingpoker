@@ -11,21 +11,21 @@ import {
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
 import { createInviteInputSchema } from 'dogsplayingpoker-shared/invite'
-import { paginationInputWithUserIdSchema } from '../types'
+import { paginationWithIdInputSchema } from 'dogsplayingpoker-shared/common'
 import { idInputSchema } from 'dogsplayingpoker-shared/common'
 
 export const inviteRoutes = new Hono<AuthedEnv>()
-  .get('/sent', zValidator('query', paginationInputWithUserIdSchema), async (c) => {
+  .get('/sent', zValidator('query', paginationWithIdInputSchema), async (c) => {
     const userId = c.get('userId')
     const params = c.req.valid('query')
-    if (params.userId !== userId) return c.json({ message: 'You can only fetch your own invites' }, 400)
+    if (params.id !== userId) return c.json({ message: 'You can only fetch your own invites' }, 400)
     const sent = await getSentInvitesForUser(params);
     return c.json(sent)
   })
-  .get('/received', zValidator('query', paginationInputWithUserIdSchema), async (c) => {
+  .get('/received', zValidator('query', paginationWithIdInputSchema), async (c) => {
     const userId = c.get('userId')
     const params = c.req.valid('query')
-    if (params.userId !== userId) return c.json({ message: 'You can only fetch your own invites' }, 400)
+    if (params.id !== userId) return c.json({ message: 'You can only fetch your own invites' }, 400)
     const received = await getReceivedInvitesForUser(params);
     return c.json(received)
   })

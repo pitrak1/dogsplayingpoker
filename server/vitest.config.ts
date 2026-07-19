@@ -8,6 +8,7 @@ export default defineConfig({
     setupFiles: ['./src/test/vitest.setup.ts'],
     globalSetup: ['./src/test/vitest.globalSetup.ts'],
     fileParallelism: false,
+    include: ['src/**/*.test.ts']
   },
   resolve: {
     alias: {
