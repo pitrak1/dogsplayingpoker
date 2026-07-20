@@ -5,6 +5,7 @@ import { userRoutes } from './routes/users'
 import { authRoutes } from './routes/auth'
 import { petRoutes } from './routes/pets'
 import { inviteRoutes } from './routes/invites'
+import { chatRoutes } from './routes/chats'
 import type { AppEnv } from './types'
 
 const apiRoutes = new Hono<AppEnv>()
@@ -16,6 +17,7 @@ const apiRoutes = new Hono<AppEnv>()
   .route('/media', mediaRoutes)
   .route('/pets', petRoutes)
   .route('/invites', inviteRoutes)
+  .route('/chats', chatRoutes)
 
 
 export const app = new Hono<AppEnv>().route('/api', apiRoutes)

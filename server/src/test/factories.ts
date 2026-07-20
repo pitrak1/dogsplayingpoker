@@ -1,6 +1,6 @@
 import type { PetRow, UserRow } from '@/db/schema'
 import { db } from '@/db'
-import { users, pets, chatInvites } from '@/db/schema'
+import { users, pets, chatInvites, chats, chatMemberships } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { CreateInviteInput, Status } from 'dogsplayingpoker-shared/invite'
 import { CreateUserInput } from 'dogsplayingpoker-shared/user'
@@ -135,3 +135,37 @@ export const setupInvite = async (
   return invite
 }
 
+export const makeChat = (overrides: Partial<{ hostId: number }> = {}) => ({
+  id: 1,
+  hostId: 2,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: new Date(),
+  ...overrides
+})
+
+export const setupChat = async (hostId: number) => {
+  const [chat] = await db.insert(chats).values({ hostId }).returning()
+  return chat
+}
+
+export const makeChatMembership = (chatId: number, userId: number) => ({
+  id: 1,
+  chatId,
+  userId,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: new Date(),
+})
+
+export const setupChatMembership = async (
+  chatId: number, 
+  userId: number, 
+) => {
+  const input = {
+    chatId,
+    userId,
+  }
+  const [chat] = await db.insert(chatMemberships).values(input).returning()
+  return chat
+}
