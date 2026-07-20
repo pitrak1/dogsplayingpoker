@@ -12,6 +12,7 @@ export const createInviteInputSchema = z.object({
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>
 
 export const chatInviteSchema = z.object({
+  id: z.number().int().positive(),
   message: z.string().nullish(),
   receiverId: z.number().int().positive(),
   receiver: userSchema.nullish(),

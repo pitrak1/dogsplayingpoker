@@ -20,9 +20,6 @@ export function Invites() {
   const { mutateAsync: declineInvite, isPending: isDeclinePending } = useDeclineInvite()
   const [pageError, setPageError]= useState<string | null>(null)
 
-  console.log(sentInvites)
-  console.log(receivedInvites)
-
   const hasReceivedInvites = receivedInvites && receivedInvites.invites.length > 0
   const hasSentInvites = sentInvites && sentInvites.invites.length > 0
 

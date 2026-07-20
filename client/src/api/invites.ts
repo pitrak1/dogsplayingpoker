@@ -8,7 +8,7 @@ export const useSentInvites = (userId: number | undefined, params: PaginationInp
     queryKey: ['invites', { senderId: userId }],
     queryFn: async () => {
       const res = await api.get('/api/invites/sent', {
-        userId: String(userId),
+        id: String(userId),
         page: String(params.page),
         pageSize: String(params.pageSize),
       })
@@ -23,7 +23,7 @@ export const useReceivedInvites = (userId: number | undefined, params: Paginatio
     queryKey: ['invites', { receiverId: userId }],
     queryFn: async () => {
       const res = await api.get('/api/invites/received', {
-        userId: String(userId),
+        id: String(userId),
         page: String(params.page),
         pageSize: String(params.pageSize),
       })
@@ -52,12 +52,11 @@ export const useAcceptInvite = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: number) => {
-      const res = await api.patch('/invites/accept', id)
+      const res = await api.patch('/invites/accept', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
       return res.json() as Promise<ChatInvite>
     },
     onSuccess: (invite) => {
-      queryClient.invalidateQueries({ queryKey: ['invites', { id: invite.id }] })
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
       queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
     },
@@ -68,12 +67,11 @@ export const useDeclineInvite = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (id: number) => {
-      const res = await api.patch('/invites/decline', id)
+      const res = await api.patch('/invites/decline', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
       return res.json() as Promise<ChatInvite>
     },
     onSuccess: (invite) => {
-      queryClient.invalidateQueries({ queryKey: ['invites', { id: invite.id }] })
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
       queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
     },
