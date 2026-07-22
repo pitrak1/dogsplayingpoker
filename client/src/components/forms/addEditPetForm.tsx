@@ -13,6 +13,7 @@ import { ReactivityInput } from './reactivityInput'
 import { useImageInput } from '@/hooks/useImageInput'
 import { getAvatarFallback } from '@/lib/avatar'
 import { useFormValidation } from '@/hooks/useFormValidation'
+import { useAuth } from '@/context/auth'
 
 type PetFormState = {
   name?: string | null
@@ -50,11 +51,11 @@ type Props = {
 }
 
 export function AddEditPetForm({ pet, onClose }: Props) {
-  const initialState = pet ?? emptyFormState
+  const isCreateForm = !pet
+  const initialState = pet ? {...pet} : emptyFormState
   // Because we always submit the whole pet shape, even on edit, we can validate against createPetSchema
   const { 
     values, 
-    setValues, 
     fieldErrors, 
     formError,
     setFormError,
@@ -62,6 +63,7 @@ export function AddEditPetForm({ pet, onClose }: Props) {
     validate
   } = useFormValidation<PetFormState, typeof createPetInputSchema>(initialState, createPetInputSchema)
   const { file, fileUrl, onChange: onPictureChange } = useImageInput(values.fileUrl)
+  const { user } = useAuth()
 
   const { mutateAsync: createPet, isPending: isCreating } = useCreatePet()
   const { mutateAsync: editPet, isPending: isEditing } = useEditPet()
@@ -70,17 +72,16 @@ export function AddEditPetForm({ pet, onClose }: Props) {
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    setValues((prev: PetFormState) => ({ ...prev, file, fileUrl }))
-
-    const result = validate()
+    if (!user) return
+    const result = validate({ ownerId: user.id } as Partial<typeof createPetInputSchema>)
     if (!result.success) return
     
     try {
-      const pictureUrl = values.file ? await uploadImage(values.file) : null
-      if (pet) {
-        await editPet({ id: pet.id, input: { ...result.data, pictureUrl }})
-      } else {
+      const pictureUrl = file ? await uploadImage(file) : null
+      if (isCreateForm) {
         await createPet({ ...result.data, pictureUrl  })
+      } else {
+        await editPet({ id: pet.id, input: { ...result.data, pictureUrl }})
       }
       if (onClose) onClose()
     } catch (err) {

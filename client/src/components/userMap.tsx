@@ -18,7 +18,7 @@ type MapProps = {
   onScroll?: (map: mapboxgl.Map, e: WheelEvent) => void
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
   onClickMarker?: (user: User) => void
-  onHoverMarker?: (userId: number | null) => void
+  onHoverMarker?: (user: User | null) => void
   onRedoSearch?: () => void
   children?: React.ReactNode
 }
@@ -105,7 +105,7 @@ export function UserMap({
   }, [mapRef, focusUser])
 
   const handleHoverMarker = useCallback((user: User | null) => {
-    if (onHoverMarker) onHoverMarker(user!.id)
+    if (onHoverMarker) onHoverMarker(user)
     setHoveredUser(user)
   }, [onHoverMarker])
 

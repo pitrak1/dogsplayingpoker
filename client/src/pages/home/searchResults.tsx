@@ -1,4 +1,4 @@
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { metersToMiles } from '@/lib/maps'
 import { MapPin, PawPrint, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router'
@@ -40,10 +40,12 @@ export function SearchResults({ users, highlightedUser, onSearchResultHover }: P
       <div className="search-result-item__info">
         <div className="search-result-item__username">{user.username}</div>
         <div className="search-result-item__user-info">
-          <div className="search-result-item__distance">
-            <MapPin size={16} />
-            {metersToMiles(user.distanceMeters).toFixed(1)}mi
-          </div>
+          {user.radiusMiles && (
+            <div className="search-result-item__distance">
+              <MapPin size={16} />
+              {metersToMiles(user.radiusMiles).toFixed(1)}mi
+            </div>
+          )}
           <div className="search-result-item__pets">
             <PawPrint size={16} />
             {user.pets.length} pets

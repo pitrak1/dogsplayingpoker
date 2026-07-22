@@ -1,7 +1,7 @@
 import * as authContext from '@/context/auth'
 import { makeUser } from '@/test/factories'
 import { vi } from 'vitest'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 
 export const mockAuthContext = (userOverride?: User) => {
   const user = userOverride ?? makeUser()

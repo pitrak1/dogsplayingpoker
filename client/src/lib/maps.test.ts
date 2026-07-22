@@ -5,7 +5,7 @@ import {
   metersToMiles,
   createMarkerElement,
 } from './maps'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 
 describe('milesToPixels', () => {
   it('returns more pixels at higher zoom levels', () => {

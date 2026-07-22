@@ -5,7 +5,7 @@ import { renderWithProviders } from '@/test/wrapper'
 import { mockAuthContext } from '@/test/mocks'
 import { makeUser } from '@/test/factories'
 
-const testUserNoLocation = makeUser({ latitude: null, longitude: null, radiusMiles: null })
+const testUserNoLocation = makeUser({ location: null, radiusMiles: null })
 const testUserWithLocation = makeUser()
 
 describe('profileEditLocationCurrent', () => {

@@ -1,4 +1,4 @@
-import { Pet, reactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/pet'
+import { Pet, ReactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/pet'
 import { 
   Baby, 
   PersonStanding, 
@@ -19,14 +19,14 @@ type Props = {
   onEditClick?: (pet: Pet) => void
 }
 
-const iconMap: Record<reactivityType, LucideIcon> = {
+const iconMap: Record<ReactivityType, LucideIcon> = {
   Dogs: Dog,
   Cats: Cat,
   Kids: Baby,
   People: PersonStanding
 }
 
-const reactivitySchemaMap: Record<reactivityType, { value: keyof Pet, notes: keyof Pet}> = {
+const reactivitySchemaMap: Record<ReactivityType, { value: keyof Pet, notes: keyof Pet}> = {
   Dogs: { value: 'dogReactivity', notes: 'dogReactivityNotes' },
   Cats: { value: 'catReactivity', notes: 'catReactivityNotes' },
   Kids: { value: 'kidReactivity', notes: 'kidReactivityNotes' },
@@ -34,7 +34,7 @@ const reactivitySchemaMap: Record<reactivityType, { value: keyof Pet, notes: key
 }
 
 export function PetDisplay({ pet, onEditClick }: Props) {
-  const [notesShown, setNotesShown] = useState<reactivityType | null>(null)
+  const [notesShown, setNotesShown] = useState<ReactivityType | null>(null)
 
   const displayAge = () => {
     if (pet.age === 0) return 'Less than a year old'
@@ -42,13 +42,13 @@ export function PetDisplay({ pet, onEditClick }: Props) {
     return `${pet.age} years old`
   }
 
-  const handleNotesToggle = (type: reactivityType) => {
+  const handleNotesToggle = (type: ReactivityType) => {
     setNotesShown(notesShown === type ? null : type)
   }
 
   const pictureSrc = pet.pictureUrl ?? getAvatarFallback(pet.name, 128)
 
-  const displayReactivity = (type: reactivityType, hideNoteButton: boolean = false) => {
+  const displayReactivity = (type: ReactivityType, hideNoteButton: boolean = false) => {
     const Icon = iconMap[type]
     const { value: valueKey, notes: notesKey } = reactivitySchemaMap[type]
     const value = pet[valueKey]

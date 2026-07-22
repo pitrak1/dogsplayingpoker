@@ -10,8 +10,9 @@ export function useFormValidation<T, S extends ZodType>(initial: T, schema: S) {
     setValues((prev) => ({ ...prev, [field]: value }))
   }
 
-  const validate = () => {
-    const result = schema.safeParse(values)
+  const validate = (overrides: Partial<S> = {}) => {
+    const updatedValues = {...values, ...overrides}
+    const result = schema.safeParse(updatedValues)
 
     if (result.success) {
       setFieldErrors({})

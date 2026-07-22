@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useSearchUsers } from '@/api/users'
 import { boundsFromMap } from '@/lib/maps'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
 

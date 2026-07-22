@@ -72,9 +72,11 @@ describe('profileEditLocation', () => {
     await fireEvent.change(screen.getByRole('slider'), { target: { value: '7' } })
     await userEvent.click(screen.getByRole('button', { name: /generate/i }))
     await userEvent.click(screen.getByRole('button', { name: /save/i }))
-    expect(mockMutate).toHaveBeenCalledWith(expect.objectContaining({ 
-      latitude: expect.any(Number), 
-      longitude: expect.any(Number), 
+    expect(mockMutate).toHaveBeenCalledWith(expect.objectContaining({
+      location: {
+        x: expect.any(Number),
+        y: expect.any(Number)
+      },
       radiusMiles: expect.any(Number) 
     }))
   })
@@ -104,8 +106,7 @@ describe('profileEditLocation', () => {
     renderWithProviders(<ProfileEditLocation />)
     await userEvent.click(screen.getByRole('button', { name: /clear/i }))
     expect(mockMutate).toHaveBeenCalledWith({ 
-      latitude: null, 
-      longitude: null, 
+      location: null,
       radiusMiles: null
     })
   })

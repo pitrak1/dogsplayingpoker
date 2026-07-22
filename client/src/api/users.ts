@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
 import { ApiError } from './errors'
-import { AuthResponse, EditUserInput, FullUser } from 'dogsplayingpoker-shared/user'
+import { AuthResponse, EditUserInput, FullUser, UserPaginationResponse } from 'dogsplayingpoker-shared/user'
 
 export const useUserByUsername = (username: string) =>
   useQuery({
@@ -29,7 +29,7 @@ export const useSearchUsers = (input: ActiveSearch | null) =>
         page: String(input!.page),
       })
       if (!res.ok) throw new Error('Failed to search users')
-      return res.json() as Promise<FullUser[]>
+      return res.json() as Promise<UserPaginationResponse>
     },
     enabled: !!input
   })

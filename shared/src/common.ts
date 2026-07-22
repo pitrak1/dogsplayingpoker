@@ -18,6 +18,9 @@ export type PaginationWithIdInput = z.infer<typeof paginationWithIdInputSchema>
 
 export type MapboxSearchResult = {
   features: {
+    properties: {
+      name: string
+    }
     geometry: {
       coordinates: number[]
     }

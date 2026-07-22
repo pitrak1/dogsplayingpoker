@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
-import { CreateInviteInput, ChatInvite, InviteListResponse } from 'dogsplayingpoker-shared/invite'
-import { PaginationInput } from '@server/types'
+import { CreateInviteInput, ChatInvite, InvitePaginationResponse } from 'dogsplayingpoker-shared/invite'
+import { PaginationInput } from 'dogsplayingpoker-shared/common'
 
 export const useSentInvites = (userId: number | undefined, params: PaginationInput) =>
   useQuery({
@@ -13,7 +13,7 @@ export const useSentInvites = (userId: number | undefined, params: PaginationInp
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return res.json() as Promise<InviteListResponse>
+      return res.json() as Promise<InvitePaginationResponse>
     },
     enabled: !!userId,
   })
@@ -28,7 +28,7 @@ export const useReceivedInvites = (userId: number | undefined, params: Paginatio
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return res.json() as Promise<InviteListResponse>
+      return res.json() as Promise<InvitePaginationResponse>
     },
     enabled: !!userId,
   })

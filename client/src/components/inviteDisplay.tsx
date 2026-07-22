@@ -1,11 +1,11 @@
-import { ChatInviteWithUsers } from 'dogsplayingpoker-shared/invite'
+import { FullChatInvite } from 'dogsplayingpoker-shared/invite'
 import { getAvatarFallback } from '@/lib/avatar'
 
 import './inviteDisplay.scss'
 import { User } from 'dogsplayingpoker-shared/user'
 
 type Props = {
-  invite: ChatInviteWithUsers
+  invite: FullChatInvite
   user: User
   onViewProfile: (user: User) => void
   onAccept?: (inviteId: number) => void

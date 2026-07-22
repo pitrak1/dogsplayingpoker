@@ -1,7 +1,7 @@
 import { SearchBox } from '@mapbox/search-js-react'
 import { SearchResults } from './searchResults'
 import { Pagination } from '@/components/pagination'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import type { MapboxSearchResult } from 'dogsplayingpoker-shared/common'
 import mapboxgl from 'mapbox-gl'
 import { useState } from 'react'
@@ -16,7 +16,7 @@ type Props = {
   onPageChange: (value: number) => void
   searchedLocation: string | null
   onSearchLocationChange: (value: string | null) => void
-  onSearchResultHover: (userId: number | null) => void
+  onSearchResultHover: (user: User | null) => void
 }
 
 export function SearchSidebar({

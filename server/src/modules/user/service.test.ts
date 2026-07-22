@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, pets, UserRow, PetRow } from '@/db/schema'
+import { users, pets, UserRow, PetRow, chatMemberships, chats } from '@/db/schema'
 import * as userService from '@/modules/user/service'
 import { makeUserInput, setupPetForUser, setupUser, setupUsers } from '@/test/factories'
 import { verifyAuthToken, verifyRefreshToken } from '@/lib/auth'
 
 beforeEach(async () => {
+  await db.delete(chats)
+  await db.delete(chatMemberships)
   await db.delete(pets)
   await db.delete(users)
 })

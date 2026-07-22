@@ -7,7 +7,7 @@ import * as authContext from '@/context/auth'
 import * as usersApi from '@/api/users'
 import * as upload from '@/lib/upload'
 import { makeUser } from '@/test/factories'
-import type { UserWithPets as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { ApiError } from '@/api/errors'
 
 const makeFile = (name = 'avatar.png', type = 'image/png') =>
