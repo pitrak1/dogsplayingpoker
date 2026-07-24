@@ -5,7 +5,7 @@ import { PaginationInput } from 'dogsplayingpoker-shared/common'
 
 export const useSentInvites = (userId: number | undefined, params: PaginationInput) =>
   useQuery({
-    queryKey: ['invites', { senderId: userId }],
+    queryKey: ['invites', { senderId: userId, page: params.page, pageSize: params.pageSize }],
     queryFn: async () => {
       const res = await api.get('/api/invites/sent', {
         id: String(userId),
@@ -20,7 +20,7 @@ export const useSentInvites = (userId: number | undefined, params: PaginationInp
 
 export const useReceivedInvites = (userId: number | undefined, params: PaginationInput) =>
   useQuery({
-    queryKey: ['invites', { receiverId: userId }],
+    queryKey: ['invites', { receiverId: userId, page: params.page, pageSize: params.pageSize }],
     queryFn: async () => {
       const res = await api.get('/api/invites/received', {
         id: String(userId),

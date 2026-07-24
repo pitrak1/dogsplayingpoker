@@ -10,10 +10,11 @@ type Props = {
   onViewProfile: (user: User) => void
   onAccept?: (inviteId: number) => void
   onDecline?: (inviteId: number) => void
+  disabled?: boolean
   type: 'sent' | 'received'
 }
 
-export function InviteDisplay({ invite, user, onViewProfile, onAccept, onDecline, type }: Props) {
+export function InviteDisplay({ invite, user, onViewProfile, onAccept, onDecline, disabled, type }: Props) {
   const src = user?.profileImageUrl ?? getAvatarFallback(user?.username, 128)
   
   const text = type === 'sent' ? `You've invited ${user.username} to chat.` : `${user.username} has invited you to chat.`
@@ -29,8 +30,8 @@ export function InviteDisplay({ invite, user, onViewProfile, onAccept, onDecline
         )}
         <div className="invite-display__buttons">
           <button className="invite-display__profile-button" onClick={() => onViewProfile(user)}>View profile</button>
-          {type === 'received' && onAccept && <button className="invite-display__accept-button" onClick={() => onAccept(invite.id)}>Accept</button>}
-          {type === 'received' && onDecline && <button className="invite-display__decline-button" onClick={() => onDecline(invite.id)}>Decline</button>}
+          {type === 'received' && onAccept && <button className="invite-display__accept-button" onClick={() => onAccept(invite.id)} disabled={disabled}>Accept</button>}
+          {type === 'received' && onDecline && <button className="invite-display__decline-button" onClick={() => onDecline(invite.id)} disabled={disabled}>Decline</button>}
         </div>
       </div>
     </div>

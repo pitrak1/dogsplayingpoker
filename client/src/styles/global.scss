@@ -73,10 +73,10 @@ $color-primary: var(--color-primary);
   font-weight: $font-weight;
 }
 
-@mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary)) {
+@mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary), $font-weight: normal) {
   font-size: $font-size;
   color: $font-color;
-  font-weight: normal;
+  font-weight: $font-weight;
 }
 
 @mixin field-error-text($font-size: 1.25rem) {
@@ -265,4 +265,78 @@ $color-primary: var(--color-primary);
   height: 1px;
   background-color: #a0a0a0;
   width: 100%;
+}
+
+%pagination-button {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: none;
+  color: black;
+  
+  &:hover {
+    background: var(--button-primary-hover);
+    color: white;
+  }
+
+  &:disabled {
+    color: var(--text-secondary)
+  }
+
+  &:disabled:hover {
+    background: var(--button-disabled)
+  }
+}
+
+%pagination-button-active {
+  @extend %pagination-button;
+
+  background: var(--button-primary);
+  color: white;
+
+  &:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+}
+
+%pagination-page-button {
+  @extend %pagination-button;
+  width: calc(32px + 0.75rem);
+  height: calc(32px + 0.75rem);
+  padding: 0rem;
+}
+
+%pagination-page-button-active {
+  @extend %pagination-page-button;
+
+  background: var(--button-primary);
+  color: white;
+
+  &:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled:hover {
+    background: var(--button-primary);
+    color: white;
+  }
 }

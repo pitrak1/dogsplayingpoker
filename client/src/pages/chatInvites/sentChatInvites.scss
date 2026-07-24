@@ -1,0 +1,14 @@
+@use '@/styles/global' as *;
+
+.sent-chat-invites {
+  @include flex-display(column, 1rem, center, inherit);
+}
+
+.sent-chat-invites__info-banner {
+  @include flex-display(row, 0, space-between, center);
+  font-size: 1.25rem;
+}
+
+.sent-chat-invites__page-size {
+  font-size: 1rem;
+}

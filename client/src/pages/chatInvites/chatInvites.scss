@@ -1,0 +1,30 @@
+@use '@/styles/global' as *;
+
+.chat-invites {
+  @include flex-display(column, 1rem, start, start);
+  margin: 2rem;
+}
+
+.chat-invites__header {
+  @include flex-display(column, 0.25rem, start, start);
+}
+
+.chat-invites__title {
+  @include primary-text(2rem, var(--text-primary), bold);
+}
+
+.chat-invites__subtitle {
+  @include secondary-text(1.4rem, var(--text-secondary), bold);
+}
+
+.chat-invites__tabs {
+  @include flex-display(row, 0.5rem, start, center)
+}
+
+.chat-invites__tab-button {
+  @extend %pagination-button;
+}
+
+.chat-invites__tab-button-active {
+  @extend %pagination-button-active;
+}

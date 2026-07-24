@@ -1,35 +1,5 @@
 @use '@/styles/global' as *;
 
-%pagination-button {
-  @include flex-display(row, 0.5rem, center, center);
-  @extend %display-button;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: none;
-  color: black;
-  
-  &:hover {
-    background: var(--button-primary-hover);
-    color: white;
-  }
-
-  &:disabled {
-    color: var(--text-secondary)
-  }
-
-  &:disabled:hover {
-    background: var(--button-disabled)
-  }
-}
-
-%pagination-page-button {
-  @extend %pagination-button;
-  width: calc(32px + 0.75rem);
-  height: calc(32px + 0.75rem);
-  padding: 0rem;
-}
-
 .pagination {
   @include flex-display(row, 0, space-between, center);
 }

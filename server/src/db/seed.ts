@@ -2,7 +2,7 @@ import 'dotenv/config'
 import bcrypt from 'bcrypt'
 import { sql } from 'drizzle-orm'
 import { db } from './index'
-import { users, pets } from './schema'
+import { users, pets, chatInvites, chats, chatMemberships, messages, userBlocks } from './schema'
 
 const avatar = (name: string, bg: string) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bg}&color=fff&size=128`
@@ -59,6 +59,7 @@ const seedUsers = [
   { username: 'wes_j',    email: 'wes@example.com',    fullName: 'Wes J',    bg: 'ffb74d', lat: 41.9265, lng: -87.6610, radius: 5 },  // West Town
   { username: 'xio_i',    email: 'xio@example.com',    fullName: 'Xio I',    bg: 'e57373', lat: 41.8475, lng: -87.6700, radius: 2 },  // Tri-Taylor
   { username: 'yuri_h',   email: 'yuri@example.com',   fullName: 'Yuri H',   bg: '9575cd', lat: 41.9900, lng: -87.6850, radius: 4 },  // West Ridge
+  { username: 'nick_p',   email: 'pitrak1@gmail.com',  fullName: 'Nick P',   bg: '2ecc71', lat: 41.8781, lng: -87.6298, radius: 5 },  // Loop (main test account)
 ]
 
 type Reactivity = 'strong' | 'mixed' | 'none' | 'unknown'
@@ -139,6 +140,11 @@ async function seed() {
   console.log('Seeding database...')
 
   if (process.env.NODE_ENV !== 'production') {
+    await db.delete(userBlocks)
+    await db.delete(messages)
+    await db.delete(chatMemberships)
+    await db.delete(chats)
+    await db.delete(chatInvites)
     await db.delete(pets)
     await db.delete(users)
   }
@@ -177,6 +183,70 @@ async function seed() {
   )
 
   console.log(`Inserted ${seedPets.length} pets.`)
+
+  // nick_p (pitrak1@gmail.com) is the last inserted user
+  const nickUser = insertedUsers[insertedUsers.length - 1]
+  const now = new Date()
+  const sevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+  const threeDays = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000)
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+
+  // 15 invites FROM other users TO pitrak1@gmail.com
+  const invitesToNick = [
+    { senderIdx: 0,  message: "Hey! Want to set up a playdate for our pups?",          status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 1,  message: "Rex and Luna would love some new friends!",               status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 3,  message: "Tank is looking for big-dog buddies to romp with.",       status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 4,  message: "Daisy is super friendly, let's meet at the park!",        status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 5,  message: "Bear could use a chill walking partner.",                 status: 'pending'  as const, expiredAt: threeDays },
+    { senderIdx: 6,  message: "Mochi needs socialization — want to try a meetup?",       status: 'declined' as const, expiredAt: oneDayAgo },
+    { senderIdx: 8,  message: "Cooper is great with everyone, want to hang at the dog park?", status: 'pending' as const, expiredAt: sevenDays },
+    { senderIdx: 9,  message: "Stella does best meeting on neutral ground — park?",      status: 'pending'  as const, expiredAt: threeDays },
+    { senderIdx: 11, message: null,                                                       status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 13, message: "Saw you nearby — want to set up a walk together?",        status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 15, message: "Our dogs would be great together!",                        status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 17, message: "Looking for weekend park buddies, interested?",            status: 'pending'  as const, expiredAt: threeDays },
+    { senderIdx: 19, message: null,                                                        status: 'declined' as const, expiredAt: oneDayAgo },
+    { senderIdx: 21, message: "My dog is super chill, would love to meet yours!",         status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 23, message: "Morning walks near the lake — want to join?",              status: 'accepted' as const, expiredAt: sevenDays },
+  ]
+
+  // 15 invites FROM pitrak1@gmail.com TO other users
+  const invitesFromNick = [
+    { receiverIdx: 2,  message: "Hey, want to grab a dog-friendly coffee and walk?",     status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 7,  message: "Saw you're nearby — up for a playdate?",                 status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 10, message: "Our dogs look like they'd get along great!",              status: 'accepted' as const, expiredAt: sevenDays },
+    { receiverIdx: 12, message: "Want to do a group walk this weekend?",                   status: 'accepted' as const, expiredAt: threeDays },
+    { receiverIdx: 14, message: null,                                                       status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 16, message: "Interested in a puppy playdate at Humboldt Park?",        status: 'declined' as const, expiredAt: oneDayAgo },
+    { receiverIdx: 18, message: "Your dog is adorable — want to meet up?",                 status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 20, message: "Looking for a morning walk buddy, interested?",           status: 'pending'  as const, expiredAt: threeDays },
+    { receiverIdx: 22, message: null,                                                        status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 24, message: "Trying to find socialization buddies for my pup!",        status: 'accepted' as const, expiredAt: sevenDays },
+    { receiverIdx: 26, message: "Want to grab a dog-friendly patio spot together?",        status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 28, message: "Sunday dog park run — want to join?",                     status: 'declined' as const, expiredAt: oneDayAgo },
+    { receiverIdx: 30, message: null,                                                        status: 'pending'  as const, expiredAt: threeDays },
+    { receiverIdx: 32, message: "Our schedules seem to overlap — let's walk together!",    status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 34, message: "Friendly neighborhood walk crew forming — want in?",      status: 'accepted' as const, expiredAt: sevenDays },
+  ]
+
+  await db.insert(chatInvites).values([
+    ...invitesToNick.map(i => ({
+      senderId: insertedUsers[i.senderIdx].id,
+      receiverId: nickUser.id,
+      message: i.message,
+      status: i.status,
+      expiredAt: i.expiredAt,
+    })),
+    ...invitesFromNick.map(i => ({
+      senderId: nickUser.id,
+      receiverId: insertedUsers[i.receiverIdx].id,
+      message: i.message,
+      status: i.status,
+      expiredAt: i.expiredAt,
+    })),
+  ])
+
+  console.log(`Inserted ${invitesToNick.length + invitesFromNick.length} chat invites.`)
   console.log('Done.')
   process.exit(0)
 }
