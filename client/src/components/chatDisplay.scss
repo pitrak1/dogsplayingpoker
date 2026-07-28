@@ -1,0 +1,38 @@
+@use '@/styles/global' as *;
+
+.chat-display {
+  @extend %display-panel;
+  @include flex-display(row, 1rem, start, center)
+}
+
+.chat-display__image {
+  @include avatar(64);
+}
+
+.chat-display__info {
+  @include flex-display(column, 0.5rem, start, start);
+}
+
+.chat-display__username {
+  @include primary-text(1.25rem);
+}
+
+.chat-display__message {
+  @include primary-text(1rem);
+}
+
+.chat-display__empty {
+  @include secondary-text(1rem);
+}
+
+.chat-display__buttons {
+  @include flex-display(row, 1rem);
+}
+
+.chat-display__profile-button {
+  @include primary-button();
+}
+
+.chat-display__view-button {
+  @include primary-button();
+}

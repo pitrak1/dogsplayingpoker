@@ -40,8 +40,8 @@ export function UserMenu() {
               <Link to="/profile/edit" onClick={closeMenu}>
                 Edit profile
               </Link>
-              <Link to={`/messages`} onClick={closeMenu}>
-                Your messages
+              <Link to={`/chats`} onClick={closeMenu}>
+                Your chats
               </Link>
               <Link to={`/invites`} onClick={closeMenu}>
                 Your invites

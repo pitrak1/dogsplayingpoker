@@ -1,0 +1,10 @@
+@use '@/styles/global' as *;
+
+.chats {
+  @include flex-display(column, 1rem, start, start);
+  margin: 2rem;
+}
+
+.chats__title {
+  @include primary-text(2rem, var(--text-primary), bold);
+}
