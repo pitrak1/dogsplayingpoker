@@ -1,11 +1,12 @@
 import type { PetRow, UserRow } from '@/db/schema'
 import { db } from '@/db'
-import { users, pets, chatInvites, chats, chatMemberships } from '@/db/schema'
+import { users, pets, chatInvites, chats, chatMemberships, messages } from '@/db/schema'
 import bcrypt from 'bcrypt'
 import { CreateInviteInput, Status } from 'dogsplayingpoker-shared/invite'
 import { CreateUserInput } from 'dogsplayingpoker-shared/user'
 import { CreatePetInput } from 'dogsplayingpoker-shared/pet'
 import { add } from 'date-fns'
+import { CreateMessageInput } from 'dogsplayingpoker-shared/message'
 
 export const makeUser = (overrides: Partial<UserRow> = {}): UserRow => ({
   id: 1,
@@ -168,4 +169,29 @@ export const setupChatMembership = async (
   }
   const [chat] = await db.insert(chatMemberships).values(input).returning()
   return chat
+}
+
+export const makeMessage = (chatId: number, createdBy: number, content: string) => ({
+  id: 1,
+  chatId,
+  content,
+  createdBy,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: new Date(),
+})
+
+export const setupMessage = async (chatId: number, createdBy: number) => {
+  const input = { chatId, createdBy, content: 'fake content here' }
+  const [message] = await db.insert(messages).values(input).returning()
+  return message
+}
+
+export const setupMessages = async (count: number, chatId: number, createdBy: number) => {
+  const values = { chatId, createdBy }
+  const input: { content: string, chatId: number, createdBy: number }[] = []
+  for (let i = 0; i < count; i++) {
+    input.push({ ...values, content: `message${i}` })
+  }
+  return await db.insert(messages).values(input).returning()
 }

@@ -1,8 +1,9 @@
-import { ne, and, eq, sql, inArray } from 'drizzle-orm'
+import { ne, and, eq, sql, inArray, isNull } from 'drizzle-orm'
 import { db } from '@/db'
-import { UserRow, users, chatMemberships } from '@/db/schema'
+import { UserRow, users, chatMemberships, messages, NewMessageRow } from '@/db/schema'
 import { PaginationWithIdInput } from 'dogsplayingpoker-shared/common'
 import { ChatMembership, ChatPaginationResponse } from 'dogsplayingpoker-shared/chat'
+import { Message, FullMessage, CreateMessageInput } from 'dogsplayingpoker-shared/message'
 
 const getFullChats = async (memberships: ChatMembership[], userId: number) => {
   const chatIds = memberships.map(m => m.chatId)
@@ -23,6 +24,28 @@ const getFullChats = async (memberships: ChatMembership[], userId: number) => {
   return memberships.map(row => ({
     ...row, 
     otherUser: otherUsersByChatId.get(row.chatId)
+  }))
+}
+
+const getFullMessages = async (m: Message[]) => {
+  const messageIds = m.map(m => m.id)
+  const messageUsers = await db
+    .select()
+    .from(users)
+    .innerJoin(messages, eq(users.id, messages.createdBy))
+    .where(and(
+      inArray(messages.id, messageIds), 
+      isNull(messages.deletedAt)
+    ))
+
+  const otherUsersByMessageId = new Map<number, UserRow>()
+  for (const u of messageUsers) {
+    otherUsersByMessageId.set(u.messages.id, u.users)
+  }
+
+  return m.map(row => ({
+    ...row, 
+    creator: otherUsersByMessageId.get(row.id)
   }))
 }
 
@@ -48,4 +71,31 @@ export const getChatsForUser = async (input: PaginationWithIdInput): Promise<Cha
   const fullChats = await getFullChats(memberships, id)
   
   return { chats: fullChats, totalCount }
+}
+
+export const getChatMembership = async (userId: number, chatId: number): Promise<ChatMembership | null> => {
+  const rows = await db.select().from(chatMemberships)
+    .where(and(
+      eq(chatMemberships.userId, userId), 
+      eq(chatMemberships.chatId, chatId),
+      isNull(chatMemberships.deletedAt)
+    ))
+  return rows[0] ?? null
+}
+
+export const getChatMessages = async (chatId: number): Promise<FullMessage[]> => {
+  const rows = await db.select().from(messages)
+      .where(and(
+        eq(messages.chatId, chatId),
+        isNull(messages.deletedAt)
+      ))
+      .orderBy(sql`created_at`)
+      .limit(50)
+  return await getFullMessages(rows)
+}
+
+export const createMessage = async (userId: number, chatId: number, input: CreateMessageInput) => {
+  const values = { ...input, createdBy: userId, chatId } as NewMessageRow
+  const rows = await db.insert(messages).values(values).returning()
+  return rows[0]
 }

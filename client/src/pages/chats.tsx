@@ -4,7 +4,6 @@ import { ChatDisplay } from '@/components/chatDisplay'
 import { User } from 'dogsplayingpoker-shared/user'
 import { useNavigate } from 'react-router'
 
-
 import './chats.scss'
 
 export function Chats() {
@@ -19,7 +18,7 @@ export function Chats() {
   }
 
   const handleViewChatClick = (chatId: number) => {
-    console.log(chatId)
+    navigate(`/chats/${chatId}`)
   }
 
   const renderChats = () => {
