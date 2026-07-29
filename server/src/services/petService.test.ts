@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
 import { users, pets } from '@/db/schema'
-import * as petService from '@/modules/pet/service'
+import * as petService from '@/services/petService'
 import { setupPetForUser, makePetInput, setupUser } from '@/test/factories'
 
 beforeEach(async () => {

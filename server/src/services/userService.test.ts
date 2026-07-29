@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
 import { users, pets, UserRow, PetRow, chatMemberships, chats } from '@/db/schema'
-import * as userService from '@/modules/user/service'
+import * as userService from '@/services/userService'
 import { makeUserInput, setupPetForUser, setupUser, setupUsers } from '@/test/factories'
 import { verifyAuthToken, verifyRefreshToken } from '@/lib/auth'
 

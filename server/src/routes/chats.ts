@@ -2,8 +2,8 @@ import { Hono } from 'hono'
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
 import { idInputSchema, paginationWithIdInputSchema } from 'dogsplayingpoker-shared/common'
-import { getChatsForUser, getChatMessages } from '@/modules/chat/service'
-import * as chatService from '@/modules/chat/service'
+import { getChatsForUser, getChatMessages } from '@/services/chatService'
+import * as chatService from '@/services/chatService'
 import { createMessageInputSchema } from 'dogsplayingpoker-shared/message'
 
 export const chatRoutes = new Hono<AuthedEnv>()

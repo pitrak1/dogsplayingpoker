@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getUploadSignature } from '@/services/cloudinary'
+import { getUploadSignature } from '@/adapters/cloudinary'
 import type { AuthedEnv } from '../types'
 
 export const mediaRoutes = new Hono<AuthedEnv>()

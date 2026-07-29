@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import * as userService from '@/modules/user/service'
+import * as userService from '@/services/userService'
 import { setRefreshCookie, getRefreshCookie } from '@/lib/auth'
 import { AppEnv } from '../types'
 import { AuthError, ConflictError } from '@/lib/errors'

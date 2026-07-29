@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
 import { makePet, makePetInput } from '@/test/factories'
-import * as petService from '@/modules/pet/service'
+import * as petService from '@/services/petService'
 
 describe('GET /api/pets', () => {
   it('returns 400 if owner id is missing', async () => {

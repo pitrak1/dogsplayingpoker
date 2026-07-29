@@ -13,3 +13,10 @@ For each database entity, there will be four groups of types.  Some groups may h
 3. `Full<Entity>` - This will be the `<Entity>` type with any directly related data attached.  Like a `User` will have their `Pet`s attached.  I hope this will be intuitive and not required a lot of different use cases, but I'll see how this one works.
 4. `<Function><Entity>Input` - This is the data passed to the backend to do a particular operation.  For example, creating a user would required `CreateUserInput`.
 5. `<Function><Entity>Form` - This is the type for the frontend to use for form components.  These will be very similar to the `<Function><Entity>Input` types with a couple exceptions.  All fields in this type will be nullable because we want the form to be empty on page load.  Also, more complex data types may differ, like we generally store a Javascript `File` and a generated file URL for a file form input, but the `<Function><Entity>Input` type uses a Cloudinary file URL.  This change is going to happen during validation/save where the data in the `Form` type is converted into the `Input` type.
+
+
+
+
+Move db wipe in test setup to common area.
+Change to use useAuth in api hooks on client side and use token on server side to get user id
+Start socketing

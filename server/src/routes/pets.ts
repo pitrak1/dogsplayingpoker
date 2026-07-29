@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
-import * as petService from '@/modules/pet/service'
+import * as petService from '@/services/petService'
 import type { AuthedEnv } from '../types'
 import { createPetInputSchema } from 'dogsplayingpoker-shared/pet'
 import { idInputSchema } from 'dogsplayingpoker-shared/common'

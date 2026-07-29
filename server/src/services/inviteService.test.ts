@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
 import { users, chatInvites, chats, chatMemberships, messages } from '@/db/schema'
-import * as inviteService from '@/modules/invite/service'
+import * as inviteService from '@/services/inviteService'
 import { setupInvite, setupUsers } from '@/test/factories'
 
 beforeEach(async () => {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
 import { makeCreateInviteInput, makeInvite } from '@/test/factories'
-import * as inviteService from '@/modules/invite/service'
+import * as inviteService from '@/services/inviteService'
 
 describe('GET /api/invites/sent', () => {
   it('returns 400 if authenticated user is not requested user', async () => {

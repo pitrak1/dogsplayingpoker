@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
-import * as userService from '@/modules/user/service'
+import * as userService from '@/services/userService'
 import type { AppEnv } from '@/types'
 import { requireAuth } from '@/middleware/auth'
 import { editUserInputSchema, searchUsersInputSchema, usernameInputSchema } from 'dogsplayingpoker-shared/user'

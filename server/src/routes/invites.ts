@@ -7,7 +7,7 @@ import {
   declineInvite,
   createInvite,
   getInviteBySenderAndReceiver
-} from '@/modules/invite/service'
+} from '@/services/inviteService'
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
 import { createInviteInputSchema } from 'dogsplayingpoker-shared/invite'
