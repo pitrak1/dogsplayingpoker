@@ -1,6 +1,5 @@
 import { useParams } from 'react-router'
 import { useChatMessages, useCreateMessage } from '@/api/chats'
-import { useAuth } from '@/context/auth'
 import { useState } from 'react'
 import './chat.scss'
 import { MessageDisplay } from '@/components/messageDisplay'
@@ -9,8 +8,7 @@ import { ErrorBanner } from '@/components/forms/errorBanner'
 
 export function Chat() {
   const { id } = useParams<{ id: string }>()
-  const { user } = useAuth()
-  const { data: messages } = useChatMessages(user?.id, Number(id))
+  const { data: messages } = useChatMessages(Number(id))
   const [message, setMessage] = useState<string>('')
   const { mutateAsync: createMessage } = useCreateMessage()
   const [pageError, setPageError] = useState<string | null>(null)

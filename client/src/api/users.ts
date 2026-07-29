@@ -1,25 +1,28 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
 import { ApiError } from './errors'
 import { AuthResponse, EditUserInput, FullUser, UserPaginationResponse } from 'dogsplayingpoker-shared/user'
+import { useAuth } from '@/context/auth'
 
-export const useUserByUsername = (username: string) =>
-  useQuery({
-    queryKey: ['user', 'by-username', username],
+export const useUserByUsername = (username: string) => {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['user', username],
     queryFn: async () => {
-      const res = await api.get(`/api/users/by-username/${username}`)
+      const res = await api.get(`/users/by-username/${username}`)
       if (!res.ok) throw new Error('Failed to fetch user')
       return res.json() as Promise<FullUser>
     },
-    enabled: !!username,
+    enabled: !!user,
   })
+}
 
 export const useSearchUsers = (input: ActiveSearch | null) =>
   useQuery({
-    queryKey: ['users', 'search', input],
+    queryKey: ['users', input],
     queryFn: async () => {
-      const res = await api.get('/api/users/search', {
+      const res = await api.get('/users/search', {
         swLat: String(input!.swLat),
         swLng: String(input!.swLng),
         neLat: String(input!.neLat),
@@ -58,8 +61,9 @@ export const useRegister = () =>
     },
   })
 
-export const useUpdateProfile = () =>
-  useMutation({
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
     mutationFn: async (input: EditUserInput) => {
       const res = await api.patch('/users/update-profile', input)
       if (!res.ok) {
@@ -68,4 +72,8 @@ export const useUpdateProfile = () =>
       }
       return res.json() as Promise<FullUser>
     },
+    onSuccess: (user) => {
+      queryClient.invalidateQueries({ queryKey: ['user', user.username] })
+    }
   })
+}

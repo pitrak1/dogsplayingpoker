@@ -1,8 +1,8 @@
-import { and, eq, gt, sql, inArray } from 'drizzle-orm'
+import { and, eq, gt, sql, inArray, or } from 'drizzle-orm'
 import { db } from '@/db'
 import { chatInvites, NewChatInviteRow, UserRow, users, ChatInviteRow, chats, chatMemberships, messages } from '@/db/schema'
 import { CreateInviteInput, InvitePaginationResponse, ChatInvite } from 'dogsplayingpoker-shared/invite'
-import { PaginationWithIdInput } from 'dogsplayingpoker-shared/common'
+import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { add } from 'date-fns'
 
 const getFullInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender') => {
@@ -20,15 +20,15 @@ const getFullInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender')
   }))
 }
 
-export const getSentInvitesForUser = async (input: PaginationWithIdInput): Promise<InvitePaginationResponse> => {
-  const { page, pageSize, id } = input
+export const getSentInvitesForUser = async (userId: number, input: PaginationInput): Promise<InvitePaginationResponse> => {
+  const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
 
   const [invites, totalCount] = await Promise.all([
     db.select().from(chatInvites)
       .where(and(
-        eq(chatInvites.senderId, id), 
+        eq(chatInvites.senderId, userId), 
         gt(chatInvites.expiredAt, sql`NOW()`)
       )) 
       .orderBy(sql`created_at`)
@@ -37,7 +37,7 @@ export const getSentInvitesForUser = async (input: PaginationWithIdInput): Promi
     db.select({ count: sql<number>`count(*)::int` })
       .from(chatInvites)
       .where(and(
-        eq(chatInvites.senderId, id),
+        eq(chatInvites.senderId, userId),
         gt(chatInvites.expiredAt, sql`NOW()`)
       ))
       .then(r => r[0].count)
@@ -50,15 +50,15 @@ export const getSentInvitesForUser = async (input: PaginationWithIdInput): Promi
   return { invites: fullInvites, totalCount }
 }
 
-export const getReceivedInvitesForUser = async (input: PaginationWithIdInput): Promise<InvitePaginationResponse> => {
-  const { page, pageSize, id } = input
+export const getReceivedInvitesForUser = async (userId: number, input: PaginationInput): Promise<InvitePaginationResponse> => {
+  const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
 
   const [invites, totalCount] = await Promise.all([
     db.select().from(chatInvites)
       .where(and(
-        eq(chatInvites.receiverId, id),
+        eq(chatInvites.receiverId, userId),
         gt(chatInvites.expiredAt, sql`NOW()`),
         eq(chatInvites.status, "pending")
       ))
@@ -68,7 +68,7 @@ export const getReceivedInvitesForUser = async (input: PaginationWithIdInput): P
     db.select({ count: sql<number>`count(*)::int` })
       .from(chatInvites)
       .where(and(
-        eq(chatInvites.receiverId, id),
+        eq(chatInvites.receiverId, userId),
         gt(chatInvites.expiredAt, sql`NOW()`),
         eq(chatInvites.status, "pending")
       ))
@@ -91,11 +91,11 @@ export const getInviteById = async (id: number): Promise<ChatInviteRow | null> =
   return rows[0] ?? null
 }
 
-export const getInviteBySenderAndReceiver = async (senderId: number, receiverId: number) => {
+export const getExistingInviteForUsers = async (user1Id: number, user2Id: number) => {
   const rows = await db.select().from(chatInvites)
-    .where(and(
-      eq(chatInvites.senderId, senderId),
-      eq(chatInvites.receiverId, receiverId)
+    .where(or(
+      and(eq(chatInvites.senderId, user1Id), eq(chatInvites.receiverId, user2Id)),
+      and(eq(chatInvites.senderId, user2Id), eq(chatInvites.receiverId, user1Id))
     ))
   return rows[0] ?? null
 }
@@ -133,9 +133,9 @@ export const acceptInvite = async (id: number) => {
   })
 }
 
-export const createInvite = async (input: CreateInviteInput) => {
+export const createInvite = async (userId: number, input: CreateInviteInput) => {
   const expiredAt = add(new Date(), { weeks: 2 })
-  const data = { status: 'pending', expiredAt, ...input } as NewChatInviteRow
+  const data = { status: 'pending', expiredAt, senderId: userId, ...input } as NewChatInviteRow
   const rows = await db.insert(chatInvites).values(data).returning()
   return rows[0]
 }

@@ -11,7 +11,7 @@ describe('inviteService.getSentInvitesForUser', () => {
   it('returns invites where user is sender', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getSentInvitesForUser({ id: user1.id })
+    const result = await inviteService.getSentInvitesForUser(user1.id, {})
     expect(result.totalCount).toBe(1)
     expect(result.invites[0].receiverId).toBe(user2.id)
   })
@@ -19,7 +19,7 @@ describe('inviteService.getSentInvitesForUser', () => {
   it('does not return invites where user is receiver', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user2.id, user1.id)
-    const result = await inviteService.getSentInvitesForUser({ id: user1.id })
+    const result = await inviteService.getSentInvitesForUser(user1.id, {})
     expect(result.totalCount).toBe(0)
   })
 })
@@ -28,7 +28,7 @@ describe('inviteService.getReceivedInvitesForUser', () => {
   it('returns invites where user is receiver', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getReceivedInvitesForUser({ id: user2.id })
+    const result = await inviteService.getReceivedInvitesForUser(user2.id, {})
     expect(result.totalCount).toBe(1)
     expect(result.invites[0].senderId).toBe(user1.id)
   })
@@ -36,7 +36,7 @@ describe('inviteService.getReceivedInvitesForUser', () => {
   it('does not return invites where user is sender', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user2.id, user1.id)
-    const result = await inviteService.getReceivedInvitesForUser({ id: user2.id })
+    const result = await inviteService.getReceivedInvitesForUser(user2.id, {})
     expect(result.totalCount).toBe(0)
   })
 })
@@ -59,20 +59,28 @@ describe('inviteService.getInviteById', () => {
   })
 })
 
-describe('inviteService.getInviteBySenderAndReceiver', () => {
-  it('returns invite', async () => {
+describe('inviteService.getExistingInviteForUsers', () => {
+  it('returns invite when user1 is sender', async () => {
     const [user1, user2] = await setupUsers(2)
     const invite = await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getInviteBySenderAndReceiver(user1.id, user2.id)
+    const result = await inviteService.getExistingInviteForUsers(user1.id, user2.id)
     expect(result).not.toBeNull()
     expect(result.senderId).toEqual(invite.senderId)
     expect(result.receiverId).toEqual(invite.receiverId)
   })
 
-  it('returns null if sender and receiver are swapped', async () => {
+  it('returns invite when user1 is receiver', async () => {
     const [user1, user2] = await setupUsers(2)
-    await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getInviteBySenderAndReceiver(user2.id, user1.id)
+    const invite = await setupInvite(user1.id, user2.id)
+    const result = await inviteService.getExistingInviteForUsers(user2.id, user1.id)
+    expect(result).not.toBeNull()
+    expect(result.senderId).toEqual(invite.senderId)
+    expect(result.receiverId).toEqual(invite.receiverId)
+  })
+
+  it('returns null if no invite exists between users', async () => {
+    const [user1, user2] = await setupUsers(2)
+    const result = await inviteService.getExistingInviteForUsers(user1.id, user2.id)
     expect(result).toBeNull()
   })
 })
@@ -143,7 +151,7 @@ describe('inviteService.acceptInvite', () => {
 describe('inviteService.createInvite', () => {
   it('creates invite', async () => {
     const [user1, user2] = await setupUsers(2)
-    await inviteService.createInvite({ senderId: user1.id, receiverId: user2.id,  message: 'fake-message' })
+    await inviteService.createInvite(user1.id, { receiverId: user2.id, message: 'fake-message' })
 
     const rows = await db.select().from(chatInvites)
     expect(rows).toHaveLength(1)
@@ -151,12 +159,12 @@ describe('inviteService.createInvite', () => {
   })
 
   it('fails if sender does not exist', async () => {
-    const [user1, user2] = await setupUsers(2)
-    await expect(inviteService.createInvite({ senderId: 92, receiverId: user2.id,  message: 'fake-message' })).rejects.toThrow()
+    const [, user2] = await setupUsers(2)
+    await expect(inviteService.createInvite(92, { receiverId: user2.id, message: 'fake-message' })).rejects.toThrow()
   })
 
   it('fails if receiver does not exist', async () => {
-    const [user1, user2] = await setupUsers(2)
-    await expect(inviteService.createInvite({ senderId: user1.id, receiverId: 92,  message: 'fake-message' })).rejects.toThrow()
+    const [user1] = await setupUsers(2)
+    await expect(inviteService.createInvite(user1.id, { receiverId: 92, message: 'fake-message' })).rejects.toThrow()
   })
 })

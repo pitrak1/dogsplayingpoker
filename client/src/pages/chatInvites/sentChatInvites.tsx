@@ -1,5 +1,4 @@
 import { useSentInvites } from '@/api/invites'
-import { useAuth } from '@/context/auth'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { User } from 'dogsplayingpoker-shared/user'
@@ -9,10 +8,9 @@ import './sentChatInvites.scss'
 
 
 export function SentChatInvites() {
-  const { user } = useAuth()
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const { data } = useSentInvites(user?.id, { page, pageSize })
+  const { data } = useSentInvites({ page, pageSize })
   const navigate = useNavigate();
 
   const hasInvites = data && data.invites.length > 0

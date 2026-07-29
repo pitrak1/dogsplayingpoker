@@ -1,17 +1,16 @@
 import { Hono } from 'hono'
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
-import { idInputSchema, paginationWithIdInputSchema } from 'dogsplayingpoker-shared/common'
+import { idInputSchema, paginationInputSchema } from 'dogsplayingpoker-shared/common'
 import { getChatsForUser, getChatMessages } from '@/services/chatService'
 import * as chatService from '@/services/chatService'
 import { createMessageInputSchema } from 'dogsplayingpoker-shared/message'
 
 export const chatRoutes = new Hono<AuthedEnv>()
-  .get('/', zValidator('query', paginationWithIdInputSchema), async (c) => {
+  .get('/', zValidator('query', paginationInputSchema), async (c) => {
     const userId = c.get('userId')
     const params = c.req.valid('query')
-    if (params.id !== userId) return c.json({ message: 'You can only fetch your own chats' }, 400)
-    const sent = await getChatsForUser(params);
+    const sent = await getChatsForUser(userId, params);
     return c.json(sent)
   })
   .get('/:id', zValidator('param', idInputSchema), async (c) => {

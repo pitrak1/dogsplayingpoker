@@ -76,7 +76,7 @@ export const makePet = (petId: number, ownerId: number, overrides: Partial<PetRo
   ...overrides
 })
 
-export const makePetInput = (ownerId: number, overrides: Partial<CreatePetInput> = {}): CreatePetInput => ({
+export const makePetInput = (overrides: Partial<CreatePetInput> = {}): CreatePetInput => ({
   name: 'testuser',
   age: 1,
   size: 'medium',
@@ -90,18 +90,16 @@ export const makePetInput = (ownerId: number, overrides: Partial<CreatePetInput>
   kidReactivityNotes: null,
   peopleReactivity: 'unknown',
   peopleReactivityNotes: null,
-  ownerId,
   ...overrides,
 })
 
 export const setupPetForUser = async (ownerId: number, overrides: Partial<CreatePetInput> = {}) => {
-  const petInput = makePetInput(ownerId, overrides)
-  const [pet] = await db.insert(pets).values(petInput).returning()
+  const petInput = makePetInput(overrides)
+  const [pet] = await db.insert(pets).values({ ...petInput, ownerId }).returning()
   return pet
 }
 
 export const makeCreateInviteInput = (overrides: Partial<CreateInviteInput> = {}): CreateInviteInput => ({
-  senderId: 1,
   receiverId: 2,
   message: 'fake-message',
   ...overrides

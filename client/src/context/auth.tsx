@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
+import { useQueryClient } from '@tanstack/react-query'
 
 const AUTH_MAX_AGE = 15 * 60
 const AUTH_TOKEN_KEY = 'authToken'
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return stored ? JSON.parse(stored) : null
   })
   _setUserState = setUser
+  const queryClient = useQueryClient()
 
   const setAuth = (token: string, user: User) => {
     setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     deleteCookie(AUTH_TOKEN_KEY)
     deleteCookie(USER_KEY)
     setUser(null)
+    queryClient.clear()
   }
 
   return (

@@ -2,36 +2,39 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import { CreateInviteInput, ChatInvite, InvitePaginationResponse } from 'dogsplayingpoker-shared/invite'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
+import { useAuth } from '@/context/auth'
 
-export const useSentInvites = (userId: number | undefined, params: PaginationInput) =>
-  useQuery({
-    queryKey: ['invites', { senderId: userId, page: params.page, pageSize: params.pageSize }],
+export const useSentInvites = (params: PaginationInput) => {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['invites', { senderId: user?.id, page: params.page, pageSize: params.pageSize }],
     queryFn: async () => {
-      const res = await api.get('/api/invites/sent', {
-        id: String(userId),
+      const res = await api.get('/invites/sent', {
         page: String(params.page),
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
       return res.json() as Promise<InvitePaginationResponse>
     },
-    enabled: !!userId,
+    enabled: !!user,
   })
+}
 
-export const useReceivedInvites = (userId: number | undefined, params: PaginationInput) =>
-  useQuery({
-    queryKey: ['invites', { receiverId: userId, page: params.page, pageSize: params.pageSize }],
+export const useReceivedInvites = (params: PaginationInput) => {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['invites', { receiverId: user?.id, page: params.page, pageSize: params.pageSize }],
     queryFn: async () => {
-      const res = await api.get('/api/invites/received', {
-        id: String(userId),
+      const res = await api.get('/invites/received', {
         page: String(params.page),
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
       return res.json() as Promise<InvitePaginationResponse>
     },
-    enabled: !!userId,
+    enabled: !!user,
   })
+}
 
 export const useCreateInvite = () => {
   const queryClient = useQueryClient()
@@ -42,7 +45,6 @@ export const useCreateInvite = () => {
       return res.json() as Promise<ChatInvite>
     },
     onSuccess: (invite) => {
-      queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
       queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
     },
   })
@@ -58,7 +60,6 @@ export const useAcceptInvite = () => {
     },
     onSuccess: (invite) => {
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
-      queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
     },
   })
 }
@@ -73,7 +74,6 @@ export const useDeclineInvite = () => {
     },
     onSuccess: (invite) => {
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
-      queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
     },
   })
 }

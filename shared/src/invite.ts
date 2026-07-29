@@ -7,7 +7,6 @@ export type Status = z.infer<typeof statusSchema>
 export const createInviteInputSchema = z.object({
   message: z.string().nullish(),
   receiverId: z.number().int().positive(),
-  senderId: z.number().int().positive(),
 })
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>
 

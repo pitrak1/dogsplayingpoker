@@ -1,5 +1,4 @@
 import { useReceivedInvites, useAcceptInvite, useDeclineInvite } from '@/api/invites'
-import { useAuth } from '@/context/auth'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { User } from 'dogsplayingpoker-shared/user'
@@ -11,10 +10,9 @@ import './receivedChatInvites.scss'
 
 
 export function ReceivedChatInvites() {
-  const { user } = useAuth()
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
-  const { data } = useReceivedInvites(user?.id, { page, pageSize })
+  const { data } = useReceivedInvites({ page, pageSize })
   const navigate = useNavigate();
   const { mutateAsync: acceptInvite, isPending: isAcceptPending } = useAcceptInvite()
   const { mutateAsync: declineInvite, isPending: isDeclinePending } = useDeclineInvite()

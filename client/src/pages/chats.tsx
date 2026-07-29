@@ -1,5 +1,4 @@
 import { useChatMemberships } from '@/api/chats'
-import { useAuth } from '@/context/auth'
 import { ChatDisplay } from '@/components/chatDisplay'
 import { User } from 'dogsplayingpoker-shared/user'
 import { useNavigate } from 'react-router'
@@ -7,9 +6,8 @@ import { useNavigate } from 'react-router'
 import './chats.scss'
 
 export function Chats() {
-  const { user } = useAuth()
   const navigate = useNavigate();
-  const { data } = useChatMemberships(user?.id, { page: 1, pageSize: 25 })
+  const { data } = useChatMemberships({ page: 1, pageSize: 25 })
 
   const hasChats = data?.chats && data?.chats.length > 0
 

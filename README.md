@@ -17,6 +17,5 @@ For each database entity, there will be four groups of types.  Some groups may h
 
 
 
-Move db wipe in test setup to common area.
 Change to use useAuth in api hooks on client side and use token on server side to get user id
 Start socketing

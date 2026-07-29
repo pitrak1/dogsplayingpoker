@@ -4,26 +4,6 @@ import { generateAuthToken } from '@/lib/auth'
 import { makeCreateInviteInput, makeInvite } from '@/test/factories'
 import * as inviteService from '@/services/inviteService'
 
-describe('GET /api/invites/sent', () => {
-  it('returns 400 if authenticated user is not requested user', async () => {
-    const token = generateAuthToken(1)
-    const res = await app.request(`/api/invites/sent?userId=${2}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    expect(res.status).toBe(400)
-  })
-})
-
-describe('GET /api/invites/received', () => {
-  it('returns 400 if authenticated user is not requested user', async () => {
-    const token = generateAuthToken(1)
-    const res = await app.request(`/api/invites/received?userId=${2}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    expect(res.status).toBe(400)
-  })
-})
-
 describe('PATCH /api/invites/accept', () => {
   it('returns 404 if invite does not exist', async () => {
     vi.spyOn(inviteService, 'getInviteById').mockResolvedValue(null)
@@ -107,7 +87,7 @@ describe('PATCH /api/invites/decline', () => {
 describe('POST /api/invites', () => {
   it('returns 400 if receiver is authed user', async () => {
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeCreateInviteInput({ senderId: 1, receiverId: 1 }))
+    const body = JSON.stringify(makeCreateInviteInput({ receiverId: 1 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',
@@ -117,10 +97,10 @@ describe('POST /api/invites', () => {
   })
 
   it('returns 400 if invite between users already exists', async () => {
-    const existingInvite = makeInvite({ senderId: 1, receiverId: 2 })
-    vi.spyOn(inviteService, 'getInviteBySenderAndReceiver').mockResolvedValue(existingInvite)
+    const existingInvite = makeInvite({ receiverId: 2 })
+    vi.spyOn(inviteService, 'getExistingInviteForUsers').mockResolvedValue(existingInvite)
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeCreateInviteInput({ senderId: 1, receiverId: 2 }))
+    const body = JSON.stringify(makeCreateInviteInput({ receiverId: 2 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',

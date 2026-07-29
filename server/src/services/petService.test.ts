@@ -49,7 +49,7 @@ describe('petService.getPetById', () => {
 describe('petService.createPet', () => {
   it('creates pet', async () => {
     const user = await setupUser()
-    const result = await petService.createPet(makePetInput(user.id))
+    const result = await petService.createPet(user.id, makePetInput())
 
     const rows = await db.select().from(pets)
     expect(rows).toHaveLength(1)
@@ -57,7 +57,7 @@ describe('petService.createPet', () => {
   })
 
   it('fails if owner does not exist', async () => {
-    await expect(petService.createPet(makePetInput(16))).rejects.toThrow()
+    await expect(petService.createPet(16, makePetInput())).rejects.toThrow()
   })
 })
 
@@ -65,7 +65,7 @@ describe('petService.editPet', () => {
   it('updates pet', async () => {
     const user = await setupUser()
     const pet = await setupPetForUser(user.id, { age: 11 })
-    const result = await petService.editPet(pet.id, makePetInput(user.id, { age: 12 }))
+    const result = await petService.editPet(pet.id, user.id, makePetInput({ age: 12 }))
     expect(result).not.toBeNull()
 
     const rows = await db.select().from(pets)
@@ -76,7 +76,7 @@ describe('petService.editPet', () => {
   it('returns null if pet does not exist', async () => {
     const user = await setupUser()
     await setupPetForUser(user.id)
-    const result = await petService.editPet(94, makePetInput(user.id))
+    const result = await petService.editPet(94, user.id, makePetInput())
     expect(result).toBeNull()
   })
 })

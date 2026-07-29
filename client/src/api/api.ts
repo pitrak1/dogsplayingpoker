@@ -4,7 +4,7 @@ const BASE = '/api'
 
 export const api = {
   get: (path: string, params?: Record<string, string>) => {
-    const url = new URL(path, window.location.origin)
+    const url = new URL(`${BASE}${path}`, window.location.origin)
     if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v))
     return rawFetch(url.toString())
   },

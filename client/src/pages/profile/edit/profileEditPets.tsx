@@ -1,14 +1,12 @@
-import { useAuth } from '@/context/auth'
 import { AddEditPetForm } from '@/components/forms/addEditPetForm'
-import { usePetsForOwner } from '@/api/pets'
+import { usePets } from '@/api/pets'
 import { Pet } from 'dogsplayingpoker-shared/pet'
 import { PetDisplay } from '@/components/petDisplay'
 import { useState } from 'react'
 import './profileEditPets.scss'
 
 export function ProfileEditPets() {
-  const { user } = useAuth()
-  const { data: pets } = usePetsForOwner(user?.id)
+  const { data: pets } = usePets()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [formPet, setFormPet] = useState<Pet | null>(null)
 

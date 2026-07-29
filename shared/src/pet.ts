@@ -48,6 +48,7 @@ export type Pet = z.infer<typeof petSchema>
 
 export const createPetInputSchema = petSchema.omit({
   id: true,
+  ownerId: true
 })
 
 export type CreatePetInput = z.infer<typeof createPetInputSchema>

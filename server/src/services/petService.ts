@@ -11,13 +11,13 @@ export const getPetById = async (id: number): Promise<Pet | null> => {
   return pet ?? null
 }
 
-export const createPet = async (input: CreatePetInput) => {
-  const rows = await db.insert(pets).values(input).returning()
+export const createPet = async (userId: number, input: CreatePetInput) => {
+  const rows = await db.insert(pets).values({ ownerId: userId, ...input }).returning()
   return rows[0]
 }
 
 // CreatePetInput is fine to use here because the current form sends back all form data, not just changes
-export const editPet = async (id: number, input: CreatePetInput): Promise<Pet | null> => {
-  const [pet] = await db.update(pets).set(input).where(eq(pets.id, id)).returning()
+export const editPet = async (id: number, userId: number, input: CreatePetInput): Promise<Pet | null> => {
+  const [pet] = await db.update(pets).set({ ownerId: userId, ...input }).where(eq(pets.id, id)).returning()
   return pet ?? null
 }

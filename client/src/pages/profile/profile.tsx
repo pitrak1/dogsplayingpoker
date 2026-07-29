@@ -33,7 +33,7 @@ export function Profile() {
   const handleSendInviteClick = async (message: string) => {
     if (!user || !currentUser) return
     try {
-      await createInvite({ senderId: currentUser.id, receiverId: user.id, message })
+      await createInvite({ receiverId: user.id, message })
       handleCloseInviteModal()
     } catch (err) {
       if (err instanceof ApiError) {

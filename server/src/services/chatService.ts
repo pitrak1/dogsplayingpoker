@@ -1,7 +1,7 @@
 import { ne, and, eq, sql, inArray, isNull } from 'drizzle-orm'
 import { db } from '@/db'
 import { UserRow, users, chatMemberships, messages, NewMessageRow } from '@/db/schema'
-import { PaginationWithIdInput } from 'dogsplayingpoker-shared/common'
+import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { ChatMembership, ChatPaginationResponse } from 'dogsplayingpoker-shared/chat'
 import { Message, FullMessage, CreateMessageInput } from 'dogsplayingpoker-shared/message'
 
@@ -49,26 +49,26 @@ const getFullMessages = async (m: Message[]) => {
   }))
 }
 
-export const getChatsForUser = async (input: PaginationWithIdInput): Promise<ChatPaginationResponse> => {
-  const { page, pageSize, id } = input
+export const getChatsForUser = async (userId: number, input: PaginationInput): Promise<ChatPaginationResponse> => {
+  const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
 
   const [memberships, totalCount] = await Promise.all([
     db.select().from(chatMemberships)
-      .where(eq(chatMemberships.userId, id)) 
+      .where(eq(chatMemberships.userId, userId)) 
       .orderBy(sql`created_at`)
       .limit(limit)
       .offset(offset),
     db.select({ count: sql<number>`count(*)::int` })
       .from(chatMemberships)
-      .where(eq(chatMemberships.userId, id)) 
+      .where(eq(chatMemberships.userId, userId)) 
       .then(r => r[0].count)
   ])
 
   if (memberships.length === 0) return { chats: [], totalCount: 0 }
 
-  const fullChats = await getFullChats(memberships, id)
+  const fullChats = await getFullChats(memberships, userId)
   
   return { chats: fullChats, totalCount }
 }

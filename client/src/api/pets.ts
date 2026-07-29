@@ -1,28 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import { CreatePetInput, Pet } from 'dogsplayingpoker-shared/pet'
+import { useAuth } from '@/context/auth'
 
-export const usePetsForOwner = (ownerId: number | undefined) =>
-  useQuery({
-    queryKey: ['pets', { ownerId }],
+export const usePets = () => {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['pets'],
     queryFn: async () => {
-      const res = await api.get('/api/pets', { ownerId: String(ownerId) })
+      const res = await api.get('/pets')
       if (!res.ok) throw new Error('Failed to fetch pets')
       return res.json() as Promise<Pet[]>
     },
-    enabled: !!ownerId,
+    enabled: !!user,
   })
-
-export const usePet = (id: number | undefined) =>
-  useQuery({
-    queryKey: ['pet', id],
-    queryFn: async () => {
-      const res = await api.get(`/api/pets/${id}`)
-      if (!res.ok) throw new Error('Failed to fetch pet')
-      return res.json() as Promise<Pet>
-    },
-    enabled: !!id,
-  })
+}
 
 export const useCreatePet = () => {
   const queryClient = useQueryClient()
@@ -32,8 +24,8 @@ export const useCreatePet = () => {
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to create pet')
       return res.json() as Promise<Pet>
     },
-    onSuccess: (pet) => {
-      queryClient.invalidateQueries({ queryKey: ['pets', { ownerId: pet.ownerId }] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pets'] })
     },
   })
 }
@@ -46,9 +38,8 @@ export const useEditPet = () => {
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to edit pet')
       return res.json() as Promise<Pet>
     },
-    onSuccess: (pet) => {
-      queryClient.invalidateQueries({ queryKey: ['pets', { ownerId: pet.ownerId }] })
-      queryClient.invalidateQueries({ queryKey: ['pet', pet.id] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pets'] })
     },
   })
 }
