@@ -1,16 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, chatInvites, chats, chatMemberships, messages } from '@/db/schema'
+import { chatInvites, chats, chatMemberships, messages } from '@/db/schema'
 import * as inviteService from '@/services/inviteService'
 import { setupInvite, setupUsers } from '@/test/factories'
+import { resetDb } from '@/test/helpers'
 
-beforeEach(async () => {
-  await db.delete(messages)
-  await db.delete(chatMemberships)
-  await db.delete(chats)
-  await db.delete(chatInvites)
-  await db.delete(users)
-})
+beforeEach(resetDb)
 
 describe('inviteService.getSentInvitesForUser', () => {
   it('returns invites where user is sender', async () => {

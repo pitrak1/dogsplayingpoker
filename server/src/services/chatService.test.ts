@@ -1,16 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, chats, chatMemberships, messages, pets } from '@/db/schema'
+import { messages } from '@/db/schema'
 import * as chatService from '@/services/chatService'
 import { setupChat, setupChatMembership, setupUser, setupUsers, setupMessages, setupMessage } from '@/test/factories'
+import { resetDb } from '@/test/helpers'
 
-beforeEach(async () => {
-  await db.delete(messages)
-  await db.delete(chatMemberships)
-  await db.delete(chats)
-  await db.delete(pets)
-  await db.delete(users)
-})
+beforeEach(resetDb)
 
 describe('chatService.getChatsForUser', () => {
   it('returns chat memberships for user', async () => {

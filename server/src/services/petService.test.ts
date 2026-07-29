@@ -1,13 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db'
-import { users, pets } from '@/db/schema'
+import { pets } from '@/db/schema'
 import * as petService from '@/services/petService'
 import { setupPetForUser, makePetInput, setupUser } from '@/test/factories'
+import { resetDb } from '@/test/helpers'
 
-beforeEach(async () => {
-  await db.delete(pets)
-  await db.delete(users)
-})
+beforeEach(resetDb)
 
 describe('petService.listPetsForOwner', () => {
   it('returns pets for owner', async () => {
