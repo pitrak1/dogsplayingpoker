@@ -28,6 +28,7 @@
     "hono": "^4.12.21",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.13.3",
+    "socket.io": "^4.8.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

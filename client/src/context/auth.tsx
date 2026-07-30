@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode } from 'react'
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 import { useQueryClient } from '@tanstack/react-query'
+import { socket } from '@/socket'
 
 const AUTH_MAX_AGE = 15 * 60
 const AUTH_TOKEN_KEY = 'authToken'
@@ -38,6 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
     setCookie(USER_KEY, JSON.stringify(user), AUTH_MAX_AGE)
     setUser(user)
+    socket.auth = { token }
+    socket.connect()
   }
 
   const clearAuth = () => {
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     deleteCookie(USER_KEY)
     setUser(null)
     queryClient.clear()
+    socket.disconnect()
   }
 
   return (
