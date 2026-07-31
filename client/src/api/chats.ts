@@ -1,9 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { api } from './api'
 import { ChatPaginationResponse } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
-import { FullMessage, Message } from 'dogsplayingpoker-shared/message'
-import { ApiError } from './errors'
+import { FullMessage } from 'dogsplayingpoker-shared/message'
 import { useAuth } from '@/context/auth'
 
 export const useChatMemberships = (params: PaginationInput) => {
@@ -35,20 +34,3 @@ export const useChatMessages = (chatId: number | undefined) => {
   })
 }
   
-
-export const useCreateMessage = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async ({ chatId, content }: { chatId: number, content: string }) => {
-      const res = await api.post(`/chats/${chatId}`, { content })
-      if (!res.ok) {
-        const body = (await res.json()) as { message: string; field?: string }
-        throw new ApiError(body.message ?? 'Cannot send message', body.field)
-      }
-      return res.json() as Promise<Message>
-    },
-    onSuccess: (message) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', { chatId: message.chatId }] })
-    },
-  })
-}

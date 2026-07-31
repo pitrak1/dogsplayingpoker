@@ -14,10 +14,16 @@ const getFullUser = async (user: User) => {
   return { ...user, pets: userPets }
 }
 
-export const getUserById = async (id: number) => {
+export const getFullUserById = async (id: number) => {
   const rows = await db.select().from(users)
     .where(and(eq(users.id, id), isNull(users.deletedAt)))
   return rows[0] ? await getFullUser(rows[0]) : null
+}
+
+export const getUserById = async (id: number) => {
+  const rows = await db.select().from(users)
+    .where(and(eq(users.id, id), isNull(users.deletedAt)))
+  return rows[0] ?? null
 }
 
 export const getUserByUsername = async (username: string) => {

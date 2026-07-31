@@ -99,3 +99,12 @@ export const createMessage = async (userId: number, chatId: number, input: Creat
   const rows = await db.insert(messages).values(values).returning()
   return rows[0]
 }
+
+// export const getMembersForChat = async (chatId: number) => {
+//   return await db.select().from(chatMemberships)
+//     .innerJoin(users, eq(users.id, chatMemberships.userId))
+//     .where(and(
+//       eq(chatMemberships.chatId, chatId),
+//       isNull(chatMemberships.deletedAt)
+//     ))
+// }

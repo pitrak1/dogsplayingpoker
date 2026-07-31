@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 import { useQueryClient } from '@tanstack/react-query'
@@ -34,6 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
   _setUserState = setUser
   const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const token = getCookie(AUTH_TOKEN_KEY)
+    if (token && !socket.connected) {
+      socket.auth = { token }
+      socket.connect()
+    }
+  }, [])
 
   const setAuth = (token: string, user: User) => {
     setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)

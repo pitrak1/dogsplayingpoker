@@ -21,7 +21,7 @@ export const userRoutes = new Hono<AppEnv>()
   })
   .get('/:id', zValidator('param', idInputSchema), async (c) => {
     const { id } = c.req.valid('param')
-    const user = await userService.getUserById(id)
+    const user = await userService.getFullUserById(id)
     if (!user) return c.json({ message: 'Not found' }, 404)
     return c.json(user)
   })
