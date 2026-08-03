@@ -1,0 +1,166 @@
+@use 'mixins' as *;
+
+%display-button {
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@mixin custom-button($font-size: 1rem, $background, $color, $hover) {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: $font-size;
+  background-color: $background;
+  color: $color;
+
+  &:hover {
+    background: $hover;
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+  }
+}
+
+@mixin primary-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-primary), var(--button-primary-text), var(--button-primary-hover));
+}
+
+@mixin secondary-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-secondary), var(--button-secondary-text), var(--button-secondary-hover));
+}
+
+@mixin success-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-success), var(--button-success-text), var(--button-success-hover));
+}
+
+@mixin failure-button($font-size: 1rem) {
+  @include custom-button($font-size, var(--button-failure), var(--button-failure-text), var(--button-failure-hover));
+}
+
+@mixin borderless-button($font-size: 1rem) {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  font-size: $font-size;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--button-borderless-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+  }
+}
+
+.primary-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 150px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  background-color: var(--button-active);
+  color: var(--button-active-text);
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--button-active-hover);
+  }
+
+  &:disabled {
+    background-color: var(--button-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.button-text {
+  padding-top: 3px;
+}
+
+%pagination-button {
+  @include flex-display(row, 0.5rem, center, center);
+  @extend %display-button;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: none;
+  color: black;
+
+  &:hover {
+    background: var(--button-primary-hover);
+    color: white;
+  }
+
+  &:disabled {
+    color: var(--text-secondary);
+  }
+
+  &:disabled:hover {
+    background: var(--button-disabled);
+  }
+}
+
+%pagination-button-active {
+  @extend %pagination-button;
+
+  background: var(--button-primary);
+  color: white;
+
+  &:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+}
+
+%pagination-page-button {
+  @extend %pagination-button;
+  width: calc(32px + 0.75rem);
+  height: calc(32px + 0.75rem);
+  padding: 0;
+}
+
+%pagination-page-button-active {
+  @extend %pagination-page-button;
+
+  background: var(--button-primary);
+  color: white;
+
+  &:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled {
+    background: var(--button-primary);
+    color: white;
+  }
+
+  &:disabled:hover {
+    background: var(--button-primary);
+    color: white;
+  }
+}

@@ -6,7 +6,7 @@
 }
 
 .chat-display__image {
-  @include avatar(64);
+  @include avatar();
 }
 
 .chat-display__info {

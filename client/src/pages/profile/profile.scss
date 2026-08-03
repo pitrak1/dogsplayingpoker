@@ -6,7 +6,7 @@
 }
 
 .profile__profile-image {
-  @include avatar(128px);
+  @include avatar();
 }
 
 .profile__user-info {

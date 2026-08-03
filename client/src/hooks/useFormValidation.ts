@@ -28,6 +28,8 @@ export function useFormValidation<T, S extends ZodType>(initial: T, schema: S) {
     return result
   }
 
+  const isValid = schema.safeParse(values).success
+
   return { 
     values, 
     setValues, 
@@ -36,6 +38,7 @@ export function useFormValidation<T, S extends ZodType>(initial: T, schema: S) {
     formError,
     setFormError,
     setFormValue,
-    validate 
+    validate,
+    isValid
   }
 }

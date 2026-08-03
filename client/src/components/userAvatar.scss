@@ -1,0 +1,23 @@
+@use '@/styles/global' as *;
+
+.avatar__current {
+  @include avatar();
+  outline: 3px solid green;
+}
+
+.avatar__suggested {
+  @include avatar();
+  outline: 3px solid yellow;
+}
+
+.avatar__marker {
+  @include avatar();
+}
+
+.avatar__menu {
+  @include avatar();
+}
+
+.avatar__profile {
+  @include avatar();
+}

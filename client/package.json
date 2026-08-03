@@ -12,6 +12,9 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@mantine/core": "^9.5.0",
+    "@mantine/dates": "^9.5.0",
+    "@mantine/hooks": "^9.5.0",
     "@mapbox/search-js-react": "^1.5.1",
     "@tanstack/react-query": "^5.100.11",
     "dogsplayingpoker-shared": "workspace:*",

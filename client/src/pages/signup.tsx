@@ -1,53 +1,58 @@
-import { FormField } from '@/components/forms/formField'
-import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useRegister } from '@/api/users'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
+import { useFormValidation } from '@/hooks/useFormValidation'
+import { z } from 'zod'
+import { TextInput, PasswordInput, Button } from '@mantine/core'
 import './signup.scss'
 
+const signupSchema = z.object({
+  username: z.string({ message: 'Username is required' }),
+  email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email'}),
+  password: z.string({ message: 'Password is required'}).min(8, { message: 'Password must be at least 8 characters' }),
+  confirmPassword: z.string({ message: 'Confirm password is required'})
+}).refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  }
+)
+
+type SignupFormState = z.infer<typeof signupSchema>
+
+const emptyFormState = {
+  email: '',
+  username: '',
+  password: '',
+  confirmPassword: '',
+} as const
+
 export function Signup() {
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
-  const [formError, setFormError] = useState<string | null>(null)
-
+  const { 
+    values,
+    fieldErrors, 
+    setFieldErrors,
+    formError,
+    setFormError,
+    setFormValue,
+    validate,
+  } = useFormValidation<SignupFormState, typeof signupSchema>(emptyFormState, signupSchema)
   const { mutateAsync: createUser, isPending } = useRegister()
-
-  const isValid =
-    email.includes('@') && username && password.length >= 8 && password === confirmPassword
-  const isDisabled = !isValid || isPending
-  const confirmPasswordError = confirmPassword.length > 0 && password !== confirmPassword ? 'Passwords do not match' : null
-
   const { setAuth } = useAuth()
-
   const navigate = useNavigate()
-
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-  }
-
-  const onChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value)
-  }
-
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-  }
-
-  const onChangeConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value)
-  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setFieldErrors({})
-    setFormError(null)
+
+    const result = validate()
+    if (!result.success) return
+
     try {
-      const { authToken, user } = await createUser({ username, email, password })
+      const { confirmPassword: _confirmPassword, ...otherValues } = result.data
+      const { authToken, user } = await createUser(otherValues)
       setAuth(authToken, user)
       navigate('/', { replace: true })
     } catch (err) {
@@ -66,48 +71,52 @@ export function Signup() {
       <ErrorBanner message={formError} />
       <h1 className="signup__header">Sign Up</h1>
       <form onSubmit={handleSubmit} className="signup__form">
-        <FormField 
+        <TextInput 
           name="email" 
           label="Email" 
-          type="email" 
-          value={email}
+          value={values.email} 
+          onChange={(e) => setFormValue('email', e.target.value)} 
+          size="lg" 
+          w="100%"
           error={fieldErrors['email']}
-          onChange={onChangeEmail} 
         />
-        <div>
+        <p>
           Although you use your email to sign in, your email will NOT be visible to other users.
-        </div>
-        <FormField
-          name="username"
-          label="Username"
-          type="text"
-          value={username}
+        </p>
+        <TextInput 
+          name="username" 
+          label="Username" 
+          value={values.username} 
+          onChange={(e) => setFormValue('username', e.target.value)} 
+          size="lg" 
+          w="100%"
           error={fieldErrors['username']}
-          onChange={onChangeUsername}
         />
-        <FormField
-          name="password"
-          label="Password"
-          type="password"
-          value={password}
+        <PasswordInput 
+          name="password" 
+          label="Password" 
+          value={values.password} 
+          onChange={(e) => setFormValue('password', e.target.value)} 
+          size="lg" 
+          w="100%"
           error={fieldErrors['password']}
-          onChange={onChangePassword}
         />
-        <FormField
-          name="confirmPassword"
-          label="Confirm Password"
-          type="password"
-          value={confirmPassword}
-          error={confirmPasswordError}
-          onChange={onChangeConfirmPassword}
+        <PasswordInput 
+          name="confirmPassword" 
+          label="Confirm Password" 
+          value={values.confirmPassword} 
+          onChange={(e) => setFormValue('confirmPassword', e.target.value)} 
+          size="lg" 
+          w="100%"
+          error={fieldErrors['confirmPassword']}
         />
-        <div>
+        <p>
           To personalize your profile with photos and information about your pets, go to the user
           menu after signup and choose the "Your profile" option.
-        </div>
-        <button type="submit" disabled={isDisabled} className="signup__button">
+        </p>
+        <Button color="brand" type="submit" disabled={isPending} size="lg" fullWidth>
           {isPending ? 'Signing up...' : 'Sign up'}
-        </button>
+        </Button>
       </form>
     </div>
   )

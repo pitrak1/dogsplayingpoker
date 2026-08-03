@@ -1,0 +1,5 @@
+@use '@/styles/global' as *;
+
+.header-nav__button {
+  @include borderless-button();
+}

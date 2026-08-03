@@ -6,7 +6,7 @@
 }
 
 .invite-display__image {
-  @include avatar(64);
+  @include avatar();
 }
 
 .invite-display__info {

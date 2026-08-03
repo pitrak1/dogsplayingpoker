@@ -1,158 +1,64 @@
+@forward 'colors';
+@forward 'mixins';
+@forward 'typography';
+@forward 'buttons';
+
+@use 'colors' as *;
+@use 'mixins' as *;
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+$header-height: 64px;
+
 :root {
-  --text-primary: black;
-  --text-secondary: #606060;
-  --text-field-error: red;
+  --header-height: #{$header-height};
 
-  --button-hover: #f0f0f0;
-  --button-active: #0066cc;
-  --button-active-text: white;
-  --button-active-hover: #005bb5;
-  --button-secondary: rgb(195, 195, 195);
-  --button-secondary-text: black;
-  --button-secondary-hover: rgb(179, 179, 179);
-  --form-field-border: 1px solid #ccc;
-  --form-field-background: #f4f4f4;
-  --color-primary: #0066cc;
-  --color-error: #ffb0b0;
-  --color-error-text: black;
-  --color-error-border: 1px solid red;
-  --color-field-error-text: red;
-  
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-field-error: #{$text-field-error};
 
-  --display-panel-background: #f4f4f4;
-  --display-panel-border: 1px solid #ccc;
+  --color-primary: #{$color-primary};
+  --color-error: #{$color-error};
+  --color-error-text: #{$color-error-text};
+  --color-error-border: 1px solid #{$color-error-border};
+  --color-field-error-text: #{$color-field-error-text};
 
-  --button-primary: #0066cc;
-  --button-primary-text: white;
-  --button-primary-hover: #005bb5;
+  --button-hover: #{$button-hover};
+  --button-active: #{$button-active};
+  --button-active-text: #{$button-active-text};
+  --button-active-hover: #{$button-active-hover};
+  --button-disabled: #{$button-disabled};
 
-  --button-secondary: #cccccc;
-  --button-secondary-text: black;
-  --button-secondary-hover: #b3b3b3;
+  --button-borderless-hover: #{$button-borderless-hover};
 
-  --button-success: green;
-  --button-success-text: white;
-  --button-success-hover: darkgreen;
+  --button-primary: #{$button-primary};
+  --button-primary-text: #{$button-primary-text};
+  --button-primary-hover: #{$button-primary-hover};
 
-  --button-failure: red;
-  --button-failure-text: white;
-  --button-failure-hover: darkred;
+  --button-secondary: #{$button-secondary};
+  --button-secondary-text: #{$button-secondary-text};
+  --button-secondary-hover: #{$button-secondary-hover};
 
-  --button-borderless-hover: #cccccc;
+  --button-success: #{$button-success};
+  --button-success-text: #{$button-success-text};
+  --button-success-hover: #{$button-success-hover};
 
-  --button-disabled: #cccccc;
+  --button-failure: #{$button-failure};
+  --button-failure-text: #{$button-failure-text};
+  --button-failure-hover: #{$button-failure-hover};
 
-  --map-blocker-color: lightgrey;
+  --form-field-border: 1px solid #{$form-field-border-color};
+  --form-field-background: #{$form-field-background};
 
-  --modal-border: 1px solid #ccc;
-}
+  --display-panel-background: #{$display-panel-background};
+  --display-panel-border: 1px solid #{$display-panel-border-color};
 
-$color-primary: var(--color-primary);
-
-@mixin avatar($size) {
-  width: $size;
-  height: $size;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  flex-shrink: 0;
-}
-
-@mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary), $font-weight: normal) {
-  font-size: $font-size;
-  color: $font-color;
-  font-weight: $font-weight;
-}
-
-@mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary), $font-weight: normal) {
-  font-size: $font-size;
-  color: $font-color;
-  font-weight: $font-weight;
-}
-
-@mixin field-error-text($font-size: 1.25rem) {
-  font-size: $font-size;
-  color: var(--text-field-error);
-  font-weight: normal;
-}
-
-%display-button {
-  border: none;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-}
-
-@mixin custom-button($font-size: 1rem, $background, $color, $hover) {
-  @include flex-display(row, 0.5rem, center, center);
-  @extend %display-button;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  font-size: $font-size;
-  background-color: $background;
-  color: $color;
-  
-  &:hover {
-    background: $hover;
-  }
-
-  &:disabled {
-    background-color: var(--button-disabled);
-  }
-}
-
-@mixin primary-button($font-size: 1rem) {
-  @include custom-button($font-size, var(--button-primary), var(--button-primary-text), var(--button-primary-hover));
-}
-
-@mixin secondary-button($font-size: 1rem) {
-  @include custom-button($font-size, var(--button-secondary), var(--button-secondary-text), var(--button-secondary-hover));
-}
-
-@mixin success-button($font-size: 1rem) {
-  @include custom-button($font-size, var(--button-success), var(--button-success-text), var(--button-success-hover));
-}
-
-@mixin failure-button($font-size: 1rem) {
-  @include custom-button($font-size, var(--button-failure), var(--button-failure-text), var(--button-failure-hover));
-}
-
-@mixin borderless-button($font-size: 1rem) {
-  @include flex-display(row, 0.5rem, center, center);
-  @extend %display-button;
-  font-size: $font-size;
-  background: none;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--button-borderless-hover);
-  }
-
-  &:disabled {
-    background-color: var(--button-disabled);
-  }
-}
-
-@mixin flex-display($direction: row, $gap: 0, $justify: center, $align: center) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
-  align-items: $align;
-  gap: $gap;
+  --modal-border: 1px solid #{$modal-border-color};
+  --map-blocker-color: #{$map-blocker-color};
 }
 
 %display-panel {
@@ -162,57 +68,14 @@ $color-primary: var(--color-primary);
   border: var(--display-panel-border);
 }
 
-.avatar__current {
-  @include avatar(36px);
-  outline: 3px solid green;
-}
-
-.avatar__suggested {
-  @include avatar(36px);
-  outline: 3px solid yellow;
-}
-
-.avatar__marker {
-  @include avatar(36px);
-}
-
-.avatar__menu {
-  @include avatar(40px);
-}
-
-.avatar__profile {
-  @include avatar(128px);
-}
-
-.primary-button {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  min-width: 150px;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border-radius: 0.5rem;
-  background-color: var(--button-active);
-  color: var(--button-active-text);
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--button-active-hover);
-  }
-
-  &:disabled {
-    background-color: var(--button-disabled);
-    cursor: not-allowed;
-  }
-}
-
-
-
-.button-text {
-  padding-top: 3px;
+@mixin avatar() {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .settings-title {
@@ -265,78 +128,4 @@ $color-primary: var(--color-primary);
   height: 1px;
   background-color: #a0a0a0;
   width: 100%;
-}
-
-%pagination-button {
-  @include flex-display(row, 0.5rem, center, center);
-  @extend %display-button;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: none;
-  color: black;
-  
-  &:hover {
-    background: var(--button-primary-hover);
-    color: white;
-  }
-
-  &:disabled {
-    color: var(--text-secondary)
-  }
-
-  &:disabled:hover {
-    background: var(--button-disabled)
-  }
-}
-
-%pagination-button-active {
-  @extend %pagination-button;
-
-  background: var(--button-primary);
-  color: white;
-
-  &:hover {
-    background: var(--button-primary);
-    color: white;
-  }
-
-  &:disabled {
-    background: var(--button-primary);
-    color: white;
-  }
-
-  &:disabled:hover {
-    background: var(--button-primary);
-    color: white;
-  }
-}
-
-%pagination-page-button {
-  @extend %pagination-button;
-  width: calc(32px + 0.75rem);
-  height: calc(32px + 0.75rem);
-  padding: 0rem;
-}
-
-%pagination-page-button-active {
-  @extend %pagination-page-button;
-
-  background: var(--button-primary);
-  color: white;
-
-  &:hover {
-    background: var(--button-primary);
-    color: white;
-  }
-
-  &:disabled {
-    background: var(--button-primary);
-    color: white;
-  }
-
-  &:disabled:hover {
-    background: var(--button-primary);
-    color: white;
-  }
 }

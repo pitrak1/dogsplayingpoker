@@ -1,44 +1,57 @@
-import { FormField } from '@/components/forms/formField'
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useLogin } from '@/api/users'
 import { ApiError } from '@/api/errors'
+import { PasswordInput, TextInput, Button } from '@mantine/core'
+import { useFormValidation } from '@/hooks/useFormValidation'
+import { z } from 'zod'
 import './login.scss'
 
+const loginSchema = z.object({
+  email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email'}),
+  password: z.string({ message: 'Password is required'}).min(8, { message: 'Password must be at least 8 characters' }),
+})
+
+type LoginFormState = z.infer<typeof loginSchema>
+
+const emptyFormState = {
+  email: '',
+  password: '',
+} as const
+
 export function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [formError, setFormError] = useState<string | null>(null)
-
+  const { 
+      values,
+      fieldErrors, 
+      setFieldErrors,
+      formError,
+      setFormError,
+      setFormValue,
+      validate,
+    } = useFormValidation<LoginFormState, typeof loginSchema>(emptyFormState, loginSchema)
   const { mutateAsync: loginUser, isPending } = useLogin()
-
   const { setAuth } = useAuth()
-
-  const isValid = email && password
-  const isDisabled = !isValid || isPending
-
   const navigate = useNavigate()
-
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
-  }
-
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    const result = validate()
+    if (!result.success) return
+
     setFormError(null)
     try {
-      const { authToken, user } = await loginUser({ email, password })
+      const { authToken, user } = await loginUser(result.data)
       setAuth(authToken, user)
       navigate('/', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
-        setFormError(err.message)
+        if (err.field) {
+          setFieldErrors({ [err.field]: err.message })
+        } else {
+          setFormError(err.message)
+        }
       }
     }
   }
@@ -48,17 +61,33 @@ export function Login() {
       <ErrorBanner message={formError} />
       <h1 className="login__header">Log in</h1>
       <form className="login__form" onSubmit={handleSubmit}>
-        <FormField name="email" label="Email" type="email" value={email} onChange={onChangeEmail} />
-        <FormField
-          name="password"
-          label="Password"
-          type="password"
-          value={password}
-          onChange={onChangePassword}
+        <TextInput 
+          name="email" 
+          label="Email" 
+          value={values.email} 
+          onChange={(e) => setFormValue('email', (e.target.value))} 
+          error={fieldErrors.email}
+          size="lg" 
+          w="100%"
         />
-        <button className="login__button" type="submit" disabled={isDisabled}>
+        <PasswordInput 
+          name="password"
+          label="Password" 
+          value={values.password} 
+          onChange={(e) => setFormValue('password', e.target.value)} 
+          error={fieldErrors.password}
+          size="lg" 
+          w="100%"
+        />
+        <Button 
+          color="brand" 
+          type="submit" 
+          disabled={isPending} 
+          size="lg" 
+          fullWidth
+        >
           {isPending ? 'Logging in...' : 'Log in'}
-        </button>
+        </Button>
       </form>
     </div>
   )

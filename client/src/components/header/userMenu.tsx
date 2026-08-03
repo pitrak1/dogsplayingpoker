@@ -1,67 +1,37 @@
 import { Link } from 'react-router'
 import { useAuth } from '@/context/auth'
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
+import { Menu, UnstyledButton } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import { UserAvatar } from '@/components/userAvatar'
 import './userMenu.scss'
 
 export function UserMenu() {
   const { user, clearAuth } = useAuth()
-  const [isOpen, setIsOpen] = useState(false)
+  const [opened, { toggle, close }] = useDisclosure(false)
+
+  if (!user) return
 
   const logout = () => {
     clearAuth()
-    setIsOpen(false)
   }
 
-  const closeMenu = () => {
-    setIsOpen(false)
-  }
-
-  const renderMenuContents = () => {
-    if (user) {
-      return (
-        <div className="user-menu__username-display">
-          <button className="user-menu__username-button" onClick={() => setIsOpen(!isOpen)}>
-            {user.profileImageUrl && (
-              <img
-                src={user.profileImageUrl}
-                alt={user.username}
-                className="avatar avatar--small"
-              />
-            )}
-            {user.username}
-            <ChevronDown />
-          </button>
-          {isOpen && (
-            <div className="user-menu__dropdown">
-              <Link to={`/profile/${user.username}`} onClick={closeMenu}>
-                Your profile
-              </Link>
-              <Link to="/profile/edit" onClick={closeMenu}>
-                Edit profile
-              </Link>
-              <Link to={`/chats`} onClick={closeMenu}>
-                Your chats
-              </Link>
-              <Link to={`/invites`} onClick={closeMenu}>
-                Your invites
-              </Link>
-              <Link to="/" onClick={logout}>
-                Log out
-              </Link>
-            </div>
-          )}
-        </div>
-      )
-    } else {
-      return (
-        <>
-          <Link to="/login">Log in</Link>
-          <Link to="/signup">Sign up</Link>
-        </>
-      )
-    }
-  }
-
-  return <div className="user-menu">{renderMenuContents()}</div>
+  return (
+    <Menu opened={opened} onClose={close}>
+      <Menu.Target>
+        <UnstyledButton fz="lg" py="md"  className="user-menu__button" onClick={toggle}>
+          <UserAvatar user={user} size={40} />
+          {user.username}
+          <ChevronRight className="user-menu__chevron" data-opened={opened}/>
+        </UnstyledButton>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item fz="lg" py="md" component={Link} to={`/profile/${user.username}`}>Your profile</Menu.Item>
+        <Menu.Item fz="lg" py="md" component={Link} to="/profile/edit">Edit profile</Menu.Item>
+        <Menu.Item fz="lg" py="md" component={Link} to="/chats">Your chats</Menu.Item>
+        <Menu.Item fz="lg" py="md" component={Link} to="/invites">Your invites</Menu.Item>
+        <Menu.Item fz="lg" py="md" component={Link} to="/" onClick={logout}>Log out</Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  )
 }

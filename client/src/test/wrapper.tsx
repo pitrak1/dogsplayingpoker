@@ -3,6 +3,7 @@ import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/context/auth'
+import { MantineProvider } from '@mantine/core'
 import { renderHook } from '@testing-library/react'
 
 const makeQueryClient = () =>
@@ -14,7 +15,11 @@ export const AppTestWrapper = (pathname: string | null | undefined) =>
   ({ children }: { children: ReactNode }) => (
     <MemoryRouter initialEntries={[pathname || '/']}>
       <QueryClientProvider client={makeQueryClient()}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <MantineProvider>
+            {children}
+          </MantineProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </MemoryRouter>
   )

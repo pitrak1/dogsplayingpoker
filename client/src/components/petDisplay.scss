@@ -12,7 +12,7 @@
 }
 
 .pet-display__picture {
-  @include avatar(128px);
+  @include avatar();
 }
 
 .pet-display__info {

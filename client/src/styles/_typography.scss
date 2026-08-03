@@ -1,0 +1,17 @@
+@mixin primary-text($font-size: 1.5rem, $font-color: var(--text-primary), $font-weight: normal) {
+  font-size: $font-size;
+  color: $font-color;
+  font-weight: $font-weight;
+}
+
+@mixin secondary-text($font-size: 1.25rem, $font-color: var(--text-secondary), $font-weight: normal) {
+  font-size: $font-size;
+  color: $font-color;
+  font-weight: $font-weight;
+}
+
+@mixin field-error-text($font-size: 1.25rem) {
+  font-size: $font-size;
+  color: var(--text-field-error);
+  font-weight: normal;
+}

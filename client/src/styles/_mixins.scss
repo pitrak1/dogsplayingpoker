@@ -1,0 +1,17 @@
+@mixin flex-display($direction: row, $gap: 0, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+@mixin avatar() {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}

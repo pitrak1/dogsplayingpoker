@@ -1,10 +1,8 @@
-@use '@/styles/variables' as *;
+@use '@/styles/global' as *;
 
 .header {
+  @include flex-display(row, 0, space-between, center);
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   height: $header-height;
   padding: 0 1.5rem;
   background: $header-bg;
@@ -12,6 +10,25 @@
   z-index: 1000;
 }
 
+.header__left {
+  @include flex-display(row, 1rem, center, center);
+}
+
+.header__logo-link {
+  @include flex-display(row, 1rem, center, center);
+  color: black;
+  text-decoration: none;
+}
+
+.header__logo {
+  height: 2.5rem;
+}
+
 .header__name {
-  margin-left: 1rem;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.header__auth-buttons {
+  @include flex-display(row, 1rem);
 }

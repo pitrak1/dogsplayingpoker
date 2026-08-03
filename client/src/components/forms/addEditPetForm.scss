@@ -36,7 +36,7 @@
 }
 
 .add-edit-pet-form__preview {
-  @include avatar(128px);
+  @include avatar();
   margin: 1.5rem;
 }
 

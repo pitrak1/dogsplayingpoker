@@ -1,11 +1,12 @@
-import './errorBanner.scss'
+import { Alert } from '@mantine/core'
+import { CircleX } from 'lucide-react'
 
 export function ErrorBanner({ message }: { message: string | null }) {
-  const showBanner = !!message
+  if (!message) return
 
   return (
-    <div className={`error-banner ${showBanner && 'visible'}`}>
+    <Alert color="red" title="Error" icon={<CircleX />} w="400">
       {message}
-    </div>
+    </Alert>
   )
 }

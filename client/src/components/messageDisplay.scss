@@ -6,7 +6,7 @@
 }
 
 .message-display__image {
-  @include avatar(64);
+  @include avatar();
 }
 
 .message-display__info {

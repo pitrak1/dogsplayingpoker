@@ -28,6 +28,15 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', {
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      }],
+    },
+  },
   // Looser rules for test files
   {
     files: ['**/*.test.ts', '**/*.test.tsx', '**/test/**/*.{ts,tsx}'],
