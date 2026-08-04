@@ -1,80 +1,12 @@
 @use '@/styles/global' as *;
 
 .search-results {
+  @include flex-display(column);
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - $header-height - $home-search-height - $home-search-pagination-height);
   overflow-y: scroll;
 }
 
 .search-results__empty-text {
   margin: 30px;
   font-size: 22px;
-}
-
-.search-result-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8px;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  border-radius: 6px;
-}
-
-.search-result-item-highlighted {
-  background-color: #f0f0f0;
-}
-
-.search-result-item__index {
-  font-size: 18px;
-  color: #666;
-  margin: 4px 16px;
-}
-
-.search-result-item__info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.search-result-item__profile-image {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  margin-right: 0.5rem;
-}
-
-.search-result-item__nav-icon {
-  margin: 8px;
-}
-
-.search-result-item__username {
-  font-size: 18px;
-  padding: 0.2rem;
-}
-
-.search-result-item__user-info {
-  width: 100%;
-  color: var(--text-secondary);
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-}
-
-.search-result-item__distance {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.search-result-item__pets {
-  display: flex;
-  align-items: center;
-  gap: 3px;
 }

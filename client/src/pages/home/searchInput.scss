@@ -1,0 +1,16 @@
+@use '@/styles/global' as *;
+
+.search-input {
+  @include flex-display(column, 1rem);
+  margin: 16px;
+  flex-shrink: 0;
+  // height: $search-input-height;
+}
+
+.search-input__title {
+  @include primary-text(1.25rem, var(--text-primary), bold);
+}
+
+.search-input__total {
+  @include secondary-text(1rem);
+}

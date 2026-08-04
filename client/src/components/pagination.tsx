@@ -34,7 +34,7 @@ export function Pagination({ pageNumber, pageSize, totalCount, onPageChange, cla
     return (
       <button
         key={num}
-        className={`pagination__page-button${isActivePage ? '-active' : ''}`}
+        className={`pagination__page-button${isActivePage ? '--active' : ''}`}
         disabled={isActivePage}
         onClick={() => onPageChange(num)}
       >

@@ -1,0 +1,43 @@
+@use '@/styles/global' as *;
+
+%search-result-display-item {
+  @include flex-display(row, 0.5rem, space-between, center);
+  cursor: pointer;
+  border: none;
+  padding: 1rem;
+}
+
+.search-result-display {
+  @extend %search-result-display-item;
+  background-color: white;
+}
+
+.search-result-display--highlighted {
+  @extend %search-result-display-item;
+  background-color: #f0f0f0;
+}
+
+.search-result-display__index {
+  @include secondary-text(1rem);
+}
+
+.search-result-display__body {
+  @include flex-display(row, 1rem);
+}
+
+.search-result-display__info {
+  @include flex-display(column, 0, flex-start, flex-start);
+}
+
+.search-result-display__username {
+  @include primary-text(1.25rem);
+}
+
+.search-result-display__user-info {
+  @include flex-display(row, 1rem, flex-start, flex-start);
+  @include secondary-text(1rem);
+}
+
+.search-result-display__user-info-item {
+  @include flex-display(row, 0.25rem, center, center);
+}

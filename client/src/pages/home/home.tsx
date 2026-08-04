@@ -1,11 +1,15 @@
 import { UserMap } from '@/components/userMap'
-import { SearchSidebar } from '@/pages/home/searchSidebar'
 import { useCallback, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import { useSearchUsers } from '@/api/users'
 import { boundsFromMap } from '@/lib/maps'
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { PaginationInput } from 'dogsplayingpoker-shared/common'
+import { SearchInput } from './searchInput'
+import { SearchResults } from './searchResults'
+import { Pagination } from '@/components/pagination'
+import { Divider } from '@mantine/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
 
@@ -18,11 +22,11 @@ type MapBounds = {
   centerLng: number
 }
 
-export type ActiveSearch = MapBounds & { page: number }
+export type ActiveSearch = MapBounds & PaginationInput
 
 export function Home() {
   const [searchUrlParams, setSearchUrlParams] = useSearchParams()
-  const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
+  const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
   const [searchedLocationName, setSearchedLocationName] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
   const [highlightedUser, setHighlightedUser] = useState<User | null>(null)
@@ -105,17 +109,28 @@ export function Home() {
           onHoverMarker={setHighlightedUser}
         />
       </div>
-      <SearchSidebar
-        users={users ?? []}
-        highlightedUser={highlightedUser}
-        totalCount={totalCount}
-        mapInstance={mapInstance}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-        searchedLocation={searchedLocationName}
-        onSearchLocationChange={handleSearchLocationChange}
-        onSearchResultHover={setHighlightedUser}
-      />
+      <div className="home__sidebar">
+        <SearchInput 
+          totalCount={totalCount} 
+          mapInstance={mapInstance} 
+          searchedLocation={searchedLocationName} 
+          onSearchLocationChange={handleSearchLocationChange} 
+        />
+        <Divider />
+        <SearchResults 
+          users={users} 
+          highlightedUser={highlightedUser} 
+          onSearchResultHover={setHighlightedUser} 
+        />
+        <Divider />
+        <Pagination 
+          pageNumber={currentPage} 
+          pageSize={25} 
+          totalCount={totalCount ?? 0} 
+          onPageChange={handlePageChange} 
+          className={"home__search-pagination"}
+        />
+      </div>
     </div>
   )
 }

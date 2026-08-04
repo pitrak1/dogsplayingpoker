@@ -13,15 +13,35 @@
 }
 
 $header-height: 64px;
+$search-sidebar-height: calc(100vh - $header-height);
+$search-input-height: 120px;
+$search-pagination-height: 48px;
+$search-results-height: calc(100vh - $header-height - $search-input-height - $search-pagination-height);
 
 :root {
   --header-height: #{$header-height};
+  --search-sidebar-height: #{$search-sidebar-height};
+  --search-input-height: #{$search-input-height};
+  --search-pagination-height: #{$search-pagination-height};
+  --search-results-height: #{$search-results-height};
+
+  --mantine-color-brand-0: #{$color-brand-0};
+  --mantine-color-brand-1: #{$color-brand-1};
+  --mantine-color-brand-2: #{$color-brand-2};
+  --mantine-color-brand-3: #{$color-brand-3};
+  --mantine-color-brand-4: #{$color-brand-4};
+  --mantine-color-brand-5: #{$color-brand-5};
+  --mantine-color-brand-6: #{$color-brand-6};
+  --mantine-color-brand-7: #{$color-brand-7};
+  --mantine-color-brand-8: #{$color-brand-8};
+  --mantine-color-brand-9: #{$color-brand-9};
 
   --text-primary: #{$text-primary};
   --text-secondary: #{$text-secondary};
   --text-field-error: #{$text-field-error};
 
   --color-primary: #{$color-primary};
+
   --color-error: #{$color-error};
   --color-error-text: #{$color-error-text};
   --color-error-border: 1px solid #{$color-error-border};

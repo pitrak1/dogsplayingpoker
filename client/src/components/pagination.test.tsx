@@ -6,12 +6,12 @@ import { Pagination } from './pagination'
 describe('Pagination', () => {
   it('shows no results when no entries are given', () => {
     const { container } = renderWithProviders(<Pagination pageNumber={1} pageSize={25} totalCount={0} onPageChange={vi.fn()} />)
-    expect(container.firstChild).toBeNull()
+    expect(container.querySelector('.pagination')).toBeNull()
   })
 
   it('shows no results when total count is less than or equal to page size', () => {
     const { container } = renderWithProviders(<Pagination pageNumber={1} pageSize={25} totalCount={25} onPageChange={vi.fn()} />)
-    expect(container.firstChild).toBeNull()
+    expect(container.querySelector('.pagination')).toBeNull()
   })
 
   it('previous button is disabled on first page', () => {

@@ -4,6 +4,37 @@
   @include flex-display(row, 0, space-between, center);
 }
 
+%pagination-button {
+  @include flex-display(row, 0, center, center);
+  @extend %display-button;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: none;
+  color: black;
+
+  &:hover {
+    background: var(--mantine-color-brand-6);
+    color: white;
+  }
+
+  &:disabled {
+    color: var(--text-secondary);
+  }
+
+  &:disabled:hover {
+    background: var(--button-disabled);
+  }
+}
+
+%pagination-page-button {
+  @extend %pagination-button;
+  width: calc(32px + 0.75rem);
+  height: calc(32px + 0.75rem);
+  padding: 0;
+}
+
+
 .pagination__nav-button {
   @extend %pagination-button;
 }
@@ -16,24 +47,24 @@
   @extend %pagination-page-button;
 }
 
-.pagination__page-button-active {
+.pagination__page-button--active {
   @extend %pagination-page-button;
 
-  background: var(--button-primary);
+  background: var(--mantine-color-brand-5);
   color: white;
 
   &:hover {
-    background: var(--button-primary);
+    background: var(--mantine-color-brand-5);
     color: white;
   }
 
   &:disabled {
-    background: var(--button-primary);
+    background: var(--mantine-color-brand-5);
     color: white;
   }
 
   &:disabled:hover {
-    background: var(--button-primary);
+    background: var(--mantine-color-brand-5);
     color: white;
   }
 }
