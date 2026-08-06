@@ -1,7 +1,6 @@
 import { UserMap } from '@/components/userMap'
 import { useCallback, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
-import { DEFAULT_MAP_CENTER } from '@/constants/map'
+import { useNavigate } from 'react-router'
 import { useSearchUsers } from '@/api/users'
 import { boundsFromMap } from '@/lib/maps'
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
@@ -12,6 +11,8 @@ import { Pagination } from '@/components/pagination'
 import { Divider } from '@mantine/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './home.scss'
+import { useCoordinateParams } from '@/hooks/useCoordinateParams'
+import { DEFAULT_MAP_CENTER } from '@/constants/map'
 
 type MapBounds = {
   swLat: number
@@ -25,7 +26,7 @@ type MapBounds = {
 export type ActiveSearch = MapBounds & PaginationInput
 
 export function Home() {
-  const [searchUrlParams, setSearchUrlParams] = useSearchParams()
+  const { mapPosition, setParams } = useCoordinateParams(DEFAULT_MAP_CENTER)
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
   const [searchedLocationName, setSearchedLocationName] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
@@ -34,11 +35,6 @@ export function Home() {
   const [searchOnNextMove, setSearchOnNextMove] = useState<boolean>(false)
 
   const navigate = useNavigate()
-
-  const lat = parseFloat(searchUrlParams.get('lat') ?? DEFAULT_MAP_CENTER.latitude.toString())
-  const lng = parseFloat(searchUrlParams.get('lng') ?? DEFAULT_MAP_CENTER.longitude.toString())
-  const zoom = parseFloat(searchUrlParams.get('zoom') ?? DEFAULT_MAP_CENTER.zoom.toString())
-
   const handleMapReady = useCallback(
     (map: mapboxgl.Map) => {
       setMapInstance(map)
@@ -62,14 +58,7 @@ export function Home() {
     if (!mapInstance) return 
     const next = boundsFromMap(mapInstance)
     const zoom = mapInstance.getZoom()
-    setSearchUrlParams(
-      {
-        lat: Number(next.centerLat).toFixed(6),
-        lng: Number(next.centerLng).toFixed(6),
-        zoom: zoom.toFixed(2),
-      },
-      { replace: true },
-    )
+    setParams(next.centerLat, next.centerLng, zoom)
     setActiveSearch({ ...next, page: 1 })
     setHasMapMoved(false)
   }
@@ -90,6 +79,7 @@ export function Home() {
   }, [searchOnNextMove, mapInstance])
 
   const handleSearchLocationChange = (location: string | null) => {
+    // This is done because if we immediately search at the map location, we will be searching before the map moves to `location`
     setSearchedLocationName(location)
     if (location) setSearchOnNextMove(true)
   }
@@ -101,7 +91,7 @@ export function Home() {
         <UserMap
           users={users ?? []}
           highlightedUser={highlightedUser}
-          initialPosition={{ lat, lng, zoom }}
+          initialPosition={mapPosition}
           onMapReady={handleMapReady}
           onMapMove={handleMapMove}
           onClickMarker={handleClickMarker}

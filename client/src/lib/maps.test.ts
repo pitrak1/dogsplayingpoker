@@ -3,9 +3,7 @@ import {
   milesToPixels,
   getCircleStops,
   metersToMiles,
-  createMarkerElement,
 } from './maps'
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 
 describe('milesToPixels', () => {
   it('returns more pixels at higher zoom levels', () => {
@@ -42,31 +40,5 @@ describe('getCircleStops', () => {
 describe('metersToMiles', () => {
   it('converts 1609.34 meters to ~1 mile', () => {
     expect(metersToMiles(1609.34)).toBeCloseTo(1)
-  })
-})
-
-describe('createMarkerElement', () => {
-  const testUser = { 
-    id: 1, 
-    username: 'sarah', 
-    profileImageUrl: 'https://example.com/avatar.jpg' 
-  } as User
-
-  it('returns a div with the marker class', () => {
-    const el = createMarkerElement(testUser, () => {})
-    expect(el.className).toContain('user-map__marker-avatar')
-  })
-
-  it('sets background image when user has a profile image', () => {
-    const el = createMarkerElement(testUser, () => {})
-    const inner = el.querySelector('.user-map__marker-avatar-inner') as HTMLElement
-    expect(inner.style.backgroundImage).toContain('https://example.com/avatar.jpg')
-  })
-
-  it('calls onClick when clicked', () => {
-    let clicked = false
-    const el = createMarkerElement(testUser, () => { clicked = true })
-    el.click()
-    expect(clicked).toBe(true)
   })
 })

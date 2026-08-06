@@ -3,6 +3,7 @@ import { UserMap } from '@/components/userMap'
 import { Shuffle } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
 import { MapBlocker } from '@/components/mapBlocker'
+import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import './profileEditLocationDistance.scss'
 
 type Props = {
@@ -53,6 +54,7 @@ export function ProfileEditLocationDistance({generatedCoordinates, distance, onD
       />
       <div className="profile-edit-location-current__map-container">
         <UserMap 
+          initialPosition={DEFAULT_MAP_CENTER}
           users={userAtLocationAsArray} 
           isBlocked={!generatedCoordinates}
           lockMovement={true}

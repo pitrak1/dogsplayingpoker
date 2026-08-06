@@ -1,5 +1,10 @@
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import { getCssVar } from './cssVars'
+import { createRoot } from 'react-dom/client'
+import type { Root } from 'react-dom/client'
+import { theme } from '@/styles/theme'
+import { MantineProvider } from '@mantine/core'
+import { UserAvatar } from '@/components/userAvatar'
 import mapboxgl from 'mapbox-gl'
 
 // At zoom 0, 1 pixel represents this many meters at the equator
@@ -27,52 +32,43 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
   return meters / metersPerPixel
 }
 
+export const renderUserMarker = (root: Root, user: FullUser, size: number, onClick: () => void) => {
+  root.render(
+    <MantineProvider theme={theme}>
+      <UserAvatar user={user} size={size} onClick={onClick} />
+    </MantineProvider>
+  )
+}
+
+export const addUserMarker = (
+  map: mapboxgl.Map,
+  user: FullUser,
+  onClick: () => void
+): { marker: mapboxgl.Marker, root: Root } => {
+  const container = document.createElement('div')
+  const root = createRoot(container)
+  renderUserMarker(root, user, 36, onClick)
+
+  const marker = new mapboxgl.Marker({ element: container })
+    .setLngLat([user.location!.x, user.location!.y])
+    .addTo(map)
+
+  return { marker, root }
+}
+
 // Creates an array mapping zoom level to miles/px for the particular latitude and mile range
 export const getCircleStops = (miles: number, latitude: number): [number, number][] =>
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
 
-export const createMarkerElement = (user: User, onClick: () => void, style?: string) => {
-  const wrapper = document.createElement('div')
-  wrapper.className = 'user-map__marker-avatar'
-  const inner = document.createElement('div')
-  inner.className = `avatar__marker user-map__marker-avatar-inner ${style}`
-  if (user.profileImageUrl) inner.style.backgroundImage = `url(${user.profileImageUrl})`
-  wrapper.appendChild(inner)
-  wrapper.addEventListener('click', onClick)
-  return wrapper
-}
-
-export const addUserMarker = (
-  map: mapboxgl.Map, 
-  user: User, 
-  onClick: () => void,
-  onHover?: (user: User | null) => void,
-  overrides?: { lat?: number, lng?: number, style?: string }) =>
-{
-  const lat = overrides?.lat ?? user.location?.y ?? 0
-  const lng = overrides?.lng ?? user.location?.x ?? 0
-  const marker = new mapboxgl.Marker({ element: createMarkerElement(user, onClick, overrides?.style) })
-    .setLngLat([lng, lat])
-    .addTo(map)
-
-  if (onHover) {
-    const el = marker.getElement()
-    el.addEventListener('mouseenter', () => onHover(user))
-    el.addEventListener('mouseleave', () => onHover(null))
-  }
-
-  return marker
-}
-  
-
-export const addUserRange = (map: mapboxgl.Map, user: User) => {
+export const addUserRange = (map: mapboxgl.Map, user: FullUser) => {
   if (!user.radiusMiles || user.radiusMiles === 0 || !user.location) return
-  return addRange(map, user.location.y, user.location.x, user.radiusMiles)
-}
+  
+  const lat = user.location.y
+  const lng = user.location.x
+  const radius = user.radiusMiles
 
-export const addRange = (map: mapboxgl.Map, lat: number, lng: number, radius: number, overrides?: { id?: string, color?: string }) => {
-  const sourceId = overrides?.id ?? `range-${lat}+${lng}+${radius}`
-  const color = overrides?.color ?? getCssVar('color-primary')
+  const sourceId = `range-${lat}+${lng}+${radius}`
+  const color = getCssVar('color-primary')
   map.addSource(sourceId, {
     type: 'geojson',
     data: {

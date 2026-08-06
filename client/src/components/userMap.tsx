@@ -1,14 +1,16 @@
-import { useRef, useCallback, useEffect, useState, useMemo } from 'react'
-import { DEFAULT_MAP_CENTER } from '@/constants/map'
+import { useRef, useEffect } from 'react'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
-import { addUserMarker, addUserRange, removeUserRange } from '@/lib/maps'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
+import { addUserRange, removeUserRange } from '@/lib/maps'
+import type { MapPosition } from 'dogsplayingpoker-shared/common'
+import { useMapboxMapMarkers } from '@/hooks/useMapboxMapMarkers'
+import { renderUserMarker } from '@/lib/maps'
 import './userMap.scss'
 
 type MapProps = {
-  users: User[] | User
-  highlightedUser?: User | null
-  initialPosition?: { lat: number, lng: number, zoom: number }
+  users: FullUser[] | FullUser
+  highlightedUser?: FullUser | null
+  initialPosition: MapPosition
   caption?: string
   /* If you lock movement and do not provide an onScroll/onDoubleClick, zooming is centered */
   lockMovement?: boolean
@@ -17,8 +19,8 @@ type MapProps = {
   onMapMove?: (map: mapboxgl.Map) => void
   onScroll?: (map: mapboxgl.Map, e: WheelEvent) => void
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
-  onClickMarker?: (user: User) => void
-  onHoverMarker?: (user: User | null) => void
+  onClickMarker?: (user: FullUser) => void
+  onHoverMarker?: (user: FullUser | null) => void
   onRedoSearch?: () => void
   children?: React.ReactNode
 }
@@ -38,106 +40,53 @@ export function UserMap({
   children
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const markersRef = useRef(new Map<number, mapboxgl.Marker>())
-  const [hoveredUser, setHoveredUser] = useState<User | null>(null)
-
-  const focusUser = useMemo(() => highlightedUser ?? hoveredUser, [highlightedUser, hoveredUser])
-
-  const handleMapMove = useCallback(
-    (map: mapboxgl.Map) => {
-      if (onMapMove) onMapMove(map)
-    },
-    [onMapMove]
-  )
-
-  const initialLat = initialPosition?.lat || DEFAULT_MAP_CENTER.latitude
-  const initialLng = initialPosition?.lng || DEFAULT_MAP_CENTER.longitude
-  const initialZoom = initialPosition?.zoom || DEFAULT_MAP_CENTER.zoom
-  const mapReadyStub = () => {}
-  const mapReadyCallback = onMapReady ?? mapReadyStub
-  
-  const { mapRef, mapLoaded } = useMapboxMap({
+  const { mapRef } = useMapboxMap({
     container: mapContainerRef,
-    initialLat,
-    initialLng,
-    initialZoom,
+    initialPosition,
     lockMovement,
-    onMapReady: mapReadyCallback,
-    onMapMove: handleMapMove,
+    onMapReady,
+    onMapMove,
     onScroll,
     onDoubleClick,
   })
-
-  const highlightMarker = (markers: Map<number, mapboxgl.Marker>, user: User) => {
-    const marker = markers.get(user.id)
-    marker?.getElement().classList.add('user-map__marker-avatar-highlighted')
-  }
-
-  const unhighlightMarker = (markers: Map<number, mapboxgl.Marker>, user: User) => {
-    const marker = markers.get(user.id)
-    marker?.getElement().classList.remove('user-map__marker-avatar-highlighted')
-  }
+  const { markerRootsRef } = useMapboxMapMarkers({ mapRef, users, onClickMarker, onHoverMarker })
+  const previousHighlightedUserRef = useRef<FullUser | null>(null)
 
   useEffect(() => {
     if (!mapRef.current) return
 
     const map = mapRef.current
-    const markers = markersRef.current
-    
-    let sourceId: string | undefined
-    if (focusUser) {
-      highlightMarker(markers, focusUser)
-      sourceId = addUserRange(map, focusUser)
+
+    // Recall previous highlighted user and update stored value
+    const previous = previousHighlightedUserRef.current
+    previousHighlightedUserRef.current = highlightedUser ?? null
+
+    // Rerender avatar at increased size for highlighted user
+    if (highlightedUser) {
+      const root = markerRootsRef.current.get(highlightedUser.id)
+      if (root) renderUserMarker(root, highlightedUser, 48, () => onClickMarker?.(highlightedUser))
+    }
+      
+    // Rerender avatar at normal size for previous user
+    if (previous) {
+      const root = markerRootsRef.current.get(previous.id)
+      if (root) renderUserMarker(root, previous, 32, () => onClickMarker?.(previous))
     }
     
+    // Add the range for the highlighted user
+    let sourceId: string | undefined
+    if (highlightedUser) {
+      sourceId = addUserRange(map, highlightedUser)
+    }
 
     return () => {
-      if (focusUser) {
-        unhighlightMarker(markers, focusUser)
-      }
-
       try {
         removeUserRange(map, sourceId)
       } catch {
         // Map is already town down, no cleanup necessary
       }
     }
-  }, [mapRef, focusUser])
-
-  const handleHoverMarker = useCallback((user: User | null) => {
-    if (onHoverMarker) onHoverMarker(user)
-    setHoveredUser(user)
-  }, [onHoverMarker])
-
-  
-
-  useEffect(() => {
-    if (!mapLoaded) return
-    const map = mapRef.current!
-    const markers = markersRef.current
-
-    const registerUserMarker = (user: User) => {
-      if (!user.location) return
-      const el = addUserMarker(
-        map, 
-        user, 
-        () => onClickMarker && onClickMarker(user), 
-        handleHoverMarker
-      )
-      markers.set(user.id, el)
-    }
-
-    if (Array.isArray(users)) {
-      users.forEach(registerUserMarker)
-    } else {
-      registerUserMarker(users)
-    }
-
-    return () => {
-      markers.forEach((m) => m.remove())
-      markers.clear()
-    }
-  }, [mapRef, mapLoaded, users, onClickMarker, handleHoverMarker])
+  }, [mapRef, markerRootsRef, highlightedUser, onClickMarker])
 
   return (
     <div className="user-map">

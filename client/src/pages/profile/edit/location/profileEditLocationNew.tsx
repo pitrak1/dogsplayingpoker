@@ -4,6 +4,7 @@ import { SearchBox } from '@mapbox/search-js-react'
 import { useAuth } from '@/context/auth'
 import { MapboxSearchResult } from 'dogsplayingpoker-shared/common'
 import { MapBlocker } from '@/components/mapBlocker'
+import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import './profileEditLocationNew.scss'
 
 type Props = {
@@ -61,7 +62,8 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
         </div>
       </div>
       <div className="profile-edit-location-new__map-container">
-        <UserMap 
+        <UserMap
+          initialPosition={DEFAULT_MAP_CENTER}
           users={userAtLocationAsArray} 
           lockMovement={true}
           isBlocked={!coordinates} 

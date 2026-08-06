@@ -26,3 +26,9 @@ export type MapboxSearchResult = {
     }
   }[]
 }
+
+export type MapPosition = {
+  lat: number,
+  lng: number,
+  zoom: number
+}

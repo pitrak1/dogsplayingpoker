@@ -1,6 +1,6 @@
 const CHICAGO = {
-  longitude: -87.6298,
-  latitude: 41.8781,
+  lng: -87.6298,
+  lat: 41.8781,
   zoom: 11,
 }
 

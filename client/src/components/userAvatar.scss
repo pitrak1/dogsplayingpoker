@@ -1,5 +1,12 @@
 @use '@/styles/global' as *;
 
+.user-avatar {
+  border-radius: 50%;
+  outline: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
 .avatar__current {
   @include avatar();
   outline: 3px solid green;

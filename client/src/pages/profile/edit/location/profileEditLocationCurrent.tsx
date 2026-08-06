@@ -3,6 +3,7 @@ import { UserMap } from '@/components/userMap'
 import { MapPin, Trash } from 'lucide-react'
 import { useState, useCallback, useEffect } from 'react'
 import { MapBlocker } from '@/components/mapBlocker'
+import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import './profileEditLocationCurrent.scss'
 
 type Props = {
@@ -34,6 +35,8 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
   const getInitialPosition = () => {
     if (user && user.location) {
       return { lat: user.location.y, lng: user?.location.x, zoom: 10 }
+    } else {
+      return DEFAULT_MAP_CENTER
     }
   }
 
