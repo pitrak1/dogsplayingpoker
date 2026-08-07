@@ -21,7 +21,6 @@ type MapProps = {
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
   onClickMarker?: (user: FullUser) => void
   onHoverMarker?: (user: FullUser | null) => void
-  onRedoSearch?: () => void
   children?: React.ReactNode
 }
 
