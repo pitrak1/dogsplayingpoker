@@ -16,5 +16,5 @@ export const theme = createTheme({
     ]
   },
   primaryColor: 'brand',
-  primaryShade: 5,  // which shade is the "default"
+  primaryShade: 5,
 })

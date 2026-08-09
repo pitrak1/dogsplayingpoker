@@ -1,0 +1,14 @@
+@use '@/styles/global' as *;
+
+.field-label {
+  @include flex-display(column);
+}
+
+.field-label__label { 
+  @include primary-text(1.25rem);
+}
+
+.field-label__description { 
+  @include primary-text(1rem);
+  padding-bottom: 1rem;
+}

@@ -1,96 +1,36 @@
+@use '@/styles/global' as *;
+
 .profile-edit-profile {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 0px;
+  @include flex-display(column, 2rem);
+  margin-left: 2rem;
 }
 
 .profile-edit-profile__field {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+  @include flex-display(column);
+  @extend %settings-block;
 }
 
-.profile-edit-profile__label {
-  color: var(--text-primary);
-  font-size: 22px;
-  padding-bottom: 0.3rem;
-}
-
-.profile-edit-profile__description {
-  color: var(--text-primary);
-  font-size: 16px;
-  padding-bottom: 0.8rem;
+.profile-edit-profile__input-and-save {
+  @include flex-display(row, 1rem);
 }
 
 .profile-edit-profile__input {
-  font-size: 16px;
+  @include primary-text(1rem);
   padding: 0.5rem;
   width: 400px;
-  margin-right: 1rem;
 }
 
-.profile-edit-profile__submit {
-  font-size: 16px;
-  background-color: var(--button-active);
-  color: var(--button-active-text);
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem;
-  width: 100px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--button-active-hover);
-  }
-
-  &:disabled {
-    background-color: var(--button-disabled);
-    cursor: not-allowed;
-  }
+.profile-edit-profile__avatar-input {
+  @include flex-display(column, 1rem);
 }
 
 .profile-edit-profile__avatar-displays {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2rem;
+  @include flex-display(row, 2rem, flex-start, center);
 }
 .profile-edit-profile__avatar-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  @include flex-display(column, 0.5rem, flex-start, center);
 }
 
 .profile-edit-profile__image-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-}
-
-.profile-edit-profile__image-upload {
-  max-width: 400px;
-}
-
-.profile-edit-profile__image-button {
-  display: inline-block;
-  margin-top: 1rem;
-  width: 150px;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border-radius: 0.5rem;
-  background-color: var(--button-active);
-  color: var(--button-active-text);
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--button-active-hover);
-  }
-
-  &:disabled {
-    background-color: var(--button-disabled);
-    cursor: not-allowed;
-  }
+  @include flex-display(row, 1rem, flex-start, center);
 }

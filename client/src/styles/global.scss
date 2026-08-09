@@ -88,6 +88,13 @@ $search-results-height: calc(100vh - $header-height - $search-input-height - $se
   border: var(--display-panel-border);
 }
 
+%settings-block {
+  background-color: var(--form-field-background);
+  padding: 25px;
+  border-radius: 6px;
+  border: var(--form-field-border);
+}
+
 @mixin avatar() {
   border-radius: 50%;
   object-fit: cover;

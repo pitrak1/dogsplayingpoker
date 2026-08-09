@@ -1,13 +1,25 @@
+@use '@/styles/global' as *;
+
+.profile-edit {
+  @include flex-display(column, 1.5rem);
+  margin: 2rem;
+}
+
+.profile-edit__header {
+  @include flex-display(column);
+}
+
 .profile-edit__title {
-  text-align: left;
-  padding: 2rem 2rem 0 2rem;
-  color: var(--text-primary);
+  @include primary-text(2rem, var(--text-primary), bold);
 }
 
 .profile-edit__subtitle {
-  text-align: left;
-  padding: 0 2rem;
-  color: var(--text-secondary);
+  @include secondary-text();
+}
+
+.profile-edit__tab {
+  @include flex-display(row, 0.5rem, flex-start, center);
+  @include primary-text(1rem);
 }
 
 .profile-edit__content {

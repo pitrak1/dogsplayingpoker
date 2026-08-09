@@ -1,4 +1,4 @@
-import './imageUpload.scss'
+import { Button } from '@mantine/core'
 
 type Props = {
   name: string
@@ -9,11 +9,9 @@ type Props = {
 
 export function ImageUpload({ name, label, onChange }: Props) {
   return (
-    <div className="image-upload">
-      <label htmlFor={name} className="image-upload__button">
-        {label}
-      </label>
-      <input className="image-upload__input" id={name} type="file" accept="image/*" onChange={onChange} />
+    <div>
+      <Button component="label" htmlFor={name} size="lg">{label}</Button>
+      <input style={{ display: 'none' }} id={name} type="file" accept="image/*" onChange={onChange} />
     </div>
   )
 }

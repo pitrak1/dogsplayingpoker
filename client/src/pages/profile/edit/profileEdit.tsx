@@ -4,6 +4,7 @@ import { ProfileEditAccount } from './profileEditAccount'
 import { ProfileEditProfile } from './profileEditProfile'
 import { ProfileEditPets } from './profileEditPets'
 import { ProfileEditLocation } from './location/profileEditLocation'
+import { Tabs } from '@mantine/core'
 import './profileEdit.scss'
 
 export function ProfileEdit() {
@@ -41,32 +42,29 @@ export function ProfileEdit() {
     },
   ]
 
-  const renderTabButtons = () => {
-    return tabInfo.map((tabItem) => (
-      <button
-        key={tabItem.name}
-        className={`profile-edit__tab-button ${tab === tabItem.name ? 'active' : ''}`}
-        onClick={() => navigate(tabItem.url)}
-      >
-        {tabItem.icon}
-        {tabItem.label}
-      </button>
-    ))
-  }
-
-  const renderActiveTab = () => {
-    const activeTab = tabInfo.find((tabItem) => tabItem.name === tab)
-    return activeTab ? activeTab.component : null
-  }
-
   return (
     <div className="profile-edit">
-      <h1 className="profile-edit__title">Edit profile</h1>
-      <h2 className="profile-edit__subtitle">Manage your account and profile settings</h2>
-      <div className="profile-edit__content">
-        <div className="profile-edit__tabs">{renderTabButtons()}</div>
-        <div className="profile-edit__form">{renderActiveTab()}</div>
+      <div className="profile-edit__header">
+        <h1 className="profile-edit__title">Edit profile</h1>
+        <span className="profile-edit__subtitle">Manage your account and profile settings</span>
       </div>
+      <Tabs defaultValue={tab} orientation="vertical">
+        <Tabs.List>
+          {tabInfo.map((tabItem) => (
+            <Tabs.Tab key={tabItem.name} value={tabItem.name} onClick={() => navigate(tabItem.url)}>
+              <div className="profile-edit__tab">
+                {tabItem.icon}
+                {tabItem.label}
+              </div>
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+        {tabInfo.map((tabItem) => (
+          <Tabs.Panel key={tabItem.name} value={tabItem.name}>
+            {tabItem.component}
+          </Tabs.Panel>
+        ))}
+      </Tabs>
     </div>
   )
 }
