@@ -5,7 +5,7 @@ import { uploadImage } from '@/lib/upload'
 import { useUpdateProfile } from '@/api/users'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { UserAvatar } from '@/components/userAvatar'
+import { AvatarDisplay } from '@/components/avatarDisplay'
 import { Button } from '@mantine/core'
 import { FieldLabel } from '@/components/forms/fieldLabel'
 import './profileEditProfile.scss'
@@ -98,20 +98,20 @@ export function ProfileEditProfile() {
           <div className="profile-edit-profile__avatar-input">
             <div className="profile-edit-profile__avatar-displays">
               <div className="profile-edit-profile__avatar-preview">
-                <UserAvatar user={userWithPreviewImage} size={128} alt="profile preview"/>
+                <AvatarDisplay imageUrl={userWithPreviewImage?.profileImageUrl ?? null} name={userWithPreviewImage?.username ?? null} size={128} alt="profile preview"/>
                 <div>Profile preview</div>
               </div>
               <div className="profile-edit-profile__avatar-preview">
-                <UserAvatar user={userWithPreviewImage} size={40} alt="user menu icon preview"/>
+                <AvatarDisplay imageUrl={userWithPreviewImage?.profileImageUrl ?? null} name={userWithPreviewImage?.username ?? null} size={40} alt="user menu icon preview"/>
                 <div>User menu icon preview</div>
               </div>
               <div className="profile-edit-profile__avatar-preview">
-                <UserAvatar user={userWithPreviewImage} size={36}  alt="map marker icon preview"/>
+                <AvatarDisplay imageUrl={userWithPreviewImage?.profileImageUrl ?? null} name={userWithPreviewImage?.username ?? null} size={36} alt="map marker icon preview"/>
                 <div>Map marker preview</div>
               </div>
             </div>
             <div className="profile-edit-profile__image-buttons">
-              <ImageUpload name="profileImage" label="Upload new profile picture" value={null} onChange={onChange} />
+              <ImageUpload name="profileImage" label="Upload new profile picture" onChange={onChange} />
               <Button size="lg" disabled={imageSaveDisabled} onClick={handleImageSave}>Save</Button>
               <Button size="lg" disabled={imageSaveDisabled} onClick={handleRevert}>Revert</Button>
             </div>

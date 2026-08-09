@@ -1,6 +1,4 @@
 import { ImageUpload } from '@/components/forms/imageUpload'
-import './addEditPetForm.scss'
-import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
 import { Baby, PersonStanding, Dog, Cat, X } from 'lucide-react'
 import { uploadImage } from '@/lib/upload'
 import { ApiError } from '@/api/errors'
@@ -11,8 +9,11 @@ import { FormField } from '@/components/forms/formField'
 import { z } from 'zod'
 import { ReactivityInput } from './reactivityInput'
 import { useImageInput } from '@/hooks/useImageInput'
-import { getAvatarFallback } from '@/lib/avatar'
 import { useFormValidation } from '@/hooks/useFormValidation'
+import { TextInput, Button } from '@mantine/core'
+import { AvatarDisplay } from '../avatarDisplay'
+import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
+import './addEditPetForm.scss'
 
 type PetFormState = {
   name?: string | null
@@ -88,8 +89,6 @@ export function AddEditPetForm({ pet, onClose }: Props) {
     }
   }
 
-  const pictureSrc = fileUrl ?? pet?.pictureUrl ?? getAvatarFallback(values.name ?? 'test', 128)
-
   return (
     <div className="add-edit-pet-form">
       <ErrorBanner message={formError} />
@@ -110,70 +109,60 @@ export function AddEditPetForm({ pet, onClose }: Props) {
       <form onSubmit={handleSave} className="add-edit-pet-form__form">
         <div className="add-edit-pet-form__non-radio-inputs">
           <div className="add-edit-pet-form__text-inputs">
-            <FormField
-              name="name"
-              label="Name"
-              variant="settings"
-              type="text"
+            <TextInput 
+              label="Name" 
+              size="lg" 
               value={values.name ?? ''}
               onChange={(e) => setFormValue('name', e.target.value)}
               error={fieldErrors['name']}
+              w="400px"
             />
-            <FormField
-              name="age"
-              label="Age"
-              variant="settings"
-              type="text"
+            <TextInput 
+              label="Age" 
+              size="lg" 
               value={String(values.age ?? '')}
               onChange={(e) => setFormValue('age', Number(e.target.value))}
               error={fieldErrors['age']}
+              w="400px"
             />
-            <FormField
-              name="breed"
+            <TextInput 
               label="Breed"
-              variant="settings"
-              type="text"
+              size="lg" 
               value={values.breed ?? ''}
               onChange={(e) => setFormValue('breed', e.target.value)}
               error={fieldErrors['breed']}
+              w="400px"
             />
           </div>
-          <FormField
-            name="picture"
-            label="Upload a picture"
-            variant="settings"
-            error={fieldErrors['picture']}
-          >
-            <img
-              src={pictureSrc}
-              alt="Picture preview"
-              className="add-edit-pet-form__preview"
+          <div className="add-edit-pet-form__picture">
+            <label className="add-edit-pet-form__picture-label" htmlFor="pictureUrl">
+              Upload a picture
+            </label>
+            <AvatarDisplay 
+              imageUrl={fileUrl ?? pet?.pictureUrl} 
+              name={values.name || 'test'} 
+              size={128} 
+              alt="pet picture preview" 
             />
-            <ImageUpload name="picture" label="Upload" value={null} onChange={onPictureChange} />
-          </FormField>
+            <ImageUpload name="pictureUrl" label="Upload" onChange={onPictureChange} />
+          </div>
         </div>
-        <FormField
-          name="size"
-          label="Size"
-          variant="settings"
-          error={fieldErrors['size']}
-        >
+        <FormField name="size" label="Size" error={fieldErrors['size']}>
           <RadioButtonGroup
             name="size"
             value={values.size}
             onChange={(value) => setFormValue('size', value as Size)}
             fields={displaySizeMap}
-            ariaLabel='size'
+            ariaLabel="size"
           />
         </FormField>
         <div>
           <div className="add-edit-pet-form__reactivity-header">Reactivity</div>
-          <small className="add-edit-pet-form__reactivity-subtitle">You can choose to add notes about your pet's reactivity in the field below each reactivity type.</small>
+          <span className="add-edit-pet-form__reactivity-subtitle">You can choose to add notes about your pet's reactivity in the field below each reactivity type.</span>
         </div>
         <ReactivityInput
           label="Dogs"
           icon={<Dog size={32} />}
-          radioName="dogReactivity"
           radioValue={values.dogReactivity}
           onRadioChange={(value) => setFormValue('dogReactivity', value as Reactivity)}
           textName="dogReactivityNotes"
@@ -185,7 +174,6 @@ export function AddEditPetForm({ pet, onClose }: Props) {
         <ReactivityInput
           label="Cats"
           icon={<Cat size={32} />}
-          radioName="catReactivity"
           radioValue={values.catReactivity}
           onRadioChange={(value) => setFormValue('catReactivity', value as Reactivity)}
           textName="catReactivityNotes"
@@ -197,7 +185,6 @@ export function AddEditPetForm({ pet, onClose }: Props) {
         <ReactivityInput
           label="Kids"
           icon={<Baby size={32} />}
-          radioName="kidReactivity"
           radioValue={values.kidReactivity}
           onRadioChange={(value) => setFormValue('kidReactivity', value as Reactivity)}
           textName="kidReactivityNotes"
@@ -209,7 +196,6 @@ export function AddEditPetForm({ pet, onClose }: Props) {
         <ReactivityInput
           label="People"
           icon={<PersonStanding size={32} />}
-          radioName="peopleReactivity"
           radioValue={values.peopleReactivity}
           onRadioChange={(value) => setFormValue('peopleReactivity', value as Reactivity)}
           textName="peopleReactivityNotes"
@@ -218,15 +204,14 @@ export function AddEditPetForm({ pet, onClose }: Props) {
           radioError={fieldErrors['peopleReactivity']}
           textError={fieldErrors['peopleReactivityNotes']}
         />
-        <div className="add-edit-pet-form__save-button-wrapper">
-          <button 
-            type="submit"
-            disabled={isPending}
-            className="add-edit-pet-form__save-button" 
-          >
-            Save
-          </button>
-        </div>
+        <Button
+          type="submit" 
+          disabled={isPending}
+          size="lg"
+          m="0 4rem"
+        >
+          Save
+        </Button>
       </form>
     </div>
   )

@@ -17,4 +17,9 @@ export const theme = createTheme({
   },
   primaryColor: 'brand',
   primaryShade: 5,
+  components: {
+    Button: {
+      defaultProps: { color: 'brand' },
+    },
+  },
 })

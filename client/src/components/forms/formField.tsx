@@ -1,56 +1,33 @@
 import './formField.scss'
 
-type Props = (
-  | { 
-    type: string, 
-    value: string, 
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    children?: never
-  }
-  | {
-    type?: never
-    value?: never
-    onChange?: never
-    children: React.ReactNode
-  }
-) & {
+type Props = {
   name: string
   label: string
+  description?: string | null
   error?: string | null
-  variant?: string | null
   icon?: React.ReactNode
+  children: React.ReactNode
 }
 
 export function FormField({
   name, 
   label,
+  description,
   error,
-  variant = 'default',
   icon,
-  type, 
-  value,
-  onChange,
   children 
 }: Props) {
   return (
-    <div className={`form-field form-field--${variant}`}>
+    <div className="form-field">
       <label
-        className={`form-field__label--${variant}`} 
+        className="form-field__label"
         htmlFor={name} 
       >
         {icon}
         {label}
       </label>
-      {children ?? (
-        <input 
-          className={`form-field__input--${variant}`}
-          id={name} 
-          name={name} 
-          type={type} 
-          value={value} 
-          onChange={onChange}
-        />
-      )}
+      {description && <span className="form-field__description">{description}</span>}
+      {children}
       {error && <span className="form-field__error-text">{error}</span>}
     </div>
   )

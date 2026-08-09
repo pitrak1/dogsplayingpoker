@@ -3,16 +3,14 @@
 .add-edit-pet-form {
   @include flex-display(column, 2rem);
   @extend %display-panel;
-  width: 100%;
 }
 
 .add-edit-pet-form__header {
-  @include flex-display();
-  width: 100%;
+  @include flex-display(row);
 }
 
 .add-edit-pet-form__title {
-  @include primary-text(1.6rem);
+  @include primary-text();
   text-align: center;
   flex: 1
 }
@@ -22,17 +20,23 @@
 }
 
 .add-edit-pet-form__form {
-  @include flex-display(column, 2rem, start, start);
-  width: 100%;
+  @include flex-display(column, 2rem);
 }
 
 .add-edit-pet-form__non-radio-inputs {
-  @include flex-display(row, 5rem, start, start);
-  width: 100%;
+  @include flex-display(row, 5rem);
 }
 
 .add-edit-pet-form__text-inputs {
-  @include flex-display(column, 2rem, start, start);
+  @include flex-display(column, 2rem);
+}
+
+.add-edit-pet-form__picture {
+  @include flex-display(column, 1rem, center, center);
+}
+
+.add-edit-pet-form__picture-label {
+  @include primary-text(1.1rem, black, bold);
 }
 
 .add-edit-pet-form__preview {
@@ -41,19 +45,9 @@
 }
 
 .add-edit-pet-form__reactivity-header {
-  @include primary-text();
+  @include primary-text(1.1rem, black, bold);
 }
 
 .add-edit-pet-form__reactivity-subtitle {
-  @include secondary-text(1.1rem);
-}
-
-.add-edit-pet-form__save-button-wrapper {
-  @include flex-display(column, 0rem, center, center);
-  width: 100%;
-}
-
-.add-edit-pet-form__save-button {
-  @include primary-button(1.25rem);
-  width: 80%;
+  @include primary-text(1rem);
 }

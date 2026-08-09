@@ -5,26 +5,7 @@
 }
 
 %pagination-button {
-  @include flex-display(row, 0, center, center);
-  @extend %display-button;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: none;
-  color: black;
-
-  &:hover {
-    background: var(--mantine-color-brand-6);
-    color: white;
-  }
-
-  &:disabled {
-    color: var(--text-secondary);
-  }
-
-  &:disabled:hover {
-    background: var(--button-disabled);
-  }
+  @include borderless-button();
 }
 
 %pagination-page-button {

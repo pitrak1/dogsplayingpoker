@@ -2,26 +2,24 @@
 
 .reactivity-input {
   @include flex-display(column, 1rem, center, start);
-  width: 100%;
 }
 
 .reactivity-input__radio-group {
-  @include flex-display(row, 1rem);
+  @include flex-display(row, 1rem, flex-start, center);
 }
 
 .reactivity-input__label {
   @include flex-display(row, 0.5rem, start);
-  @include primary-text(1.25rem);
+  @include primary-text(1.1rem, black, bold);
   width: 7rem;
 }
 
 .reactivity-input__notes {
-  font-size: 1rem;
-  padding: 0.5rem;
+  @include primary-text(1rem);
+  @include mantine-input();
   width: 100%;
 }
 
 .reactivity-input__error-text {
   @include field-error-text();
-  margin-top: 0.25rem;
 }

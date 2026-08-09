@@ -1,7 +1,7 @@
 import type { FullUser as User } from 'dogsplayingpoker-shared/user'
 import { metersToMiles } from '@/lib/maps'
 import { MapPin, PawPrint, ArrowRight } from 'lucide-react'
-import { UserAvatar } from '@/components/userAvatar'
+import { AvatarDisplay } from '@/components/avatarDisplay'
 import './searchResultDisplay.scss'
 
 type Props = {
@@ -22,7 +22,7 @@ export function SearchResultDisplay({ user, isHighlighted, resultNumber, onClick
     >
       <div className="search-result-display__index">{resultNumber}</div>
       <div className="search-result-display__body">
-        <UserAvatar user={user} size={60} />
+        <AvatarDisplay imageUrl={user.profileImageUrl ?? null} name={user.username} size={60} />
         <div className="search-result-display__info">
           <div className="search-result-display__username">{user.username}</div>
           <div className="search-result-display__user-info">

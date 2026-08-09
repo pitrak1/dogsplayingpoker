@@ -79,11 +79,10 @@ export function Login() {
           size="lg" 
           w="100%"
         />
-        <Button 
-          color="brand" 
-          type="submit" 
-          disabled={isPending} 
-          size="lg" 
+        <Button
+          type="submit"
+          disabled={isPending}
+          size="lg"
           fullWidth
         >
           {isPending ? 'Logging in...' : 'Log in'}

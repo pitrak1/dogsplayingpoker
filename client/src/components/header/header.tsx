@@ -25,12 +25,12 @@ export function Header() {
           <span className="header__name">DogsPlayingPoker</span>
         </Link>
       </div>
-      {showReturnHome && <Button component={Link} to="/" variant="filled" color="brand" size="lg">Return home</Button>}
+      {showReturnHome && <Button component={Link} to="/" size="lg">Return home</Button>}
       {showUserMenu && <UserMenu />}
       {showAuthButtons && (
         <div className="header__auth-buttons">
-          <Button component={Link} to="/login" variant="filled" color="brand" size="lg">Log in</Button>
-          <Button component={Link} to="/signup" variant="filled" color="brand" size="lg">Sign up</Button>
+          <Button component={Link} to="/login" size="lg">Log in</Button>
+          <Button component={Link} to="/signup" size="lg">Sign up</Button>
         </div>
       )}
     </div>

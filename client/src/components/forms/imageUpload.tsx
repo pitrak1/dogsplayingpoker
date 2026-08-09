@@ -3,7 +3,6 @@ import { Button } from '@mantine/core'
 type Props = {
   name: string
   label: string
-  value: File | null
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 

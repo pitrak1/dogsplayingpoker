@@ -1,27 +1,22 @@
+@use '@/styles/global' as *;
 
 .radio-button-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
+  @include flex-display(row, 1rem, flex-start, center);
 }
 
 .radio-button-group__input-label {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
+  @include flex-display(row, 0.5rem, flex-start, center);
+  @include primary-text(1rem);
   border: none;
   border-radius: 12px;
   padding: 1rem;
-  background-color: var(--button-secondary);
+  background-color: white;
   cursor: pointer;
-  min-width: 15rem;
+  min-width: 10rem;
   justify-content: center;
 
   &:hover {
-    background-color: var(--button-secondary-hover);
+    outline: 1px solid var(--mantine-color-brand-5);
   }
 
   input { 
@@ -31,7 +26,7 @@
   }
 
   &:has(input:checked) {
-    background-color: var(--button-active);
-    color: var(--button-active-text)
+    background-color: var(--mantine-color-brand-5);
+    color: white;
   }
 }

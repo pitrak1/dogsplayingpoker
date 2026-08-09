@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
 import { theme } from '@/styles/theme'
 import { MantineProvider } from '@mantine/core'
-import { UserAvatar } from '@/components/userAvatar'
+import { AvatarDisplay } from '@/components/avatarDisplay'
 import mapboxgl from 'mapbox-gl'
 
 // At zoom 0, 1 pixel represents this many meters at the equator
@@ -35,7 +35,7 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
 export const renderUserMarker = (root: Root, user: FullUser, size: number, onClick: () => void) => {
   root.render(
     <MantineProvider theme={theme}>
-      <UserAvatar user={user} size={size} onClick={onClick} />
+      <AvatarDisplay imageUrl={user.profileImageUrl ?? null} name={user.username} size={size} onClick={onClick} />
     </MantineProvider>
   )
 }

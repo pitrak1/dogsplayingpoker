@@ -1,11 +1,10 @@
-import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
 import { Reactivity, displayReactivityMap } from 'dogsplayingpoker-shared/pet'
+import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
 import './reactivityInput.scss'
 
 type Props = {
   label: string
   icon?: React.ReactNode
-  radioName: string
   radioValue: Reactivity | null
   onRadioChange: (e: Reactivity) => void
   radioError?: string | null
@@ -18,7 +17,6 @@ type Props = {
 export function ReactivityInput({
   label,
   icon,
-  radioName, 
   radioValue, 
   onRadioChange,
   radioError,
@@ -30,15 +28,12 @@ export function ReactivityInput({
   return (
     <div className="reactivity-input">
       <div className="reactivity-input__radio-group">
-        <label
-          className="reactivity-input__label" 
-          htmlFor={radioName}
-        >
+        <label className="reactivity-input__label" htmlFor={textName}>
           {icon}
           {label}
         </label>
         <RadioButtonGroup
-          name={radioName}
+          name={textName}
           value={radioValue ?? 'unknown'}
           onChange={(value) => onRadioChange(value as Reactivity)}
           fields={displayReactivityMap}

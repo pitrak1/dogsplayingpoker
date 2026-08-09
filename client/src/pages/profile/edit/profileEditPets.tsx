@@ -3,6 +3,7 @@ import { usePets } from '@/api/pets'
 import { Pet } from 'dogsplayingpoker-shared/pet'
 import { PetDisplay } from '@/components/petDisplay'
 import { useState } from 'react'
+import { Button } from '@mantine/core'
 import './profileEditPets.scss'
 
 export function ProfileEditPets() {
@@ -30,17 +31,17 @@ export function ProfileEditPets() {
   return (
     <div className="profile-edit-pets">
       <div className="profile-edit-pets__header">
-        <h2 className="settings-title">Your pets</h2>
-        <small className="settings-subtitle">Edit and add new pets here</small>
+        <h2 className="profile-edit-pets__title">Your pets</h2>
+        <span className="profile-edit-pets__subtitle">Edit and add new pets here</span>
       </div>
       <div className="profile-edit-pets__pets-list">
         {!hasPets && <div className="profile-edit-pets__empty">You currently have no pets added</div>}
         {hasPets && pets.map((p: Pet) => <PetDisplay key={p.id} pet={p} onEditClick={handleEditClick} />)}
       </div>
       {!isFormOpen && (
-        <button className="primary-button" onClick={handleAddNewPetClick}>
+        <Button size="lg" m="0 4rem" onClick={handleAddNewPetClick}>
           Add a new pet
-        </button>
+        </Button>
       )}
       {isFormOpen && (
         <AddEditPetForm pet={formPet} onClose={handleFormClose} />

@@ -3,7 +3,7 @@ import { useAuth } from '@/context/auth'
 import { ChevronRight } from 'lucide-react'
 import { Menu, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { UserAvatar } from '@/components/userAvatar'
+import { AvatarDisplay } from '@/components/avatarDisplay'
 import './userMenu.scss'
 
 export function UserMenu() {
@@ -20,7 +20,7 @@ export function UserMenu() {
     <Menu opened={opened} onClose={close}>
       <Menu.Target>
         <UnstyledButton fz="lg" py="md"  className="user-menu__button" onClick={toggle}>
-          <UserAvatar user={user} size={40} />
+          <AvatarDisplay imageUrl={user.profileImageUrl ?? null} name={user.username} size={40} />
           {user.username}
           <ChevronRight className="user-menu__chevron" data-opened={opened}/>
         </UnstyledButton>

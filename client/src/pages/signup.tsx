@@ -114,7 +114,7 @@ export function Signup() {
           To personalize your profile with photos and information about your pets, go to the user
           menu after signup and choose the "Your profile" option.
         </p>
-        <Button color="brand" type="submit" disabled={isPending} size="lg" fullWidth>
+        <Button type="submit" disabled={isPending} size="lg" fullWidth>
           {isPending ? 'Signing up...' : 'Sign up'}
         </Button>
       </form>

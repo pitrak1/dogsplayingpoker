@@ -10,8 +10,8 @@
   font-weight: $font-weight;
 }
 
-@mixin field-error-text($font-size: 1.25rem) {
-  font-size: $font-size;
+@mixin field-error-text() {
+  font-size: 1rem;
   color: var(--text-field-error);
   font-weight: normal;
 }
