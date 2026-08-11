@@ -1,0 +1,70 @@
+@use '@/styles/global' as *;
+
+.reactivity-display {
+  @include flex-display(row, 1rem, flex-start, center);
+}
+
+%reactivity-item {
+  @include flex-display(row, 0.5rem, center, center);
+  padding: 10px;
+  border-radius: 18px;
+  border-style: solid;
+  border-width: 2px;
+  font-size: 1.1rem;
+}
+
+%reactivity-strong {
+  border-color: #ff9090;
+  background-color: #ffd0d0;
+}
+
+%reactivity-mixed {
+  border-color: #e0e040;
+  background-color: #ffffd0;
+}
+
+%reactivity-none {
+  border-color: #40c040;
+  background-color: #f0fff0;
+}
+
+%reactivity-unknown {
+  border-color: #d0d0d0;
+  background-color: #f0f0f0;
+}
+
+.reactivity-display--strong {
+  @extend %reactivity-item;
+  @extend %reactivity-strong;
+}
+
+.reactivity-display--mixed {
+  @extend %reactivity-item;
+  @extend %reactivity-mixed;
+}
+
+.reactivity-display--none {
+  @extend %reactivity-item;
+  @extend %reactivity-none;
+}
+
+.reactivity-display--unknown {
+  @extend %reactivity-item;
+  @extend %reactivity-unknown;
+}
+
+.reactivity-display__button {
+  @include flex-display(row, 0, flex-start, center);
+}
+
+.reactivity-display__chevron {
+  transition: transform 0.2s ease;
+
+  &[data-opened='true'] {
+    transform: rotate(90deg);
+  }
+}
+
+.reactivity-display__notes {
+  @include primary-text(1.1rem);
+}

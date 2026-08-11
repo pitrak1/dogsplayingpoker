@@ -1,17 +1,9 @@
-import { Pet, ReactivityType, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/pet'
-import { 
-  Baby, 
-  PersonStanding, 
-  Dog, 
-  Cat, 
-  StickyNote, 
-  ChevronDown, 
-  ChevronUp, 
-  LucideIcon,
-  SquarePen
-} from 'lucide-react'
+import { Pet, reactivityTypeSchema, displaySizeMap } from 'dogsplayingpoker-shared/pet'
+import { SquarePen } from 'lucide-react'
 import { useState } from 'react'
-import { getAvatarFallback } from '@/lib/avatar'
+import { AvatarDisplay } from './avatarDisplay'
+import { Button, Divider } from '@mantine/core'
+import { ReactivityDisplay } from './reactivityDisplay'
 import './petDisplay.scss'
 
 type Props = {
@@ -19,22 +11,8 @@ type Props = {
   onEditClick?: (pet: Pet) => void
 }
 
-const iconMap: Record<ReactivityType, LucideIcon> = {
-  Dogs: Dog,
-  Cats: Cat,
-  Kids: Baby,
-  People: PersonStanding
-}
-
-const reactivitySchemaMap: Record<ReactivityType, { value: keyof Pet, notes: keyof Pet}> = {
-  Dogs: { value: 'dogReactivity', notes: 'dogReactivityNotes' },
-  Cats: { value: 'catReactivity', notes: 'catReactivityNotes' },
-  Kids: { value: 'kidReactivity', notes: 'kidReactivityNotes' },
-  People: { value: 'peopleReactivity', notes: 'peopleReactivityNotes' }
-}
-
 export function PetDisplay({ pet, onEditClick }: Props) {
-  const [notesShown, setNotesShown] = useState<ReactivityType | null>(null)
+  const [notesShown, setNotesShown] = useState<boolean>(false)
 
   const displayAge = () => {
     if (pet.age === 0) return 'Less than a year old'
@@ -42,84 +20,59 @@ export function PetDisplay({ pet, onEditClick }: Props) {
     return `${pet.age} years old`
   }
 
-  const handleNotesToggle = (type: ReactivityType) => {
-    setNotesShown(notesShown === type ? null : type)
-  }
-
-  const pictureSrc = pet.pictureUrl ?? getAvatarFallback(pet.name, 128)
-
-  const displayReactivity = (type: ReactivityType, hideNoteButton: boolean = false) => {
-    const Icon = iconMap[type]
-    const { value: valueKey, notes: notesKey } = reactivitySchemaMap[type]
-    const value = pet[valueKey]
-    const notes = pet[notesKey]
-
-    return (
-      <div key={type}className={`pet-display__reactivity-item--${value}`}>
-        <Icon size={24} />
-        {type}
-        {!hideNoteButton && notes && (
-          <>
-            <div className="divider__vert" />
-            <button 
-              className="pet-display__reactivity-notes-button"
-              aria-label={`toggle ${type} reactivity notes`}
-              onClick={() => handleNotesToggle(type)}
-            >
-              <StickyNote size={18} aria-hidden="true"/>
-              {notesShown === type ? 
-                (<ChevronUp size={18} aria-hidden="true"/>) : 
-                (<ChevronDown size={18} aria-hidden="true"/>)}
-            </button>
-          </>
-        )}
-      </div>
-    )
-  }
-
-  const displayNotes = () => {
-    if (!notesShown) return null
-
-    const { notes: notesKey } = reactivitySchemaMap[notesShown]
-    const notes = pet[notesKey]
-
-    return (
-      <>
-        <div className="divider__hor" />
-        <div className="pet-display__notes">
-          {displayReactivity(notesShown, true)}
-          <div className="pet-display__notes-text">{notes}</div>
-        </div>
-      </>
-    )
+  const handleNotesClick = () => {
+    setNotesShown((prev) => !prev)
   }
 
   return (
     <div className="pet-display">
       <div className="pet-display__body-without-notes">
-        <img
-          src={pictureSrc}
-          alt={`Picture of ${pet.name}`}
-          className="pet-display__picture"
+        <AvatarDisplay 
+          imageUrl={pet.pictureUrl} 
+          name={pet.name} 
+          alt={`picture of ${pet.name}`} 
+          size={128} 
         />
         <div className="pet-display__info">
-          <div className="pet-display__headline">
+          <div className="pet-display__header">
             <div className="pet-display__name">{pet.name}</div>
             <div className="pet-display__age">{displayAge()}</div>
           </div>
           <div className="pet-display__subtitle">{pet.breed} &bull; {displaySizeMap[pet.size]}</div>
           <div className="pet-display__reactivity">
-            {reactivityTypeSchema.options.map((type) => displayReactivity(type))}
+            {reactivityTypeSchema.options.map((type) => (
+              <ReactivityDisplay 
+                key={type}
+                pet={pet} 
+                type={type}
+                displayNotes={false}
+                notesOpen={notesShown} 
+                onNotesClick={handleNotesClick} 
+              />
+            ))}
           </div>
         </div>
         {onEditClick && (
-          <button className="pet-display__edit-button" onClick={() => onEditClick(pet)}>
-            <SquarePen size={20} />
+          <Button size="lg" onClick={() => onEditClick(pet)} leftSection={<SquarePen size={20} />}>
             Edit
-          </button>
+          </Button>
         )}
       </div>
-      {displayNotes()}
+      {notesShown && (
+        <>
+          <Divider size="xs" color="black" w="100%"/>
+          <div className="pet-display__notes">
+            {reactivityTypeSchema.options.map((type) => (
+              <ReactivityDisplay
+                key={type}
+                pet={pet} 
+                type={type} 
+                displayNotes={true}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }

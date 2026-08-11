@@ -11,18 +11,13 @@
   width: 100%;
 }
 
-.pet-display__picture {
-  @include avatar();
-}
-
 .pet-display__info {
   @include flex-display(column, 0.25rem, start, start);
-  width: 100%;
+  flex: 1;
 }
 
-.pet-display__headline {
-  @include flex-display(row, 1rem, start);
-  width: 100%;
+.pet-display__header {
+  @include flex-display(row, 1rem, flex-start, center);
 }
 
 .pet-display__name {
@@ -44,68 +39,4 @@
 
 .pet-display__notes {
   @include flex-display(row, 1rem, start, center);
-}
-
-.pet-display__reactivity-notes-button {
-  @include flex-display(row, 0rem, center, center);
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.pet-display__notes-text {
-  font-size: 1.1rem;
-}
-
-.pet-display__edit-button {
-  @include primary-button();
-}
-
-%reactivity-item {
-  @include flex-display(row, 0.5rem, center, center);
-  padding: 10px;
-  border-radius: 18px;
-  border-style: solid;
-  border-width: 2px;
-  font-size: 1.1rem;
-}
-
-%reactivity-strong {
-  border-color: #ff9090;
-  background-color: #ffd0d0;
-}
-
-%reactivity-mixed {
-  border-color: #e0e040;
-  background-color: #ffffd0;
-}
-
-%reactivity-none {
-  border-color: #40c040;
-  background-color: #f0fff0;
-}
-
-%reactivity-unknown {
-  border-color: #d0d0d0;
-  background-color: #f0f0f0;
-}
-
-.pet-display__reactivity-item--strong {
-  @extend %reactivity-item;
-  @extend %reactivity-strong;
-}
-
-.pet-display__reactivity-item--mixed {
-  @extend %reactivity-item;
-  @extend %reactivity-mixed;
-}
-
-.pet-display__reactivity-item--none {
-  @extend %reactivity-item;
-  @extend %reactivity-none;
-}
-
-.pet-display__reactivity-item--unknown {
-  @extend %reactivity-item;
-  @extend %reactivity-unknown;
 }

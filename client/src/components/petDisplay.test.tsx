@@ -105,22 +105,4 @@ describe('PetDisplay', () => {
 
     expect(await screen.queryByText('Some notes about cat reactivity')).not.toBeInTheDocument()
   })
-
-  it('shows new notes when a toggle is clicked when notes are already visible', async () => {
-    mockAuthContext()
-    const pet = makePet({ 
-      kidReactivityNotes: 'Some notes about kid reactivity', 
-      peopleReactivityNotes: 'Some notes about people reactivity' 
-    })
-    renderWithProviders(<PetDisplay pet={pet} />)
-
-    const kidNotesToggleButton = await screen.findByRole('button', { name: /toggle kids reactivity notes/i })
-    act(() => kidNotesToggleButton.click())
-
-    const peopleNotesToggleButton = await screen.findByRole('button', { name: /toggle people reactivity notes/i })
-    act(() => peopleNotesToggleButton.click())
-
-    expect(await screen.findByText('Some notes about people reactivity')).toBeInTheDocument()
-    expect(screen.queryByText('Some notes about kid reactivity')).not.toBeInTheDocument()
-  })
 })
