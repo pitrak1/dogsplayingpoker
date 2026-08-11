@@ -1,10 +1,12 @@
 import { useAuth } from '@/context/auth'
 import { UserMap } from '@/components/userMap'
 import { MapPin, Trash } from 'lucide-react'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { MapBlocker } from '@/components/mapBlocker'
 import { DEFAULT_MAP_CENTER } from '@/constants/map'
 import './profileEditLocationCurrent.scss'
+import { FullUser } from 'dogsplayingpoker-shared/user'
+import { Button } from '@mantine/core'
 
 type Props = {
   isPending: boolean
@@ -13,7 +15,8 @@ type Props = {
 
 export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
   const { user } = useAuth()
-  const users = user ? [user] : []
+  const users = useMemo(() => user ? [user] : [], [user])
+  const [highlightedUser, setHighlightedUser] = useState<FullUser | null>(null)
   
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null)
   
@@ -40,22 +43,21 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
     }
   }
 
-    
   return (
     <div className="profile-edit-location-current">
       <div className="profile-edit-location-current__header">
         <div className="profile-edit-location-current__text">
           <label className="profile-edit-location-current__title">Your current location</label>
-          <small className="profile-edit-location-current__description">This is how your location appears to other users.</small>
+          <span className="profile-edit-location-current__description">This is how your location appears to other users.</span>
         </div>
-        <button 
-          className="profile-edit-location-current__clear-button"
+        <Button
+          size="lg"
           disabled={clearButtonDisabled} 
           onClick={onClearClick}
+          leftSection={<Trash size={20} />}
         >
-          <Trash size={20} />
-          <div className="profile-edit-location-current__clear-button-text">Clear</div>
-        </button>
+          Clear
+        </Button>
       </div>
       <div className="profile-edit-location-current__map-container">
         <UserMap 
@@ -64,6 +66,8 @@ export function ProfileEditLocationCurrent({isPending, onClearClick}: Props) {
           isBlocked={!hasCurrentLocation}
           lockMovement={true}
           onMapReady={handleMapReady}
+          highlightedUser={highlightedUser}
+          onHoverMarker={setHighlightedUser}
         >
           <MapBlocker>
             <MapPin size={26} />

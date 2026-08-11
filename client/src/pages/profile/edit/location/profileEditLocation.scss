@@ -2,16 +2,14 @@
 
 .profile-edit-location {
   @include flex-display(column, 2rem);
-  width: 100%;
+  margin-left: 2rem;
 }
 
 .profile-edit-location__change-location {
   @extend %display-panel;
   @include flex-display(column, 1.5rem);
-  width: 100%;
 }
 
 .profile-edit-location__buttons {
   @include flex-display(row, 1rem, end);
-  width: 100%;
 }

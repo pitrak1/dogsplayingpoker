@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { UserMap } from '@/components/userMap'
 import { SearchBox } from '@mapbox/search-js-react'
 import { useAuth } from '@/context/auth'
@@ -34,11 +34,14 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
     onSearchSubmit(lat, lng)
   }
 
-  const userAtLocationAsArray = (user && coordinates) ? [{
-    ...user,
-    location: { x: coordinates.lng, y: coordinates.lat },
-    radiusMiles: 0
-  }] : []
+  const userAtLocationAsArray = useMemo(() =>
+    (user && coordinates) ? [{
+      ...user,
+      location: { x: coordinates.lng, y: coordinates.lat },
+      radiusMiles: 0
+    }] : [],
+    [user, coordinates]
+  )
   
   return (
     <div className="profile-edit-location-new">
@@ -49,7 +52,7 @@ export function ProfileEditLocationNew({coordinates, onSearchSubmit}: Props) {
         >
           Enter a new location
         </label>
-        <small className="profile-edit-location-new__description">This location will be obscured using the distance range entered below.</small>
+        <span className="profile-edit-location-new__description">This location will be obscured using the distance range entered below.</span>
         <div className="profile-edit-location-new__searchbox-container">
           <SearchBox
             aria-labelledby="location-search-box-label"

@@ -10,6 +10,7 @@ import { ProfileEditLocationCurrent } from './profileEditLocationCurrent'
 import { ProfileEditLocationNew } from './profileEditLocationNew'
 import { ProfileEditLocationDistance } from './profileEditLocationDistance'
 import { Shuffle, Save } from 'lucide-react'
+import { Button } from '@mantine/core'
 
 export function ProfileEditLocation() {
   const [coordinates, setCoordinates] = useState<mapboxgl.LngLat | null>(null)
@@ -79,22 +80,22 @@ export function ProfileEditLocation() {
           onDistanceChange={setDistance}
         />
         <div className="profile-edit-location__buttons">
-          <button 
-            className="primary-button" 
+          <Button 
+            size="lg"
             disabled={isGenerateDisabled} 
             onClick={handleGenerateClick}
+            leftSection={<Shuffle size={20} />}
           >
-            <Shuffle size={20} />
-            <div className="button-text">Generate</div>
-          </button>
-          <button 
-            className="primary-button"  
+            Generate
+          </Button>
+          <Button
+            size="lg"
             disabled={isSaveDisabled} 
             onClick={handleSaveClick}
+            leftSection={<Save size={20} />}
           >
-            <Save size={20} />
-            <div className="button-text">Save</div>
-          </button>
+            Save
+          </Button>
         </div>
       </div>
       

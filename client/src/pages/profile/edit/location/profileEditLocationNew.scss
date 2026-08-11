@@ -2,12 +2,10 @@
 
 .profile-edit-location-new {
   @include flex-display(column, 1.5rem);
-  width: 100%;
 }
 
 .profile-edit-location-new__header {
   @include flex-display(column, 0.25rem, start, start);
-  width: 100%;
 }
 
 .profile-edit-location-new__title {

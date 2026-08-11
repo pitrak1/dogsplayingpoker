@@ -3,12 +3,10 @@
 .profile-edit-location-current {
   @extend %display-panel;
   @include flex-display(column, 1.5rem);
-  width: 100%;
 }
 
 .profile-edit-location-current__header {
   @include flex-display(row, 0rem, space-between);
-  width: 100%;
 }
 
 .profile-edit-location-current__text {
@@ -16,23 +14,14 @@
 }
 
 .profile-edit-location-current__title {
-  @include primary-text(1.4rem)
+  @include primary-text(1.4rem);
 }
 
 .profile-edit-location-current__description {
-  @include primary-text(1rem)
-}
-
-.profile-edit-location-current__clear-button {
-  @include primary-button(1.25rem)
-}
-
-.profile-edit-location-current__clear-button-text {
-  padding-top: 3px;
+  @include primary-text(1rem);
 }
 
 .profile-edit-location-current__map-container {
   width: 100%;
   height: 500px;
 }
-
