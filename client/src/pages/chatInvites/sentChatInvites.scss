@@ -2,6 +2,7 @@
 
 .sent-chat-invites {
   @include flex-display(column, 1rem, center, inherit);
+  margin: 1rem;
 }
 
 .sent-chat-invites__info-banner {

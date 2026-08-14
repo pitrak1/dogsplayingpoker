@@ -6,6 +6,7 @@ import { ApiError } from '@/api/errors'
 import { InviteDisplay } from '@/components/inviteDisplay'
 import { ErrorBanner } from '@/components/forms/errorBanner'
 import { Pagination } from '@/components/pagination'
+import { Select } from '@mantine/core'
 import './receivedChatInvites.scss'
 
 
@@ -46,41 +47,33 @@ export function ReceivedChatInvites() {
     }
   }
 
-  const renderInvites = () => {
-    if (!hasInvites) return
-    return data.invites.map((i) => (
-      i.sender && <InviteDisplay 
-        key={i.id} 
-        invite={i} 
-        user={i.sender} 
-        onViewProfile={handleViewProfileClick}
-        onAccept={handleInviteAccept}
-        onDecline={handleInviteDecline}
-        type={'received'}
-        disabled={isPending}
-      />
-    ))
-  }
-
-  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-  }
-
   return (
     <div className="received-chat-invites">
       <ErrorBanner message={pageError} />
       <div className="received-chat-invites__info-banner">
-        <small>Showing {data?.invites.length} of {data?.totalCount} invites</small>
-        <div className="received-chat-invites__page-size">
-          <label htmlFor="pageSize">Results per page: </label>
-          <select name="pageSize" value={pageSize} onChange={handlePageSizeChange}>Settings
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-          </select>
-        </div>
+        <span className="received-chat-invites__count">Showing {data?.invites.length} of {data?.totalCount} invites</span>
+        <Select 
+          label="Results per page" 
+          // This is to make the label appear on the same line as the select
+          styles={{ root: { display: 'flex', alignItems: 'center', gap: 8 }, label: { marginBottom: 0 } }}
+          defaultValue={5} 
+          data={[5, 10, 25]} 
+          value={pageSize} 
+          onChange={(value) => value !== null && setPageSize(value)} 
+        />
       </div>
-      {renderInvites()}
+      {hasInvites && data.invites.map((i) => (
+        i.sender && <InviteDisplay 
+          key={i.id} 
+          invite={i} 
+          user={i.sender} 
+          onViewProfile={handleViewProfileClick}
+          onAccept={handleInviteAccept}
+          onDecline={handleInviteDecline}
+          type={'received'}
+          disabled={isPending}
+        />
+      ))}
       <Pagination pageNumber={page} pageSize={pageSize} totalCount={data?.totalCount ?? 0} onPageChange={setPage}/>
     </div>
   )

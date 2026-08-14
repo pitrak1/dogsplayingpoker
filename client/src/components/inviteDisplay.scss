@@ -5,10 +5,6 @@
   @include flex-display(row, 1rem, start, center)
 }
 
-.invite-display__image {
-  @include avatar();
-}
-
 .invite-display__info {
   @include flex-display(column, 0.5rem, start, start);
 }
@@ -27,16 +23,4 @@
 
 .invite-display__buttons {
   @include flex-display(row, 1rem);
-}
-
-.invite-display__profile-button {
-  @include primary-button();
-}
-
-.invite-display__accept-button {
-  @include success-button();
-}
-
-.invite-display__decline-button {
-  @include failure-button();
 }

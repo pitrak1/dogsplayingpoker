@@ -2,6 +2,7 @@
 
 .received-chat-invites {
   @include flex-display(column, 1rem, center, inherit);
+  margin: 1rem;
 }
 
 .received-chat-invites__info-banner {
@@ -9,6 +10,7 @@
   font-size: 1.25rem;
 }
 
-.received-chat-invites__page-size {
+.received-chat-invites__count {
   font-size: 1rem;
 }
+

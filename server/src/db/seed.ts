@@ -149,7 +149,7 @@ async function seed() {
     await db.delete(users)
   }
 
-  const hashed = await bcrypt.hash('password123', 12)
+  const hashed = await bcrypt.hash('asdfasdf', 12)
 
   const insertedUsers = await db.insert(users).values(
     seedUsers.map((u) => ({
@@ -195,38 +195,38 @@ async function seed() {
   const invitesToNick = [
     { senderIdx: 0,  message: "Hey! Want to set up a playdate for our pups?",          status: 'pending'  as const, expiredAt: sevenDays },
     { senderIdx: 1,  message: "Rex and Luna would love some new friends!",               status: 'pending'  as const, expiredAt: sevenDays },
-    { senderIdx: 3,  message: "Tank is looking for big-dog buddies to romp with.",       status: 'accepted' as const, expiredAt: sevenDays },
-    { senderIdx: 4,  message: "Daisy is super friendly, let's meet at the park!",        status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 3,  message: "Tank is looking for big-dog buddies to romp with.",       status: 'pending'  as const, expiredAt: sevenDays },
+    { senderIdx: 4,  message: "Daisy is super friendly, let's meet at the park!",        status: 'pending'  as const, expiredAt: sevenDays },
     { senderIdx: 5,  message: "Bear could use a chill walking partner.",                 status: 'pending'  as const, expiredAt: threeDays },
-    { senderIdx: 6,  message: "Mochi needs socialization — want to try a meetup?",       status: 'declined' as const, expiredAt: oneDayAgo },
+    { senderIdx: 6,  message: "Mochi needs socialization — want to try a meetup?",       status: 'pending'  as const, expiredAt: oneDayAgo },
     { senderIdx: 8,  message: "Cooper is great with everyone, want to hang at the dog park?", status: 'pending' as const, expiredAt: sevenDays },
     { senderIdx: 9,  message: "Stella does best meeting on neutral ground — park?",      status: 'pending'  as const, expiredAt: threeDays },
     { senderIdx: 11, message: null,                                                       status: 'pending'  as const, expiredAt: sevenDays },
-    { senderIdx: 13, message: "Saw you nearby — want to set up a walk together?",        status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 13, message: "Saw you nearby — want to set up a walk together?",        status: 'pending'  as const, expiredAt: sevenDays },
     { senderIdx: 15, message: "Our dogs would be great together!",                        status: 'pending'  as const, expiredAt: sevenDays },
     { senderIdx: 17, message: "Looking for weekend park buddies, interested?",            status: 'pending'  as const, expiredAt: threeDays },
-    { senderIdx: 19, message: null,                                                        status: 'declined' as const, expiredAt: oneDayAgo },
+    { senderIdx: 19, message: null,                                                        status: 'pending'  as const, expiredAt: oneDayAgo },
     { senderIdx: 21, message: "My dog is super chill, would love to meet yours!",         status: 'pending'  as const, expiredAt: sevenDays },
-    { senderIdx: 23, message: "Morning walks near the lake — want to join?",              status: 'accepted' as const, expiredAt: sevenDays },
+    { senderIdx: 23, message: "Morning walks near the lake — want to join?",              status: 'pending'  as const, expiredAt: sevenDays },
   ]
 
   // 15 invites FROM pitrak1@gmail.com TO other users
   const invitesFromNick = [
     { receiverIdx: 2,  message: "Hey, want to grab a dog-friendly coffee and walk?",     status: 'pending'  as const, expiredAt: sevenDays },
     { receiverIdx: 7,  message: "Saw you're nearby — up for a playdate?",                 status: 'pending'  as const, expiredAt: sevenDays },
-    { receiverIdx: 10, message: "Our dogs look like they'd get along great!",              status: 'accepted' as const, expiredAt: sevenDays },
-    { receiverIdx: 12, message: "Want to do a group walk this weekend?",                   status: 'accepted' as const, expiredAt: threeDays },
+    { receiverIdx: 10, message: "Our dogs look like they'd get along great!",              status: 'pending'  as const, expiredAt: sevenDays },
+    { receiverIdx: 12, message: "Want to do a group walk this weekend?",                   status: 'pending'  as const, expiredAt: threeDays },
     { receiverIdx: 14, message: null,                                                       status: 'pending'  as const, expiredAt: sevenDays },
-    { receiverIdx: 16, message: "Interested in a puppy playdate at Humboldt Park?",        status: 'declined' as const, expiredAt: oneDayAgo },
+    { receiverIdx: 16, message: "Interested in a puppy playdate at Humboldt Park?",        status: 'pending'  as const, expiredAt: oneDayAgo },
     { receiverIdx: 18, message: "Your dog is adorable — want to meet up?",                 status: 'pending'  as const, expiredAt: sevenDays },
     { receiverIdx: 20, message: "Looking for a morning walk buddy, interested?",           status: 'pending'  as const, expiredAt: threeDays },
     { receiverIdx: 22, message: null,                                                        status: 'pending'  as const, expiredAt: sevenDays },
-    { receiverIdx: 24, message: "Trying to find socialization buddies for my pup!",        status: 'accepted' as const, expiredAt: sevenDays },
+    { receiverIdx: 24, message: "Trying to find socialization buddies for my pup!",        status: 'pending'  as const, expiredAt: sevenDays },
     { receiverIdx: 26, message: "Want to grab a dog-friendly patio spot together?",        status: 'pending'  as const, expiredAt: sevenDays },
-    { receiverIdx: 28, message: "Sunday dog park run — want to join?",                     status: 'declined' as const, expiredAt: oneDayAgo },
+    { receiverIdx: 28, message: "Sunday dog park run — want to join?",                     status: 'pending'  as const, expiredAt: oneDayAgo },
     { receiverIdx: 30, message: null,                                                        status: 'pending'  as const, expiredAt: threeDays },
     { receiverIdx: 32, message: "Our schedules seem to overlap — let's walk together!",    status: 'pending'  as const, expiredAt: sevenDays },
-    { receiverIdx: 34, message: "Friendly neighborhood walk crew forming — want in?",      status: 'accepted' as const, expiredAt: sevenDays },
+    { receiverIdx: 34, message: "Friendly neighborhood walk crew forming — want in?",      status: 'pending'  as const, expiredAt: sevenDays },
   ]
 
   await db.insert(chatInvites).values([

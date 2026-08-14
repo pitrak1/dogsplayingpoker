@@ -1,8 +1,8 @@
 import { FullChatInvite } from 'dogsplayingpoker-shared/invite'
-import { getAvatarFallback } from '@/lib/avatar'
-
-import './inviteDisplay.scss'
 import { User } from 'dogsplayingpoker-shared/user'
+import { Button } from '@mantine/core'
+import { AvatarDisplay } from './avatarDisplay'
+import './inviteDisplay.scss'
 
 type Props = {
   invite: FullChatInvite
@@ -15,12 +15,10 @@ type Props = {
 }
 
 export function InviteDisplay({ invite, user, onViewProfile, onAccept, onDecline, disabled, type }: Props) {
-  const src = user?.profileImageUrl ?? getAvatarFallback(user?.username, 128)
-  
   const text = type === 'sent' ? `You've invited ${user.username} to chat.` : `${user.username} has invited you to chat.`
   return (
     <div className="invite-display">
-      <img src={src} alt={user.username} className="invite-display__image" />
+      <AvatarDisplay imageUrl={user.profileImageUrl} name={user.username} size={128} />
       <div className="invite-display__info">
         <div className="invite-display__username">{text}</div>
         {invite.message ? (
@@ -29,9 +27,9 @@ export function InviteDisplay({ invite, user, onViewProfile, onAccept, onDecline
           <div className="invite-display__empty">No message was included.</div>
         )}
         <div className="invite-display__buttons">
-          <button className="invite-display__profile-button" onClick={() => onViewProfile(user)}>View profile</button>
-          {type === 'received' && onAccept && <button className="invite-display__accept-button" onClick={() => onAccept(invite.id)} disabled={disabled}>Accept</button>}
-          {type === 'received' && onDecline && <button className="invite-display__decline-button" onClick={() => onDecline(invite.id)} disabled={disabled}>Decline</button>}
+          <Button size="lg" onClick={() => onViewProfile(user)}>View profile</Button>
+          {type === 'received' && onAccept && <Button size="lg" color="success" onClick={() => onAccept(invite.id)} disabled={disabled}>Accept</Button>}
+          {type === 'received' && onDecline && <Button size="lg" color="error" onClick={() => onDecline(invite.id)} disabled={disabled}>Decline</Button>}
         </div>
       </div>
     </div>
