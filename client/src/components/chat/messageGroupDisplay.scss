@@ -1,0 +1,49 @@
+@use '@/styles/global' as *;
+
+.message-group-display {
+  width: 100%;
+  @include flex-display(column, 0.5rem, flex-end, flex-start);
+}
+
+.message-group-display--creator {
+  width: 100%;
+  @include flex-display(column, 0.5rem, flex-end, flex-end);
+}
+
+.message-group-display__header {
+  @include flex-display(row, 1rem, center, center);
+}
+
+.message-group-display__profile-button {
+  @include flex-display(row, 0.5rem, flex-start, center);
+  padding: 0.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+
+  &:hover {
+    cursor: pointer;
+    background: var(--mantine-color-brand-1)
+  }
+}
+
+.message-group-display__username {
+  @include primary-text(1.2rem);
+}
+
+.message-group-display__timestamp {
+  @include secondary-text(0.9rem);
+}
+
+.message-group-display__message {
+  padding: 1rem;
+  border-radius: 24px 24px 24px 4px;
+  background-color: var(--display-panel-background);
+  border: var(--display-panel-border);
+}
+
+.message-group-display__message--creator {
+  padding: 1rem;
+  border-radius: 24px 24px 4px 24px;
+  background-color: var(--mantine-color-brand-1);
+  border: 1px solid var(--mantine-color-brand-3);
+}

@@ -7,9 +7,8 @@ import { Signup } from '@/pages/signup'
 import '@/styles/global.scss'
 import { Profile } from '@/pages/profile/profile'
 import { ProfileEdit } from '@/pages/profile/edit/profileEdit'
-import { Chats } from '@/pages/chats'
+import { Chats } from '@/pages/chats/chats'
 import { ChatInvites } from '@/pages/chatInvites/chatInvites'
-import { Chat } from '@/pages/chat'
 
 export function App() {
   return (
@@ -25,9 +24,9 @@ export function App() {
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/profile/edit/:tab" element={<ProfileEdit />} />
           <Route path="/chats" element={<Chats />} />
+          <Route path="/chats/:id" element={<Chats />} />
           <Route path="/invites" element={<ChatInvites />} />
           <Route path="/invites/:tab" element={<ChatInvites />} />
-          <Route path="/chats/:id" element={<Chat />} />
         </Routes>
       </main>
     </BrowserRouter>

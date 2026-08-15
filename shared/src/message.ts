@@ -22,3 +22,9 @@ export type Message = z.infer<typeof messageSchema>
 export type FullMessage = Message & {
   creator?: User | null
 }
+
+export type MessageGroup = {
+  user: User
+  createdAt: Date
+  messages: FullMessage[]
+}

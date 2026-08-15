@@ -1,0 +1,21 @@
+@use '@/styles/global' as *;
+
+.chats {
+  @include flex-display(row, 0, start, start);
+}
+
+.chats__nav {
+  flex-shrink: 0;
+  width: 400px;
+  height: calc(100vh - $header-height);
+}
+
+.chats__body {
+  flex: 1;
+}
+
+.chats__info {
+  flex-shrink: 0;
+  width: 400px;
+  height: calc(100vh - $header-height);
+}

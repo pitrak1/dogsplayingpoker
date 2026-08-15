@@ -1,5 +1,6 @@
 import type { FullUser as User, FullUserRow } from 'dogsplayingpoker-shared/user'
 import type { Pet } from 'dogsplayingpoker-shared/pet'
+import type { FullMessage } from 'dogsplayingpoker-shared/message'
 
 export const makeUser = (overrides: Partial<FullUserRow> = {}): FullUserRow => ({
   id: 1,
@@ -30,6 +31,16 @@ export const makeUsers = (count: number, overrides: Partial<User> = {}): User[] 
     })
   )
 }
+
+export const makeMessage = (overrides: Partial<FullMessage> & { id: number; createdBy: number } ): FullMessage => ({
+  content: `message ${overrides.id}`,
+  chatId: 1,
+  createdAt: new Date(`2024-01-01T00:00:00.000Z`),
+  updatedAt: new Date(`2024-01-01T00:00:00.000Z`),
+  deletedAt: null,
+  creator: makeUser({ id: overrides.createdBy }),
+  ...overrides,
+})
 
 export const makePet = (overrides: Partial<Pet> = {}): Pet => ({
   id: 1,

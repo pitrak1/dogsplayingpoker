@@ -1,0 +1,21 @@
+@use '@/styles/global' as *;
+
+.chat {
+  @include flex-display(column, 0, flex-end, flex-end);
+  height: calc(100vh - $header-height);
+}
+
+.chat__messages {
+  @include flex-display(column, 0.5, flex-end);
+  height: calc(100vh - $header-height);
+  width: 100%;
+  overflow-y: scroll;
+  flex: 1;
+  padding: 2rem;
+}
+
+.chat__input {
+  flex-shrink: 0;
+  width: 100%;
+  border: 1px solid black;
+}

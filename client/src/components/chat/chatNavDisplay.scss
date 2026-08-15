@@ -1,0 +1,30 @@
+@use '@/styles/global' as *;
+
+.chat-nav-display {
+  @include flex-display(row, 1rem, start, center);
+  background-color: white;
+  border: 1px solid lightgrey;
+  padding: 1rem;
+  width: 100%;
+
+  &:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+  }
+}
+
+.chat-nav-display__info {
+  @include flex-display(column, 0rem, start, start);
+}
+
+.chat-nav-display__username {
+  @include primary-text(1.2rem);
+}
+
+.chat-nav-display__message {
+  @include primary-text(1rem);
+}
+
+.chat-nav-display__empty {
+  @include secondary-text(1rem);
+}
