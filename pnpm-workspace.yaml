@@ -2,8 +2,8 @@ packages:
   - server
   - client
   - shared
+
 allowBuilds:
-  '0': esbuild
-  '1': '@parcel/watcher'
-  '@parcel/watcher': set this to true or false
-  bcrypt: set this to true or false
+  esbuild: true
+  bcrypt: true
+  '@parcel/watcher': true

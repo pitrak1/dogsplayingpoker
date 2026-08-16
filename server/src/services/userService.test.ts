@@ -22,14 +22,34 @@ describe('userService.getUserById', () => {
     expect(result?.email).toBe(testUser.email)
   })
 
+  it('returns null if user id does not exist', async () => {
+    const result = await userService.getUserById(14)
+    expect(result).toBeNull()
+  })
+})
+
+describe('userService.getFullUserById', () => {
+  let testUser: UserRow
+  let testPet: PetRow
+
+  beforeEach(async () => {
+    testUser = await setupUser()
+    testPet = await setupPetForUser(testUser.id)
+  })
+
+  it('returns existing user', async () => {
+    const result = await userService.getFullUserById(testUser.id)
+    expect(result?.email).toBe(testUser.email)
+  })
+
   it('returns associated pets', async () => {
-    const result = await userService.getUserById(testUser.id)
+    const result = await userService.getFullUserById(testUser.id)
     expect(result?.pets).toHaveLength(1)
     expect(result?.pets[0].name).toBe(testPet.name)
   })
 
   it('returns null if user id does not exist', async () => {
-    const result = await userService.getUserById(14)
+    const result = await userService.getFullUserById(14)
     expect(result).toBeNull()
   })
 })
