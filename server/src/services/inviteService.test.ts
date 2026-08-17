@@ -3,7 +3,7 @@ import { db } from '@/db'
 import { chatInvites, chats, chatMemberships, messages } from '@/db/schema'
 import * as inviteService from '@/services/inviteService'
 import { setupInvite, setupUsers } from '@/test/factories'
-import { resetDb } from '@/test/helpers'
+import { MISSING_ID, resetDb } from '@/test/helpers'
 
 beforeEach(resetDb)
 
@@ -54,7 +54,7 @@ describe('inviteService.getInviteById', () => {
   it('returns null if id does not exist', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id)
-    const result = await inviteService.getInviteById(92)
+    const result = await inviteService.getInviteById(MISSING_ID)
     expect(result).toBeNull()
   })
 })
@@ -100,7 +100,7 @@ describe('inviteService.declineInvite', () => {
   it('returns null if invite does not exist', async () => {
     const [user1, user2] = await setupUsers(2)
     await setupInvite(user1.id, user2.id, 'fake-message', 'pending')
-    const result = await inviteService.declineInvite(94)
+    const result = await inviteService.declineInvite(MISSING_ID)
     expect(result).toBeNull()
   })
 })
@@ -143,7 +143,7 @@ describe('inviteService.acceptInvite', () => {
   it('returns null if invite does not exist', async () => {
       const [user1, user2] = await setupUsers(2)
       await setupInvite(user1.id, user2.id, 'fake-message', 'pending')
-      const result = await inviteService.acceptInvite(94)
+      const result = await inviteService.acceptInvite(MISSING_ID)
       expect(result).toBeNull()
     })
 })
@@ -160,11 +160,11 @@ describe('inviteService.createInvite', () => {
 
   it('fails if sender does not exist', async () => {
     const [, user2] = await setupUsers(2)
-    await expect(inviteService.createInvite(92, { receiverId: user2.id, message: 'fake-message' })).rejects.toThrow()
+    await expect(inviteService.createInvite(MISSING_ID, { receiverId: user2.id, message: 'fake-message' })).rejects.toThrow()
   })
 
   it('fails if receiver does not exist', async () => {
     const [user1] = await setupUsers(2)
-    await expect(inviteService.createInvite(user1.id, { receiverId: 92, message: 'fake-message' })).rejects.toThrow()
+    await expect(inviteService.createInvite(user1.id, { receiverId: MISSING_ID, message: 'fake-message' })).rejects.toThrow()
   })
 })

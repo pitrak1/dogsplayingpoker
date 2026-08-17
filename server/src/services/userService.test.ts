@@ -4,7 +4,7 @@ import { users, pets, UserRow, PetRow } from '@/db/schema'
 import * as userService from '@/services/userService'
 import { makeUserInput, setupPetForUser, setupUser, setupUsers } from '@/test/factories'
 import { verifyAuthToken, verifyRefreshToken } from '@/lib/auth'
-import { resetDb } from '@/test/helpers'
+import { MISSING_ID, resetDb } from '@/test/helpers'
 
 beforeEach(resetDb)
 
@@ -23,7 +23,7 @@ describe('userService.getUserById', () => {
   })
 
   it('returns null if user id does not exist', async () => {
-    const result = await userService.getUserById(14)
+    const result = await userService.getUserById(MISSING_ID)
     expect(result).toBeNull()
   })
 })
@@ -49,7 +49,7 @@ describe('userService.getFullUserById', () => {
   })
 
   it('returns null if user id does not exist', async () => {
-    const result = await userService.getFullUserById(14)
+    const result = await userService.getFullUserById(MISSING_ID)
     expect(result).toBeNull()
   })
 })

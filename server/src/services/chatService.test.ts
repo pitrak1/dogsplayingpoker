@@ -3,7 +3,7 @@ import { db } from '@/db'
 import { messages } from '@/db/schema'
 import * as chatService from '@/services/chatService'
 import { setupChat, setupChatMembership, setupUser, setupUsers, setupMessages, setupMessage } from '@/test/factories'
-import { resetDb } from '@/test/helpers'
+import { MISSING_ID, resetDb } from '@/test/helpers'
 
 beforeEach(resetDb)
 
@@ -44,7 +44,7 @@ describe('chatService.getChatMembership', () => {
     const user = await setupUser()
     const chat = await setupChat(user.id)
     await setupChatMembership(chat.id, user.id)
-    const result = await chatService.getChatMembership(12, chat.id)
+    const result = await chatService.getChatMembership(MISSING_ID, chat.id)
     expect(result).toBeNull()
   })
 })
@@ -98,6 +98,6 @@ describe('chatService.createMessage', () => {
   it('fails if creator does not exist', async () => {
     const user = await setupUser()
     const chat = await setupChat(user.id)
-    await expect(chatService.createMessage(56, chat.id, { content: 'fake content' })).rejects.toThrow()
+    await expect(chatService.createMessage(MISSING_ID, chat.id, { content: 'fake content' })).rejects.toThrow()
   })
 })

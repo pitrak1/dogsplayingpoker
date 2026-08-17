@@ -3,7 +3,7 @@ import { db } from '@/db'
 import { pets } from '@/db/schema'
 import * as petService from '@/services/petService'
 import { setupPetForUser, makePetInput, setupUser } from '@/test/factories'
-import { resetDb } from '@/test/helpers'
+import { MISSING_ID, resetDb } from '@/test/helpers'
 
 beforeEach(resetDb)
 
@@ -41,7 +41,7 @@ describe('petService.getPetById', () => {
   it('returns null if id does not exist', async () => {
     const user = await setupUser()
     await setupPetForUser(user.id)
-    const result = await petService.getPetById(94)
+    const result = await petService.getPetById(MISSING_ID)
     expect(result).toBeNull()
   })
 })
@@ -57,7 +57,7 @@ describe('petService.createPet', () => {
   })
 
   it('fails if owner does not exist', async () => {
-    await expect(petService.createPet(16, makePetInput())).rejects.toThrow()
+    await expect(petService.createPet(MISSING_ID, makePetInput())).rejects.toThrow()
   })
 })
 
@@ -76,7 +76,7 @@ describe('petService.editPet', () => {
   it('returns null if pet does not exist', async () => {
     const user = await setupUser()
     await setupPetForUser(user.id)
-    const result = await petService.editPet(94, user.id, makePetInput())
+    const result = await petService.editPet(MISSING_ID, user.id, makePetInput())
     expect(result).toBeNull()
   })
 })
