@@ -1,0 +1,27 @@
+# node_modules is reinstalled inside the image for the image's own platform —
+# copying the host's would break bcrypt's native binding.
+node_modules
+**/node_modules
+
+# Build outputs are produced inside the image, never copied in.
+**/dist
+
+# Secrets. This is the reason VITE_* values have to arrive as --build-arg:
+# client/.env never enters the build context.
+**/.env
+**/.env.*
+
+.git
+.gitignore
+.vscode
+**/.DS_Store
+
+# Tests and their throwaway database never ship.
+**/*.test.ts
+server/src/test
+server/docker-compose.test.yml
+**/vitest.config.ts
+
+README.md
+Dockerfile
+.dockerignore
