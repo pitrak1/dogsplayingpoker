@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/wrapper'
@@ -33,10 +33,6 @@ const setupHooks = (error: string | null = null, field: string | null = null) =>
 }
 
 describe('signup', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('calls createUser with the entered credentials', async () => {
     const { mockMutate } = setupHooks()
     renderWithProviders(<Signup />)

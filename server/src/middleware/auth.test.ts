@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { authMiddleware,requireAuth } from './auth'
 import { Hono } from 'hono'
 import type { AppEnv } from '@/types'

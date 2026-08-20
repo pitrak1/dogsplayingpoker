@@ -4,7 +4,8 @@ import path from 'node:path'
 export default defineConfig({
   test: {
     environment: 'node',
-    globals: true,  // makes describe, it, expect global like Jest
+    globals: true,
+    restoreMocks: true,
     setupFiles: ['./src/test/vitest.setup.ts'],
     globalSetup: ['./src/test/vitest.globalSetup.ts'],
     fileParallelism: false,

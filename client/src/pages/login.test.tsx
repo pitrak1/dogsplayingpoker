@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Login } from './login'
@@ -26,10 +26,6 @@ const setupHooks = (loginResolved = true) => {
 }
 
 describe('login', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('calls login with the entered credentials', async () => {
     const { mockMutate } = setupHooks()
     renderWithProviders(<Login />)

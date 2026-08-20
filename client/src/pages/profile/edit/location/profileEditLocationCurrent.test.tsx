@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { ProfileEditLocationCurrent } from './profileEditLocationCurrent'
 import { renderWithProviders } from '@/test/wrapper'
@@ -9,10 +9,6 @@ const testUserNoLocation = makeUser({ location: null, radiusMiles: null })
 const testUserWithLocation = makeUser()
 
 describe('profileEditLocationCurrent', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('clear button is disabled if user does not have a current location', () => {
     mockAuthContext(testUserNoLocation)
     renderWithProviders(<ProfileEditLocationCurrent isPending={false} onClearClick={vi.fn()} />)

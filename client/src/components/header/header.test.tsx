@@ -1,14 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { screen } from '@testing-library/react'
 import { Header } from '@/components/header/header'
 import { renderWithProviders } from '@/test/wrapper'
 import { mockAuthContext } from '@/test/mocks'
 
 describe('header', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('shows return home if on /login', async () => {
     renderWithProviders(<Header />, '/login')
     expect(await screen.findByText(/return home/i)).toBeInTheDocument()

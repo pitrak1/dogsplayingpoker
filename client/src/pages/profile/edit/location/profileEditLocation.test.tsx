@@ -29,7 +29,6 @@ const mockUpdateProfile = (success = true) => {
 
 describe('profileEditLocation', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
     mockAuthContext()
   })
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useImageInput } from './useImageInput'
 
@@ -6,10 +6,6 @@ const fileChangeEvent = (files: File[]) =>
   ({ target: { files } }) as unknown as React.ChangeEvent<HTMLInputElement>
 
 describe('useImageInput', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('creates object URL when a file is set', () => {
     const { result } = renderHook(() => useImageInput())
     const file = new File(['dummy'], 'rex.jpg', { type: 'image/jpeg' })

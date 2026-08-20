@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from './api'
-import { ChatPaginationResponse } from 'dogsplayingpoker-shared/chat'
+import { chatPaginationResponseSchema } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
-import { FullMessage } from 'dogsplayingpoker-shared/message'
+import { fullMessageSchema } from 'dogsplayingpoker-shared/message'
+import { z } from 'zod'
 import { useAuth } from '@/context/auth'
 
 export const useChatMemberships = (params: PaginationInput) => {
@@ -15,7 +16,7 @@ export const useChatMemberships = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch chats')
-      return res.json() as Promise<ChatPaginationResponse>
+      return chatPaginationResponseSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -28,7 +29,7 @@ export const useChatMessages = (chatId: number | undefined) => {
     queryFn: async () => {
       const res = await api.get(`/chats/${chatId}`)
       if (!res.ok) throw new Error('Failed to fetch messages')
-      return res.json() as Promise<FullMessage[]>
+      return z.array(fullMessageSchema).parse(await res.json())
     },
     enabled: !!user && !!chatId,
   })

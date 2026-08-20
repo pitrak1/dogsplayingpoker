@@ -7,7 +7,6 @@ import mapboxgl from 'mapbox-gl'
 
 describe('profileEditLocationDistance', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
     mockAuthContext()
   })
 

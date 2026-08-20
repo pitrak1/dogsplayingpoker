@@ -27,7 +27,6 @@ const mockAuth = (overrides?: Partial<User>) => {
 
 describe('ProfileEditProfile', () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:fake-preview-url')
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(vi.fn())
   })

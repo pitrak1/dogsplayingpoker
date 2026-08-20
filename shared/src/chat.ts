@@ -4,9 +4,9 @@ import { userSchema } from './user'
 export const chatSchema = z.object({
   id: z.number().int().positive(),
   hostId: z.number().int().positive(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullish()
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  deletedAt: z.coerce.date().nullish()
 })
 
 export type Chat = z.infer<typeof chatSchema>
@@ -25,7 +25,9 @@ export const fullChatMembershipSchema = z.intersection(
 
 export type FullChatMembership = z.infer<typeof fullChatMembershipSchema>
 
-export type ChatPaginationResponse = {
-  chats: FullChatMembership[]
-  totalCount: number
-}
+export const chatPaginationResponseSchema = z.object({
+  chats: z.array(fullChatMembershipSchema),
+  totalCount: z.number().int().nonnegative(),
+})
+
+export type ChatPaginationResponse = z.infer<typeof chatPaginationResponseSchema>

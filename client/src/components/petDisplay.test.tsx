@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { screen, act } from '@testing-library/react'
 import { renderWithProviders } from '@/test/wrapper'
 import { PetDisplay } from './petDisplay'
@@ -7,10 +7,6 @@ import { mockAuthContext } from '@/test/mocks'
 import { getAvatarFallback } from '@/lib/avatar'
 
 describe('PetDisplay', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks()
-  })
-
   it('displays age correctly if 0', async () => {
     mockAuthContext()
     const pet = makePet({ age: 0 })

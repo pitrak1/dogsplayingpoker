@@ -3,6 +3,19 @@ import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
 import { makeCreateInviteInput, makeInvite } from '@/test/factories'
 import * as inviteService from '@/services/inviteService'
+import { beforeEach } from 'vitest'
+import { resetDb, schemaMismatch } from '@/test/helpers'
+import { setupUsers, setupInvite } from '@/test/factories'
+import { invitePaginationResponseSchema, chatInviteSchema } from 'dogsplayingpoker-shared/invite'
+import { chatSchema } from 'dogsplayingpoker-shared/chat'
+
+beforeEach(resetDb)
+
+const authed = (userId: number) => ({
+  Authorization: `Bearer ${generateAuthToken(userId)}`,
+  'Content-Type': 'application/json',
+})
+
 
 describe('PATCH /api/invites/accept', () => {
   it('returns 404 if invite does not exist', async () => {
@@ -42,6 +55,19 @@ describe('PATCH /api/invites/accept', () => {
     })
     expect(res.status).toBe(400)
   })
+
+  it('response matches chatSchema', async () => {
+    const [sender, receiver] = await setupUsers(2)
+    const invite = await setupInvite(sender.id, receiver.id)
+    const res = await app.request('/api/invites/accept', {
+      method: 'PATCH',
+      headers: authed(receiver.id),
+      body: JSON.stringify({ id: invite.id }),
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, chatSchema)).toBeNull()
+  })
+
 })
 
 describe('PATCH /api/invites/decline', () => {
@@ -82,6 +108,19 @@ describe('PATCH /api/invites/decline', () => {
     })
     expect(res.status).toBe(400)
   })
+
+  it('response matches chatInviteSchema', async () => {
+    const [sender, receiver] = await setupUsers(2)
+    const invite = await setupInvite(sender.id, receiver.id)
+    const res = await app.request('/api/invites/decline', {
+      method: 'PATCH',
+      headers: authed(receiver.id),
+      body: JSON.stringify({ id: invite.id }),
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, chatInviteSchema)).toBeNull()
+  })
+
 })
 
 describe('POST /api/invites', () => {
@@ -107,5 +146,37 @@ describe('POST /api/invites', () => {
       body
     })
     expect(res.status).toBe(400)
+  })
+
+  it('response matches chatInviteSchema', async () => {
+    const [sender, receiver] = await setupUsers(2)
+    const res = await app.request('/api/invites', {
+      method: 'POST',
+      headers: authed(sender.id),
+      body: JSON.stringify({ receiverId: receiver.id, message: 'hello' }),
+    })
+    expect(res.status).toBe(201)
+    expect(await schemaMismatch(res, chatInviteSchema)).toBeNull()
+  })
+
+})
+
+describe('GET /api/invites/received', () => {
+  it('response matches invitePaginationResponseSchema', async () => {
+    const [sender, receiver] = await setupUsers(2)
+    await setupInvite(sender.id, receiver.id)
+    const res = await app.request('/api/invites/received', { headers: authed(receiver.id) })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, invitePaginationResponseSchema)).toBeNull()
+  })
+})
+
+describe('GET /api/invites/sent', () => {
+  it('response matches invitePaginationResponseSchema', async () => {
+    const [sender, receiver] = await setupUsers(2)
+    await setupInvite(sender.id, receiver.id)
+    const res = await app.request('/api/invites/sent', { headers: authed(sender.id) })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, invitePaginationResponseSchema)).toBeNull()
   })
 })

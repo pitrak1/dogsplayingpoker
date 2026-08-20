@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { User } from './user'
+import { userSchema, User } from './user'
 
 export const createMessageInputSchema = z.object({
   content: z.string(),
@@ -12,16 +12,18 @@ export const messageSchema = z.object({
   content: z.string(),
   chatId: z.number().int().positive(),
   createdBy: z.number().int().positive(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullish()
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  deletedAt: z.coerce.date().nullish()
 })
 
 export type Message = z.infer<typeof messageSchema>
 
-export type FullMessage = Message & {
-  creator?: User | null
-}
+export const fullMessageSchema = messageSchema.extend({
+  creator: userSchema.nullish()
+})
+
+export type FullMessage = z.infer<typeof fullMessageSchema>
 
 export type MessageGroup = {
   user: User

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Pet } from './pet'
+import { Pet, petSchema } from './pet'
 import { paginationInputSchema } from './common'
 
 
@@ -17,7 +17,7 @@ export const userSchema = z.object({
   email: z.string().min(1),
   profileImageUrl: z.string().nullish(),
   location: locationSchema.nullish(),
-  radiusMiles: z.number().int().positive().nullish()
+  radiusMiles: z.number().int().nonnegative().nullish()
 })
 
 export type User = z.infer<typeof userSchema>
@@ -42,7 +42,7 @@ export const createUserInputSchema = z.object({
   password: z.string().min(1),
   profileImageUrl: z.string().nullish(),
   location: locationSchema.nullish(),
-  radiusMiles: z.number().int().positive().nullish()
+  radiusMiles: z.number().int().nonnegative().nullish()
 })
 
 export type CreateUserInput = z.infer<typeof createUserInputSchema>
@@ -51,22 +51,30 @@ export const editUserInputSchema = z.object({
   username: z.string().nullish(),
   profileImageUrl: z.string().nullish(),
   location: locationSchema.nullish(),
-  radiusMiles: z.coerce.number().int().min(0).nullable().optional()
+  radiusMiles: z.coerce.number().int().nonnegative().nullish()
 })
 
 export type EditUserInput = z.infer<typeof editUserInputSchema>
 
-export type FullUser = User & { pets: Pet[] }
+export const fullUserSchema = userSchema.extend({
+  pets: z.array(petSchema)
+})
 
-export type AuthResponse = {
-  authToken: string
-  user: FullUser
-}
+export type FullUser = z.infer<typeof fullUserSchema>
 
-export type UploadSignature = {
-  timestamp: number
-  signature: string
-}
+export const authResponseSchema = z.object({
+  authToken: z.string().min(1),
+  user: fullUserSchema,
+})
+
+export type AuthResponse = z.infer<typeof authResponseSchema>
+
+export const uploadSignatureSchema = z.object({
+  timestamp: z.number(),
+  signature: z.string(),
+})
+
+export type UploadSignature = z.infer<typeof uploadSignatureSchema>
 
 
 export const searchUsersInputSchema = z.intersection(
@@ -87,7 +95,9 @@ export const usernameInputSchema = z.object({
   username: z.string()
 })
 
-export type UserPaginationResponse = {
-  users: FullUser[]
-  totalCount: number
-}
+export const userPaginationResponseSchema = z.object({
+  users: z.array(fullUserSchema),
+  totalCount: z.number().int().nonnegative(),
+})
+
+export type UserPaginationResponse = z.infer<typeof userPaginationResponseSchema>

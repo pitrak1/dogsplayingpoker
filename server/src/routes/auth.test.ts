@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { app } from '@/app'
 import { generateRefreshToken } from '@/lib/auth'
+import { beforeEach } from 'vitest'
+import { resetDb, schemaMismatch } from '@/test/helpers'
+import { setupUser } from '@/test/factories'
+import { authResponseSchema } from 'dogsplayingpoker-shared/user'
+
+beforeEach(resetDb)
+
 
 describe('POST /api/auth/login', () => {
   it('rejects requests with missing fields', async () => {
@@ -25,6 +32,18 @@ describe('POST /api/auth/login', () => {
     })
     expect(res.status).toBe(400)
   })
+
+  it('response matches authResponseSchema', async () => {
+    await setupUser()
+    const res = await app.request('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'test@example.com', password: 'hashed' }),
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, authResponseSchema)).toBeNull()
+  })
+
 })
 
 describe('POST /api/auth/register', () => {
@@ -40,6 +59,21 @@ describe('POST /api/auth/register', () => {
     })
     expect(res.status).toBe(400)
   })
+
+  it('response matches authResponseSchema', async () => {
+    const res = await app.request('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'brandnew',
+        email: 'brandnew@example.com',
+        password: 'password1234',
+      }),
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, authResponseSchema)).toBeNull()
+  })
+
 })
 
 describe ('POST /api/auth/refresh', () => {

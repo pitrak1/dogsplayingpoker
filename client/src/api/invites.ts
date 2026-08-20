@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
-import { CreateInviteInput, ChatInvite, InvitePaginationResponse } from 'dogsplayingpoker-shared/invite'
-import { Chat } from 'dogsplayingpoker-shared/chat'
+import { CreateInviteInput, chatInviteSchema, invitePaginationResponseSchema } from 'dogsplayingpoker-shared/invite'
+import { chatSchema } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { useAuth } from '@/context/auth'
 
@@ -15,7 +15,7 @@ export const useSentInvites = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return res.json() as Promise<InvitePaginationResponse>
+      return invitePaginationResponseSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -31,7 +31,7 @@ export const useReceivedInvites = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return res.json() as Promise<InvitePaginationResponse>
+      return invitePaginationResponseSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -43,7 +43,7 @@ export const useCreateInvite = () => {
     mutationFn: async (input: CreateInviteInput) => {
       const res = await api.post('/invites', input)
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to create invite')
-      return res.json() as Promise<ChatInvite>
+      return chatInviteSchema.parse(await res.json())
     },
     onSuccess: (invite) => {
       queryClient.invalidateQueries({ queryKey: ['invites', { senderId: invite.senderId }] })
@@ -58,7 +58,7 @@ export const useAcceptInvite = () => {
     mutationFn: async (id: number) => {
       const res = await api.patch('/invites/accept', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
-      return res.json() as Promise<Chat | null>
+      return chatSchema.nullable().parse(await res.json())
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: user?.id }] })
@@ -74,7 +74,7 @@ export const useDeclineInvite = () => {
     mutationFn: async (id: number) => {
       const res = await api.patch('/invites/decline', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
-      return res.json() as Promise<ChatInvite>
+      return chatInviteSchema.parse(await res.json())
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: user?.id }] })

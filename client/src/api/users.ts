@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
 import { ApiError } from './errors'
-import { AuthResponse, EditUserInput, FullUser, UserPaginationResponse } from 'dogsplayingpoker-shared/user'
+import { authResponseSchema, EditUserInput, fullUserSchema, userPaginationResponseSchema } from 'dogsplayingpoker-shared/user'
 import { useAuth } from '@/context/auth'
 
 export const useUserByUsername = (username: string) => {
@@ -12,7 +12,7 @@ export const useUserByUsername = (username: string) => {
     queryFn: async () => {
       const res = await api.get(`/users/by-username/${username}`)
       if (!res.ok) throw new Error('Failed to fetch user')
-      return res.json() as Promise<FullUser>
+      return fullUserSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -32,7 +32,7 @@ export const useSearchUsers = (input: ActiveSearch | null) =>
         page: String(input!.page),
       })
       if (!res.ok) throw new Error('Failed to search users')
-      return res.json() as Promise<UserPaginationResponse>
+      return userPaginationResponseSchema.parse(await res.json())
     },
     enabled: !!input
   })
@@ -45,7 +45,7 @@ export const useLogin = () =>
         const body = (await res.json()) as { message: string; field?: string }
         throw new ApiError(body.message ?? 'Login failed', body.field)
       }
-      return res.json() as Promise<AuthResponse>
+      return authResponseSchema.parse(await res.json())
     },
   })
 
@@ -57,7 +57,7 @@ export const useRegister = () =>
         const body = (await res.json()) as { message: string; field?: string }
         throw new ApiError(body.message ?? 'Signup failed', body.field)
       }
-      return res.json() as Promise<AuthResponse>
+      return authResponseSchema.parse(await res.json())
     },
   })
 
@@ -70,7 +70,7 @@ export const useUpdateProfile = () => {
         const body = (await res.json()) as { message: string; field?: string }
         throw new ApiError(body.message ?? 'Update profile failed', body.field)
       }
-      return res.json() as Promise<FullUser>
+      return fullUserSchema.parse(await res.json())
     },
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user', user.username] })

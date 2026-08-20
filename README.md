@@ -1,6 +1,8 @@
 TODO List:
 
 - Initial deploy - DONE 8/18
+- comb through type naming
+- add strict zod testing for server contract tests/audit required fields for each endpoint
 - Better loading display for different pages
 - Better work in progress for different pages
 - socketing
@@ -15,7 +17,6 @@ TODO List:
 - Support logging in through Google
 
 TODO Bugs:
-
 
 TODO Possibilities:
 - Support purposes (Walking/Sitting/Training, Paid/Unpaid)

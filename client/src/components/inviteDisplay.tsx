@@ -1,11 +1,11 @@
-import { FullChatInvite } from 'dogsplayingpoker-shared/invite'
+import { ChatInvite } from 'dogsplayingpoker-shared/invite'
 import { User } from 'dogsplayingpoker-shared/user'
 import { Button } from '@mantine/core'
 import { AvatarDisplay } from './avatarDisplay'
 import './inviteDisplay.scss'
 
 type Props = {
-  invite: FullChatInvite
+  invite: ChatInvite
   user: User
   onViewProfile: (user: User) => void
   onAccept?: (inviteId: number) => void

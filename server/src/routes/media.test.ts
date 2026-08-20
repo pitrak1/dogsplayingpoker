@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
+import { schemaMismatch } from '@/test/helpers'
+import { uploadSignatureSchema } from 'dogsplayingpoker-shared/user'
 
 describe('POST /api/media/upload-signature', () => {
   it('returns a signature', async () => {
@@ -13,4 +15,13 @@ describe('POST /api/media/upload-signature', () => {
     expect(body.timestamp).toBeTypeOf('number')
     expect(body.signature).toBeTypeOf('string')
   })
+
+  it('response matches uploadSignatureSchema', async () => {
+    const res = await app.request('/api/media/upload-signature', {
+      headers: { Authorization: `Bearer ${generateAuthToken(1)}` },
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, uploadSignatureSchema)).toBeNull()
+  })
+
 })
