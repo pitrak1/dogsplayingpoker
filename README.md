@@ -1,3 +1,27 @@
+TODO List:
+
+- Initial deploy - DONE 8/18
+- Better loading display for different pages
+- Better work in progress for different pages
+- socketing
+  - message notifications by chat
+  - invite notifications
+- improve floating temporary alerts for async actions (ex: accepting invite should show popup alert that fades)
+- Obscure profile data unless logged in
+- Gate messaging by MFA
+- Properly show distance on map
+- Map filtering by obfuscation distance
+- Support Email verification on signup
+- Support logging in through Google
+
+TODO Bugs:
+
+
+TODO Possibilities:
+- Support purposes (Walking/Sitting/Training, Paid/Unpaid)
+- Max range on message?
+
+
 Type Naming Conventions:
 
 Shared types/zod schemas will be in the shared directory so they can be used on the client and the server.

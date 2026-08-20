@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import { CreateInviteInput, ChatInvite, InvitePaginationResponse } from 'dogsplayingpoker-shared/invite'
+import { Chat } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { useAuth } from '@/context/auth'
 
@@ -52,28 +53,31 @@ export const useCreateInvite = () => {
 
 export const useAcceptInvite = () => {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   return useMutation({
     mutationFn: async (id: number) => {
       const res = await api.patch('/invites/accept', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
-      return res.json() as Promise<ChatInvite>
+      return res.json() as Promise<Chat | null>
     },
-    onSuccess: (invite) => {
-      queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: user?.id }] })
+      queryClient.invalidateQueries({ queryKey: ['chatMemberships'] })
     },
   })
 }
 
 export const useDeclineInvite = () => {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   return useMutation({
     mutationFn: async (id: number) => {
       const res = await api.patch('/invites/decline', { id })
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to update invite')
       return res.json() as Promise<ChatInvite>
     },
-    onSuccess: (invite) => {
-      queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: invite.receiverId }] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invites', { receiverId: user?.id }] })
     },
   })
 }
