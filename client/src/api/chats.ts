@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from './api'
-import { chatPaginationResponseSchema } from 'dogsplayingpoker-shared/chat'
+import { paginatedChatsSchema } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { fullMessageSchema } from 'dogsplayingpoker-shared/message'
 import { z } from 'zod'
@@ -16,7 +16,7 @@ export const useChatMemberships = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch chats')
-      return chatPaginationResponseSchema.parse(await res.json())
+      return paginatedChatsSchema.parse(await res.json())
     },
     enabled: !!user,
   })

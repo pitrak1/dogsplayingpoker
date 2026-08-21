@@ -1,28 +1,24 @@
-import type { FullUser as User, FullUserRow } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import type { Pet } from 'dogsplayingpoker-shared/pet'
 import type { FullMessage } from 'dogsplayingpoker-shared/message'
 
-export const makeUser = (overrides: Partial<FullUserRow> = {}): FullUserRow => ({
+export const makeUser = (overrides: Partial<FullUser> = {}): FullUser => ({
   id: 1,
   username: 'testuser',
   email: 'test@example.com',
-  password: 'hashed',
   profileImageUrl: 'https://example.com/profile.jpg',
   location: {
     x: -87.6298,
     y: 41.8781
   },
   radiusMiles: 5,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deletedAt: null,
   pets: [],
   ...overrides,
 })
 
 
 
-export const makeUsers = (count: number, overrides: Partial<User> = {}): User[] => {
+export const makeUsers = (count: number, overrides: Partial<FullUser> = {}): FullUser[] => {
   return Array.from({ length: count }, (_, i) =>
     makeUser({
       id: i + 1,

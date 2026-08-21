@@ -2,7 +2,7 @@ import { ne, and, eq, sql, inArray, isNull } from 'drizzle-orm'
 import { db } from '@/db'
 import { UserRow, users, chatMemberships, messages, NewMessageRow } from '@/db/schema'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
-import { ChatMembership, ChatPaginationResponse } from 'dogsplayingpoker-shared/chat'
+import { ChatMembership, PaginatedChats } from 'dogsplayingpoker-shared/chat'
 import { Message, FullMessage, CreateMessageInput } from 'dogsplayingpoker-shared/message'
 
 const getFullChats = async (memberships: ChatMembership[], userId: number) => {
@@ -49,7 +49,7 @@ const getFullMessages = async (m: Message[]) => {
   }))
 }
 
-export const getChatsForUser = async (userId: number, input: PaginationInput): Promise<ChatPaginationResponse> => {
+export const getChatsForUser = async (userId: number, input: PaginationInput): Promise<PaginatedChats> => {
   const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit

@@ -25,9 +25,9 @@ export const fullChatMembershipSchema = z.intersection(
 
 export type FullChatMembership = z.infer<typeof fullChatMembershipSchema>
 
-export const chatPaginationResponseSchema = z.object({
+export const paginatedChatsSchema = z.object({
   chats: z.array(fullChatMembershipSchema),
   totalCount: z.number().int().nonnegative(),
 })
 
-export type ChatPaginationResponse = z.infer<typeof chatPaginationResponseSchema>
+export type PaginatedChats = z.infer<typeof paginatedChatsSchema>

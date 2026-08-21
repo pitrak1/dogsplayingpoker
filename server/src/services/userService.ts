@@ -7,7 +7,7 @@ import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUserRow } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
-import type { CreateUserInput, EditUserInput, User, FullUser, SearchUsersInput } from 'dogsplayingpoker-shared/user'
+import type { CreateUserInput, EditUserInput, User, FullUser, SearchUserInput } from 'dogsplayingpoker-shared/user'
 
 const getFullUser = async (user: User) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
@@ -75,7 +75,7 @@ export const refreshAccessToken = (refreshToken: string) => {
   return { authToken: generateAuthToken(payload.userId) }
 }
 
-export const searchUsersNearby = async (params: SearchUsersInput): Promise<{ users: FullUser[], totalCount: number }> => {
+export const searchUsersNearby = async (params: SearchUserInput): Promise<{ users: FullUser[], totalCount: number }> => {
   const pageSize = params.pageSize ?? 25
   const offset = ((params.page ?? 1) - 1) * pageSize
 

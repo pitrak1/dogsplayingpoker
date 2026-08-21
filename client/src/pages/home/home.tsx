@@ -1,7 +1,7 @@
 import { UserMap } from '@/components/userMap'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import type { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { SearchInput } from './searchInput'
 import { SearchResults } from './searchResults'
@@ -34,7 +34,7 @@ export function Home() {
     setSearchPage 
   } = useMapboxMapSearch()
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map>()
-  const [highlightedUser, setHighlightedUser] = useState<User | null>(null)
+  const [highlightedUser, setHighlightedUser] = useState<FullUser | null>(null)
   const [hasMapMoved, setHasMapMoved] = useState<boolean>(false)
   const [searchOnNextMove, setSearchOnNextMove] = useState<boolean>(false)
   const [searchLocationName, setSearchLocationName] = useState<string | null>(null)
@@ -55,7 +55,7 @@ export function Home() {
     setHasMapMoved(false)
   }, [mapInstance, setParamsFromMap, setSearchToMap, setHasMapMoved])
 
-  const handleClickMarker = useCallback((user: User) => {
+  const handleClickMarker = useCallback((user: FullUser) => {
     navigate(`/profile/${user.username}`)
   }, [navigate])
 

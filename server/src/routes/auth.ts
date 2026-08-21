@@ -15,10 +15,6 @@ const registerSchema = z.object({
   username: z.string().min(1),
   email: z.email(),
   password: z.string().min(8),
-  profileImageUrl: z.string().nullable().optional(),
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
-  radiusMiles: z.number().nullable().optional(),
 })
 
 export const authRoutes = new Hono<AppEnv>()

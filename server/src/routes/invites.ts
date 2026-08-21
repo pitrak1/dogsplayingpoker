@@ -10,7 +10,7 @@ import {
 } from '@/services/inviteService'
 import type { AuthedEnv } from '../types'
 import { zValidator } from '@hono/zod-validator'
-import { createInviteInputSchema } from 'dogsplayingpoker-shared/invite'
+import { createChatInviteInputSchema } from 'dogsplayingpoker-shared/invite'
 import { paginationInputSchema } from 'dogsplayingpoker-shared/common'
 import { idInputSchema } from 'dogsplayingpoker-shared/common'
 
@@ -55,7 +55,7 @@ export const inviteRoutes = new Hono<AuthedEnv>()
   )
   .post(
     '/',
-    zValidator('json', createInviteInputSchema),
+    zValidator('json', createChatInviteInputSchema),
     async (c) => {
       const userId = c.get('userId')
       const { receiverId, message } = c.req.valid('json')

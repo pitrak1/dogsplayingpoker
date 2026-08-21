@@ -1,15 +1,15 @@
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import { metersToMiles } from '@/lib/maps'
 import { MapPin, PawPrint, ArrowRight } from 'lucide-react'
 import { AvatarDisplay } from '@/components/avatarDisplay'
 import './searchResultDisplay.scss'
 
 type Props = {
-  user: User
+  user: FullUser
   isHighlighted: boolean
   resultNumber: number
-  onClick: (user: User) => void
-  onSearchResultHover: (user: User | null) => void
+  onClick: (user: FullUser) => void
+  onSearchResultHover: (user: FullUser | null) => void
 }
 
 export function SearchResultDisplay({ user, isHighlighted, resultNumber, onClick, onSearchResultHover }: Props) {

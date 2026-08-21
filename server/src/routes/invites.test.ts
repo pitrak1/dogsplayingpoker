@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { app } from '@/app'
 import { generateAuthToken } from '@/lib/auth'
-import { makeCreateInviteInput, makeInvite } from '@/test/factories'
+import { makeCreateChatInviteInput, makeInvite } from '@/test/factories'
 import * as inviteService from '@/services/inviteService'
 import { beforeEach } from 'vitest'
 import { resetDb, schemaMismatch } from '@/test/helpers'
 import { setupUsers, setupInvite } from '@/test/factories'
-import { invitePaginationResponseSchema, chatInviteSchema } from 'dogsplayingpoker-shared/invite'
+import { paginatedChatInvitesSchema, chatInviteSchema } from 'dogsplayingpoker-shared/invite'
 import { chatSchema } from 'dogsplayingpoker-shared/chat'
 
 beforeEach(resetDb)
@@ -126,7 +126,7 @@ describe('PATCH /api/invites/decline', () => {
 describe('POST /api/invites', () => {
   it('returns 400 if receiver is authed user', async () => {
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeCreateInviteInput({ receiverId: 1 }))
+    const body = JSON.stringify(makeCreateChatInviteInput({ receiverId: 1 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',
@@ -139,7 +139,7 @@ describe('POST /api/invites', () => {
     const existingInvite = makeInvite({ receiverId: 2 })
     vi.spyOn(inviteService, 'getExistingInviteForUsers').mockResolvedValue(existingInvite)
     const token = generateAuthToken(1)
-    const body = JSON.stringify(makeCreateInviteInput({ receiverId: 2 }))
+    const body = JSON.stringify(makeCreateChatInviteInput({ receiverId: 2 }))
     const res = await app.request(`/api/invites`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       method: 'POST',
@@ -162,21 +162,21 @@ describe('POST /api/invites', () => {
 })
 
 describe('GET /api/invites/received', () => {
-  it('response matches invitePaginationResponseSchema', async () => {
+  it('response matches paginatedChatInvitesSchema', async () => {
     const [sender, receiver] = await setupUsers(2)
     await setupInvite(sender.id, receiver.id)
     const res = await app.request('/api/invites/received', { headers: authed(receiver.id) })
     expect(res.status).toBe(200)
-    expect(await schemaMismatch(res, invitePaginationResponseSchema)).toBeNull()
+    expect(await schemaMismatch(res, paginatedChatInvitesSchema)).toBeNull()
   })
 })
 
 describe('GET /api/invites/sent', () => {
-  it('response matches invitePaginationResponseSchema', async () => {
+  it('response matches paginatedChatInvitesSchema', async () => {
     const [sender, receiver] = await setupUsers(2)
     await setupInvite(sender.id, receiver.id)
     const res = await app.request('/api/invites/sent', { headers: authed(sender.id) })
     expect(res.status).toBe(200)
-    expect(await schemaMismatch(res, invitePaginationResponseSchema)).toBeNull()
+    expect(await schemaMismatch(res, paginatedChatInvitesSchema)).toBeNull()
   })
 })

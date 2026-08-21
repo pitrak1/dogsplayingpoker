@@ -7,13 +7,13 @@ import * as authContext from '@/context/auth'
 import * as usersApi from '@/api/users'
 import * as upload from '@/lib/upload'
 import { makeUser } from '@/test/factories'
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import { ApiError } from '@/api/errors'
 
 const makeFile = (name = 'avatar.png', type = 'image/png') =>
   new File(['fake content'], name, { type })
 
-const mockAuth = (overrides?: Partial<User>) => {
+const mockAuth = (overrides?: Partial<FullUser>) => {
   const user = makeUser(overrides)
   const setAuthUser = vi.fn()
   vi.spyOn(authContext, 'setAuthUser').mockImplementation(setAuthUser)

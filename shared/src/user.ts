@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Pet, petSchema } from './pet'
+import { petSchema } from './pet'
 import { paginationInputSchema } from './common'
 
 
@@ -22,27 +22,10 @@ export const userSchema = z.object({
 
 export type User = z.infer<typeof userSchema>
 
-export const userRowSchema = z.intersection(
-  userSchema,
-  z.object({
-    password: z.string().min(1),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    deletedAt: z.date().nullish()
-  })
-)
-
-export type UserRow = z.infer<typeof userRowSchema>
-
-export type FullUserRow = UserRow & { pets: Pet[] }
-
 export const createUserInputSchema = z.object({
   username: z.string().min(1),
   email: z.string().min(1),
   password: z.string().min(1),
-  profileImageUrl: z.string().nullish(),
-  location: locationSchema.nullish(),
-  radiusMiles: z.number().int().nonnegative().nullish()
 })
 
 export type CreateUserInput = z.infer<typeof createUserInputSchema>
@@ -77,7 +60,7 @@ export const uploadSignatureSchema = z.object({
 export type UploadSignature = z.infer<typeof uploadSignatureSchema>
 
 
-export const searchUsersInputSchema = z.intersection(
+export const searchUserInputSchema = z.intersection(
   z.object({
     swLat: z.coerce.number(),
     swLng: z.coerce.number(),
@@ -89,15 +72,17 @@ export const searchUsersInputSchema = z.intersection(
   paginationInputSchema
 )
 
-export type SearchUsersInput = z.infer<typeof searchUsersInputSchema>
+export type SearchUserInput = z.infer<typeof searchUserInputSchema>
 
 export const usernameInputSchema = z.object({
   username: z.string()
 })
 
-export const userPaginationResponseSchema = z.object({
+export type UsernameInput = z.infer<typeof usernameInputSchema>
+
+export const paginatedUsersSchema = z.object({
   users: z.array(fullUserSchema),
   totalCount: z.number().int().nonnegative(),
 })
 
-export type UserPaginationResponse = z.infer<typeof userPaginationResponseSchema>
+export type PaginatedUsers = z.infer<typeof paginatedUsersSchema>

@@ -1,7 +1,7 @@
 import { and, eq, gt, sql, inArray, or } from 'drizzle-orm'
 import { db } from '@/db'
 import { chatInvites, NewChatInviteRow, UserRow, users, ChatInviteRow, chats, chatMemberships, messages } from '@/db/schema'
-import { CreateInviteInput, InvitePaginationResponse, ChatInvite } from 'dogsplayingpoker-shared/invite'
+import { CreateChatInviteInput, PaginatedChatInvites, ChatInvite } from 'dogsplayingpoker-shared/invite'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { add } from 'date-fns'
 
@@ -20,7 +20,7 @@ const getFullInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender')
   }))
 }
 
-export const getSentInvitesForUser = async (userId: number, input: PaginationInput): Promise<InvitePaginationResponse> => {
+export const getSentInvitesForUser = async (userId: number, input: PaginationInput): Promise<PaginatedChatInvites> => {
   const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
@@ -50,7 +50,7 @@ export const getSentInvitesForUser = async (userId: number, input: PaginationInp
   return { invites: fullInvites, totalCount }
 }
 
-export const getReceivedInvitesForUser = async (userId: number, input: PaginationInput): Promise<InvitePaginationResponse> => {
+export const getReceivedInvitesForUser = async (userId: number, input: PaginationInput): Promise<PaginatedChatInvites> => {
   const { page, pageSize } = input
   const limit = pageSize ?? 10
   const offset = ((page ?? 1) - 1) * limit
@@ -133,7 +133,7 @@ export const acceptInvite = async (id: number) => {
   })
 }
 
-export const createInvite = async (userId: number, input: CreateInviteInput) => {
+export const createInvite = async (userId: number, input: CreateChatInviteInput) => {
   const expiredAt = add(new Date(), { weeks: 2 })
   const data = { status: 'pending', expiredAt, senderId: userId, ...input } as NewChatInviteRow
   const rows = await db.insert(chatInvites).values(data).returning()

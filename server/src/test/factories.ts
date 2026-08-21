@@ -1,9 +1,8 @@
-import type { PetRow, UserRow } from '@/db/schema'
+import type { NewUserRow, PetRow, UserRow } from '@/db/schema'
 import { db } from '@/db'
 import { users, pets, chatInvites, chats, chatMemberships, messages } from '@/db/schema'
 import bcrypt from 'bcrypt'
-import { CreateInviteInput, Status } from 'dogsplayingpoker-shared/invite'
-import { CreateUserInput } from 'dogsplayingpoker-shared/user'
+import { CreateChatInviteInput, Status } from 'dogsplayingpoker-shared/invite'
 import { CreatePetInput } from 'dogsplayingpoker-shared/pet'
 import { add } from 'date-fns'
 import { CreateMessageInput } from 'dogsplayingpoker-shared/message'
@@ -22,7 +21,9 @@ export const makeUser = (overrides: Partial<UserRow> = {}): UserRow => ({
   ...overrides,
 })
 
-export const makeUserInput = (overrides: Partial<CreateUserInput> = {}): CreateUserInput => ({
+// Factories seed rows straight into Postgres, so they describe an insert -- not the
+// API's CreateUserInput, which only carries the three fields createUser reads.
+export const makeUserInput = (overrides: Partial<NewUserRow> = {}): NewUserRow => ({
   username: 'testuser',
   email: 'test@example.com',
   password: 'hashed',
@@ -35,7 +36,7 @@ export const makeUserInput = (overrides: Partial<CreateUserInput> = {}): CreateU
   ...overrides,
 })
 
-export const setupUser = async (overrides: Partial<CreateUserInput> = {}) => {
+export const setupUser = async (overrides: Partial<NewUserRow> = {}) => {
   const userInput = makeUserInput(overrides)
   const hashed = await bcrypt.hash(userInput.password, 12)
   const convertedUserInput = {...userInput, password: hashed }
@@ -43,11 +44,11 @@ export const setupUser = async (overrides: Partial<CreateUserInput> = {}) => {
   return user
 }
 
-export const setupUsers = async (count: number, overrides: Partial<CreateUserInput> = {}) => {
+export const setupUsers = async (count: number, overrides: Partial<NewUserRow> = {}) => {
   const base = makeUserInput(overrides)
   const hashed = await bcrypt.hash(base.password, 12)
   const userInput = { ...base, password: hashed }
-  const input: CreateUserInput[] = []
+  const input: NewUserRow[] = []
   for (let i = 0; i < count; i++) {
     input.push({...userInput, username: `user${i}`, email: `user${i}@example.com` })
   }
@@ -99,13 +100,13 @@ export const setupPetForUser = async (ownerId: number, overrides: Partial<Create
   return pet
 }
 
-export const makeCreateInviteInput = (overrides: Partial<CreateInviteInput> = {}): CreateInviteInput => ({
+export const makeCreateChatInviteInput = (overrides: Partial<CreateChatInviteInput> = {}): CreateChatInviteInput => ({
   receiverId: 2,
   message: 'fake-message',
   ...overrides
 })
 
-export const makeInvite = (overrides: Partial<CreateInviteInput> = {}) => ({
+export const makeInvite = (overrides: Partial<CreateChatInviteInput> = {}) => ({
   id: 1,
   message: 'some fake message',
   senderId: 2,

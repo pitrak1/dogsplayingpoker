@@ -6,7 +6,7 @@ import { beforeEach } from 'vitest'
 import { z } from 'zod'
 import { resetDb, schemaMismatch } from '@/test/helpers'
 import { setupUsers, setupChat, setupChatMembership, setupMessage } from '@/test/factories'
-import { chatPaginationResponseSchema } from 'dogsplayingpoker-shared/chat'
+import { paginatedChatsSchema } from 'dogsplayingpoker-shared/chat'
 import { fullMessageSchema } from 'dogsplayingpoker-shared/message'
 
 beforeEach(resetDb)
@@ -57,12 +57,12 @@ describe('POST /api/chats/:id', () => {
 })
 
 describe('GET /api/chats', () => {
-  it('response matches chatPaginationResponseSchema', async () => {
+  it('response matches paginatedChatsSchema', async () => {
     const { me } = await setupPair()
     const res = await app.request('/api/chats', {
       headers: { Authorization: `Bearer ${generateAuthToken(me.id)}` },
     })
     expect(res.status).toBe(200)
-    expect(await schemaMismatch(res, chatPaginationResponseSchema)).toBeNull()
+    expect(await schemaMismatch(res, paginatedChatsSchema)).toBeNull()
   })
 })

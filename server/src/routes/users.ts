@@ -3,11 +3,11 @@ import { zValidator } from '@hono/zod-validator'
 import * as userService from '@/services/userService'
 import type { AppEnv } from '@/types'
 import { requireAuth } from '@/middleware/auth'
-import { editUserInputSchema, searchUsersInputSchema, usernameInputSchema } from 'dogsplayingpoker-shared/user'
+import { editUserInputSchema, searchUserInputSchema, usernameInputSchema } from 'dogsplayingpoker-shared/user'
 import { idInputSchema } from 'dogsplayingpoker-shared/common'
 
 export const userRoutes = new Hono<AppEnv>()
-  .get('/search', zValidator('query', searchUsersInputSchema), async (c) => {
+  .get('/search', zValidator('query', searchUserInputSchema), async (c) => {
     const params = c.req.valid('query')
     const users = await userService.searchUsersNearby(params)
     return c.json(users)

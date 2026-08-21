@@ -1,18 +1,18 @@
-import type { FullUser as User } from 'dogsplayingpoker-shared/user'
+import type { FullUser } from 'dogsplayingpoker-shared/user'
 import { useNavigate } from 'react-router'
 import { SearchResultDisplay } from './searchResultDisplay'
 import './searchResults.scss'
 
 type Props = {
-  users: User[] | null
-  highlightedUser?: User | null
-  onSearchResultHover: (user: User | null) => void
+  users: FullUser[] | null
+  highlightedUser?: FullUser | null
+  onSearchResultHover: (user: FullUser | null) => void
 }
 
 export function SearchResults({ users, highlightedUser, onSearchResultHover }: Props) {
   const navigate = useNavigate()
 
-  const onUserClick = (user: User) => {
+  const onUserClick = (user: FullUser) => {
     navigate(`/profile/${user.username}`)
   }
 

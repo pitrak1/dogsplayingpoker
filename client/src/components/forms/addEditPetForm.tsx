@@ -3,10 +3,9 @@ import { Baby, PersonStanding, Dog, Cat, X } from 'lucide-react'
 import { uploadImage } from '@/lib/upload'
 import { ApiError } from '@/api/errors'
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { Pet, createPetInputSchema, reactivitySchema, sizeSchema, displaySizeMap, Size, Reactivity } from 'dogsplayingpoker-shared/pet'
+import { Pet, createPetInputSchema, displaySizeMap, Size, Reactivity } from 'dogsplayingpoker-shared/pet'
 import { useCreatePet, useEditPet } from '@/api/pets'
 import { FormField } from '@/components/forms/formField'
-import { z } from 'zod'
 import { ReactivityInput } from './reactivityInput'
 import { useImageInput } from '@/hooks/useImageInput'
 import { useFormValidation } from '@/hooks/useFormValidation'
@@ -15,20 +14,20 @@ import { AvatarDisplay } from '../avatarDisplay'
 import { RadioButtonGroup } from '@/components/forms/radioButtonGroup'
 import './addEditPetForm.scss'
 
-type PetFormState = {
+type CreatePetForm = {
   name?: string | null
   age?: number | null
   breed?: string | null
   file?: File | null
   fileUrl?: string | null
-  size: z.infer<typeof sizeSchema>
-  dogReactivity: z.infer<typeof reactivitySchema>
+  size: Size
+  dogReactivity: Reactivity
   dogReactivityNotes?: string | null
-  catReactivity: z.infer<typeof reactivitySchema>
+  catReactivity: Reactivity
   catReactivityNotes?: string | null
-  kidReactivity: z.infer<typeof reactivitySchema>
+  kidReactivity: Reactivity
   kidReactivityNotes?: string | null
-  peopleReactivity: z.infer<typeof reactivitySchema>
+  peopleReactivity: Reactivity
   peopleReactivityNotes?: string | null
 }
 
@@ -61,7 +60,7 @@ export function AddEditPetForm({ pet, onClose }: Props) {
     setFormError,
     setFormValue,
     validate
-  } = useFormValidation<PetFormState, typeof createPetInputSchema>(initialState, createPetInputSchema)
+  } = useFormValidation<CreatePetForm, typeof createPetInputSchema>(initialState, createPetInputSchema)
   const { file, fileUrl, onChange: onPictureChange } = useImageInput(values.fileUrl)
 
   const { mutateAsync: createPet, isPending: isCreating } = useCreatePet()

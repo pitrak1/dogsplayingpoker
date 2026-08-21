@@ -4,7 +4,7 @@ import { generateAuthToken } from '@/lib/auth'
 import { beforeEach } from 'vitest'
 import { resetDb, schemaMismatch } from '@/test/helpers'
 import { setupUser, setupPetForUser } from '@/test/factories'
-import { fullUserSchema, userPaginationResponseSchema } from 'dogsplayingpoker-shared/user'
+import { fullUserSchema, paginatedUsersSchema } from 'dogsplayingpoker-shared/user'
 
 beforeEach(resetDb)
 
@@ -17,13 +17,13 @@ describe('GET /api/users/search', () => {
     expect(res.status).toBe(400)
   })
 
-  it('response matches userPaginationResponseSchema', async () => {
+  it('response matches paginatedUsersSchema', async () => {
     const user = await setupUser()
     await setupPetForUser(user.id)
     const url = '/api/users/search?swLat=41&swLng=-88&neLat=42&neLng=-87&centerLat=41.8781&centerLng=-87.6298'
     const res = await app.request(url)
     expect(res.status).toBe(200)
-    expect(await schemaMismatch(res, userPaginationResponseSchema)).toBeNull()
+    expect(await schemaMismatch(res, paginatedUsersSchema)).toBeNull()
   })
 
 })

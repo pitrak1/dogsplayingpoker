@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
-import { CreateInviteInput, chatInviteSchema, invitePaginationResponseSchema } from 'dogsplayingpoker-shared/invite'
+import { CreateChatInviteInput, chatInviteSchema, paginatedChatInvitesSchema } from 'dogsplayingpoker-shared/invite'
 import { chatSchema } from 'dogsplayingpoker-shared/chat'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { useAuth } from '@/context/auth'
@@ -15,7 +15,7 @@ export const useSentInvites = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return invitePaginationResponseSchema.parse(await res.json())
+      return paginatedChatInvitesSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -31,7 +31,7 @@ export const useReceivedInvites = (params: PaginationInput) => {
         pageSize: String(params.pageSize),
       })
       if (!res.ok) throw new Error('Failed to fetch invites')
-      return invitePaginationResponseSchema.parse(await res.json())
+      return paginatedChatInvitesSchema.parse(await res.json())
     },
     enabled: !!user,
   })
@@ -40,7 +40,7 @@ export const useReceivedInvites = (params: PaginationInput) => {
 export const useCreateInvite = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: CreateInviteInput) => {
+    mutationFn: async (input: CreateChatInviteInput) => {
       const res = await api.post('/invites', input)
       if (!res.ok) throw new Error((await res.json()).toString() ?? 'Failed to create invite')
       return chatInviteSchema.parse(await res.json())
