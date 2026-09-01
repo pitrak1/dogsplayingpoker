@@ -67,6 +67,16 @@ describe('GET /api/users/:id', () => {
     })
     expect(res.status).toBe(400)
   })
+
+  it('response matches fullUserSchema', async () => {
+    const user = await setupUser()
+    await setupPetForUser(user.id)
+    const res = await app.request(`/api/users/${user.id}`, {
+      headers: { Authorization: `Bearer ${generateAuthToken(user.id)}` },
+    })
+    expect(res.status).toBe(200)
+    expect(await schemaMismatch(res, fullUserSchema)).toBeNull()
+  })
 })
 
 describe('GET /api/users/update-profile', () => {

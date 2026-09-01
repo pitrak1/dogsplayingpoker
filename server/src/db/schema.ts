@@ -8,7 +8,7 @@ import {
   pgEnum,
   geometry,
 } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { relations, getTableColumns } from 'drizzle-orm'
 
 export type UserRow = typeof users.$inferSelect
 export type NewUserRow = typeof users.$inferInsert
@@ -43,6 +43,11 @@ export const users = pgTable('users', {
   index('users_deleted_at_idx').on(table.deletedAt),
   index('users_created_at_idx').on(table.createdAt)
 ])
+
+// This just strips out the password column which is only needed for the login endpoint
+const { password: _password, ...userColumns } = getTableColumns(users)
+export const safeUserColumns = userColumns
+export type SafeUserRow = Omit<UserRow, 'password'>
 
 export const pets = pgTable('pets', {
   id: serial('id').primaryKey(),

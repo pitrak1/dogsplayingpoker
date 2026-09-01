@@ -1,15 +1,15 @@
 import { and, eq, gt, sql, inArray, or } from 'drizzle-orm'
 import { db } from '@/db'
-import { chatInvites, NewChatInviteRow, UserRow, users, ChatInviteRow, chats, chatMemberships, messages } from '@/db/schema'
+import { chatInvites, NewChatInviteRow, users, ChatInviteRow, chats, chatMemberships, messages, safeUserColumns, type SafeUserRow } from '@/db/schema'
 import { CreateChatInviteInput, PaginatedChatInvites, ChatInvite } from 'dogsplayingpoker-shared/invite'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { add } from 'date-fns'
 
 const getFullInvites = async (invites: ChatInvite[], key: 'receiver' | 'sender') => {
   const userIds = invites.map(i => i[`${key}Id`])
-  const allUsers = await db.select().from(users).where(inArray(users.id, userIds))
+  const allUsers = await db.select(safeUserColumns).from(users).where(inArray(users.id, userIds))
 
-  const usersById = new Map<number, UserRow>()
+  const usersById = new Map<number, SafeUserRow>()
   for (const user of allUsers) {
     usersById.set(user.id, user)
   }

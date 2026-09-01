@@ -1,33 +1,33 @@
-import { and, eq, isNull, sql, getTableColumns, inArray } from 'drizzle-orm'
+import { and, eq, isNull, sql, inArray } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { db } from '@/db'
-import { users, pets } from '@/db/schema'
+import { users, pets, safeUserColumns, type SafeUserRow } from '@/db/schema'
 import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/lib/auth'
 import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUserRow } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
-import type { CreateUserInput, EditUserInput, User, FullUser, SearchUserInput } from 'dogsplayingpoker-shared/user'
+import type { CreateUserInput, EditUserInput, FullUser, SearchUserInput } from 'dogsplayingpoker-shared/user'
 
-const getFullUser = async (user: User) => {
+const getFullUser = async (user: SafeUserRow) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
   return { ...user, pets: userPets }
 }
 
 export const getFullUserById = async (id: number) => {
-  const rows = await db.select().from(users)
+  const rows = await db.select(safeUserColumns).from(users)
     .where(and(eq(users.id, id), isNull(users.deletedAt)))
   return rows[0] ? await getFullUser(rows[0]) : null
 }
 
 export const getUserById = async (id: number) => {
-  const rows = await db.select().from(users)
+  const rows = await db.select(safeUserColumns).from(users)
     .where(and(eq(users.id, id), isNull(users.deletedAt)))
   return rows[0] ?? null
 }
 
 export const getUserByUsername = async (username: string) => {
-  const rows = await db.select().from(users)
+  const rows = await db.select(safeUserColumns).from(users)
     .where(and(eq(users.username, username), isNull(users.deletedAt)))
   return rows[0] ? await getFullUser(rows[0]) : null
 }
@@ -35,10 +35,14 @@ export const getUserByUsername = async (username: string) => {
 export const loginUser = async (email: string, password: string) => {
   const rows = await db.select().from(users)
     .where(and(eq(users.email, email), isNull(users.deletedAt)))
-  const user = rows[0]
-  if (!user) throw new AuthError('Invalid credentials')
-  const valid = await bcrypt.compare(password, user.password)
+  const row = rows[0]
+  if (!row) throw new AuthError('Invalid credentials')
+  const valid = await bcrypt.compare(password, row.password)
   if (!valid) throw new AuthError('Invalid credentials')
+
+  // This is the only endpoint that explicitly needs the password column
+  // after comparison, we want to drop it explicitly just to be safe
+  const { password: _password, ...user } = row
 
   return {
     authToken: generateAuthToken(user.id),
@@ -54,7 +58,7 @@ export const createUser = async (input: CreateUserInput) => {
       username: input.username,
       email: input.email,
       password: hashed,
-    }).returning()
+    }).returning(safeUserColumns)
     const user = rows[0]
     return {
       authToken: generateAuthToken(user.id),
@@ -84,7 +88,7 @@ export const searchUsersNearby = async (params: SearchUserInput): Promise<{ user
 
   const [userRows, totalCount] = await Promise.all([
     db.select({
-      ...getTableColumns(users),
+      ...safeUserColumns,
       distanceMeters: sql<number>`ST_Distance(${users.location}::geography, ${center})`.as('distance_meters'),
     })
       .from(users)
@@ -150,7 +154,7 @@ export const updateUserProfile = async (userId: number, input: EditUserInput) =>
       .update(users)
       .set(updates)
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
-      .returning()
+      .returning(safeUserColumns)
     return getFullUser(rows[0])
   } catch (e: unknown) {
     if (e instanceof DatabaseError && e.code === PG_UNIQUE_VIOLATION) {

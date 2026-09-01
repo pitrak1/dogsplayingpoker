@@ -14,7 +14,15 @@ export const resetDb = async () => {
 
 export const MISSING_ID = 2_000_000_000
 
+// This checks for the password key in the response body or a bcrypt hash value (that always starts with $2b$) 
+// to make sure we don't accidentally leak a secret in another kvp
+const leakedSecret = (text: string) =>
+  text.includes('"password":') || text.includes('$2b$')
+
 export const schemaMismatch = async (res: Response, schema: z.ZodType) => {
-  const result = schema.safeParse(await res.json())
+  const text = await res.text()
+  if (leakedSecret(text)) return `Response leaked a secret:\n${text.slice(0, 300)}`
+
+  const result = schema.safeParse(JSON.parse(text))
   return result.success ? null : z.prettifyError(result.error)
 }

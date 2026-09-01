@@ -1,6 +1,6 @@
 import { ne, and, eq, sql, inArray, isNull } from 'drizzle-orm'
 import { db } from '@/db'
-import { UserRow, users, chatMemberships, messages, NewMessageRow } from '@/db/schema'
+import { users, chatMemberships, messages, NewMessageRow, safeUserColumns, type SafeUserRow } from '@/db/schema'
 import { PaginationInput } from 'dogsplayingpoker-shared/common'
 import { ChatMembership, PaginatedChats } from 'dogsplayingpoker-shared/chat'
 import { Message, FullMessage, CreateMessageInput } from 'dogsplayingpoker-shared/message'
@@ -8,7 +8,10 @@ import { Message, FullMessage, CreateMessageInput } from 'dogsplayingpoker-share
 const getFullChats = async (memberships: ChatMembership[], userId: number) => {
   const chatIds = memberships.map(m => m.chatId)
   const otherChatUsers = await db
-    .select()
+    .select({
+      chatId: chatMemberships.chatId,
+      user: safeUserColumns,
+    })
     .from(chatMemberships)
     .innerJoin(users, eq(chatMemberships.userId, users.id))
     .where(and(
@@ -16,9 +19,9 @@ const getFullChats = async (memberships: ChatMembership[], userId: number) => {
       ne(chatMemberships.userId, userId)
     ))
 
-  const otherUsersByChatId = new Map<number, UserRow>()
-  for (const u of otherChatUsers) {
-    otherUsersByChatId.set(u.chat_memberships.chatId, u.users)
+  const otherUsersByChatId = new Map<number, SafeUserRow>()
+  for (const row of otherChatUsers) {
+    otherUsersByChatId.set(row.chatId, row.user)
   }
 
   return memberships.map(row => ({
@@ -30,17 +33,20 @@ const getFullChats = async (memberships: ChatMembership[], userId: number) => {
 const getFullMessages = async (m: Message[]) => {
   const messageIds = m.map(m => m.id)
   const messageUsers = await db
-    .select()
+    .select({
+      messageId: messages.id,
+      user: safeUserColumns,
+    })
     .from(users)
     .innerJoin(messages, eq(users.id, messages.createdBy))
     .where(and(
-      inArray(messages.id, messageIds), 
+      inArray(messages.id, messageIds),
       isNull(messages.deletedAt)
     ))
 
-  const otherUsersByMessageId = new Map<number, UserRow>()
-  for (const u of messageUsers) {
-    otherUsersByMessageId.set(u.messages.id, u.users)
+  const otherUsersByMessageId = new Map<number, SafeUserRow>()
+  for (const row of messageUsers) {
+    otherUsersByMessageId.set(row.messageId, row.user)
   }
 
   return m.map(row => ({
