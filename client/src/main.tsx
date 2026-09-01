@@ -1,4 +1,4 @@
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryCache, QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query'
 import { z, ZodError } from 'zod'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -8,6 +8,12 @@ import '@mantine/core/styles.css'
 import { MantineProvider } from '@mantine/core'
 import { theme } from './styles/theme'
 
+const logSchemaMismatch = (error: unknown, label: string) => {
+  if (error instanceof ZodError) {
+    console.error(`Schema mismatch on ${label}\n${z.prettifyError(error)}`)
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -15,13 +21,11 @@ const queryClient = new QueryClient({
     },
   },
   queryCache: new QueryCache({
-    onError: (error, query) => {
-      if (error instanceof ZodError) {
-        console.error(
-          `Schema mismatch on ${JSON.stringify(query.queryKey)}\n${z.prettifyError(error)}`,
-        )
-      }
-    },
+    onError: (error, query) => logSchemaMismatch(error, JSON.stringify(query.queryKey)),
+  }),
+  mutationCache: new MutationCache({
+    onError: (error, _vars, _ctx, mutation) =>
+      logSchemaMismatch(error, mutation.options.mutationKey?.join('/') ?? 'mutation'),
   }),
 })
 

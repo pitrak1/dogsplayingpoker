@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import type { FullUser } from 'dogsplayingpoker-shared/user'
+import { fullUserSchema, type FullUser } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 import { useQueryClient } from '@tanstack/react-query'
 import { socket } from '@/socket'
 
 const AUTH_MAX_AGE = 15 * 60
 const AUTH_TOKEN_KEY = 'authToken'
-const USER_KEY = 'user'
+const USER_KEY = 'user.v2'
 
 let _setUserState: ((user: FullUser | null) => void) | null = null
 
@@ -19,6 +19,21 @@ export const setAuthUser = (user: FullUser) => {
   _setUserState?.(user)
 }
 
+const readStoredUser = (): FullUser | null => {
+  const stored = getCookie(USER_KEY)
+  if (!stored) return null
+  try { 
+    const result = fullUserSchema.safeParse(JSON.parse(stored))
+    if (result.success) return result.data
+  } catch {
+    // Malformed json, ignore and return null
+  }
+  
+  // We only delete the cookie if it was garbage anyway
+  deleteCookie(USER_KEY)
+  return null
+}
+
 type AuthContextType = {
   user: FullUser | null
   setAuth: (token: string, user: FullUser) => void
@@ -28,10 +43,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<FullUser | null>(() => {
-    const stored = getCookie(USER_KEY)
-    return stored ? JSON.parse(stored) : null
-  })
+  const [user, setUser] = useState<FullUser | null>(readStoredUser)
   _setUserState = setUser
   const queryClient = useQueryClient()
 

@@ -16,7 +16,7 @@ describe('AuthProvider + useAuth', () => {
   })
 
   it('hydrates user from cookie on mount', () => {
-    setCookie('user', JSON.stringify(testUser), 60)
+    setCookie('user.v2', JSON.stringify(testUser), 60)
     const { result } = renderHookWithProviders(() => useAuth())
     expect(result.current.user?.username).toBe('sarah')
   })
@@ -42,7 +42,7 @@ describe('AuthProvider + useAuth', () => {
     act(() => {
       result.current.setAuth('token123', testUser)
     })
-    expect(document.cookie).toContain('user=')
+    expect(document.cookie).toContain('user.v2=')
   })
 
   it('clearAuth removes user state', () => {

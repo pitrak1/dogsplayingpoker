@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
-import { ApiError } from './errors'
 import { authResponseSchema, EditUserInput, fullUserSchema, paginatedUsersSchema } from 'dogsplayingpoker-shared/user'
 import { useAuth } from '@/context/auth'
 
@@ -9,11 +8,7 @@ export const useUserByUsername = (username: string) => {
   const { user } = useAuth()
   return useQuery({
     queryKey: ['user', username],
-    queryFn: async () => {
-      const res = await api.get(`/users/by-username/${username}`)
-      if (!res.ok) throw new Error('Failed to fetch user')
-      return fullUserSchema.parse(await res.json())
-    },
+    queryFn: () => api.get(fullUserSchema, `/users/by-username/${username}`),
     enabled: !!user,
   })
 }
@@ -21,8 +16,8 @@ export const useUserByUsername = (username: string) => {
 export const useSearchUsers = (input: ActiveSearch | null) =>
   useQuery({
     queryKey: ['users', input],
-    queryFn: async () => {
-      const res = await api.get('/users/search', {
+    queryFn: () =>
+      api.get(paginatedUsersSchema, '/users/search', {
         swLat: String(input!.swLat),
         swLng: String(input!.swLng),
         neLat: String(input!.neLat),
@@ -30,48 +25,30 @@ export const useSearchUsers = (input: ActiveSearch | null) =>
         centerLat: String(input!.centerLat),
         centerLng: String(input!.centerLng),
         page: String(input!.page),
-      })
-      if (!res.ok) throw new Error('Failed to search users')
-      return paginatedUsersSchema.parse(await res.json())
-    },
+      }),
     enabled: !!input
   })
 
 export const useLogin = () =>
   useMutation({
-    mutationFn: async (input: { email: string; password: string }) => {
-      const res = await api.post('/auth/login', input)
-      if (!res.ok) {
-        const body = (await res.json()) as { message: string; field?: string }
-        throw new ApiError(body.message ?? 'Login failed', body.field)
-      }
-      return authResponseSchema.parse(await res.json())
-    },
+    mutationKey: ['auth', 'login'],
+    mutationFn: (input: { email: string; password: string }) =>
+      api.post(authResponseSchema, '/auth/login', input),
   })
 
 export const useRegister = () =>
   useMutation({
-    mutationFn: async (input: { username: string; email: string; password: string }) => {
-      const res = await api.post('/auth/register', input)
-      if (!res.ok) {
-        const body = (await res.json()) as { message: string; field?: string }
-        throw new ApiError(body.message ?? 'Signup failed', body.field)
-      }
-      return authResponseSchema.parse(await res.json())
-    },
+    mutationKey: ['auth', 'register'],
+    mutationFn: (input: { username: string; email: string; password: string }) =>
+      api.post(authResponseSchema, '/auth/register', input),
   })
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: EditUserInput) => {
-      const res = await api.patch('/users/update-profile', input)
-      if (!res.ok) {
-        const body = (await res.json()) as { message: string; field?: string }
-        throw new ApiError(body.message ?? 'Update profile failed', body.field)
-      }
-      return fullUserSchema.parse(await res.json())
-    },
+    mutationKey: ['users', 'updateProfile'],
+    mutationFn: (input: EditUserInput) =>
+      api.patch(fullUserSchema, '/users/update-profile', input),
     onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['user', user.username] })
     }

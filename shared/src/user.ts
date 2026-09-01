@@ -52,6 +52,10 @@ export const authResponseSchema = z.object({
 
 export type AuthResponse = z.infer<typeof authResponseSchema>
 
+export const refreshResponseSchema = authResponseSchema.pick({ authToken: true })
+
+export type RefreshResponse = z.infer<typeof refreshResponseSchema>
+
 export const uploadSignatureSchema = z.object({
   timestamp: z.number(),
   signature: z.string(),
