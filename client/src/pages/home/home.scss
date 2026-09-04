@@ -34,6 +34,12 @@
   height: calc(100vh - $header-height);
 }
 
+.home__search-results-login-prompt {
+  @include flex-display(column, 0, center, center);
+  flex: 1;
+  font-size: 1.2rem;
+}
+
 .home__search-pagination {
   padding: 0.5rem;
   flex-shrink: 0;

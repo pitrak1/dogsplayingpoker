@@ -1,13 +1,13 @@
 import { and, eq, isNull, sql, inArray } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { db } from '@/db'
-import { users, pets, safeUserColumns, type SafeUserRow } from '@/db/schema'
+import { users, pets, safeUserColumns, type SafeUserRow, publicUserColumns } from '@/db/schema'
 import { generateAuthToken, generateRefreshToken, verifyRefreshToken } from '@/lib/auth'
 import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUserRow } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
-import type { CreateUserInput, EditUserInput, FullUser, SearchUserInput } from 'dogsplayingpoker-shared/user'
+import type { CreateUserInput, EditUserInput, PublicPaginatedUsers, PaginatedUsers, SearchUserInput } from 'dogsplayingpoker-shared/user'
 
 const getFullUser = async (user: SafeUserRow) => {
   const userPets = await db.select().from(pets).where(eq(pets.ownerId, user.id))
@@ -79,16 +79,24 @@ export const refreshAccessToken = (refreshToken: string) => {
   return { authToken: generateAuthToken(payload.userId) }
 }
 
-export const searchUsersNearby = async (params: SearchUserInput): Promise<{ users: FullUser[], totalCount: number }> => {
+type SearchParams = SearchUserInput & { isAuthenticated: boolean }
+
+export function searchUsersNearby(params: SearchUserInput & { isAuthenticated: true }): Promise<PaginatedUsers>
+export function searchUsersNearby(params: SearchUserInput & { isAuthenticated: false }): Promise<PublicPaginatedUsers>
+export function searchUsersNearby(params: SearchParams): Promise<PaginatedUsers | PublicPaginatedUsers>
+
+export async function searchUsersNearby(params: SearchUserInput & { isAuthenticated: boolean }): Promise<PaginatedUsers | PublicPaginatedUsers> {
   const pageSize = params.pageSize ?? 25
   const offset = ((params.page ?? 1) - 1) * pageSize
 
   const center = sql`ST_MakePoint(${params.centerLng}, ${params.centerLat})::geography`
   const envelope = sql`ST_MakeEnvelope(${params.swLng}, ${params.swLat}, ${params.neLng}, ${params.neLat}, 4326)`
 
+  const columns = params.isAuthenticated ? safeUserColumns : publicUserColumns
+
   const [userRows, totalCount] = await Promise.all([
     db.select({
-      ...safeUserColumns,
+      ...columns,
       distanceMeters: sql<number>`ST_Distance(${users.location}::geography, ${center})`.as('distance_meters'),
     })
       .from(users)
@@ -109,6 +117,9 @@ export const searchUsersNearby = async (params: SearchUserInput): Promise<{ user
   ])
 
   if (userRows.length === 0) return { users: [], totalCount: 0 }
+
+  // We don't need to include pets for unauthenticated users
+  if (!params.isAuthenticated) return { users: userRows, totalCount }
 
   // Single query for all pets across all returned users
   const userIds = userRows.map((u) => u.id)

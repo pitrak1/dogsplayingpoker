@@ -1,4 +1,4 @@
-import type { FullUser } from 'dogsplayingpoker-shared/user'
+import type { PublicUser } from 'dogsplayingpoker-shared/user'
 import { getCssVar } from './cssVars'
 import { createRoot } from 'react-dom/client'
 import type { Root } from 'react-dom/client'
@@ -32,17 +32,21 @@ export const milesToPixels = (miles: number, latitude: number, zoom: number) => 
   return meters / metersPerPixel
 }
 
-export const renderUserMarker = (root: Root, user: FullUser, size: number, onClick: () => void) => {
+// The minimal shape the map helpers read. Both FullUser and PublicUser satisfy it,
+// so anything built on it (UserMap, useMapboxMapMarkers) accepts either.
+export type MarkerUser = PublicUser & { username?: string }
+
+export const renderUserMarker = (root: Root, user: MarkerUser, size: number, onClick: () => void) => {
   root.render(
     <MantineProvider theme={theme}>
-      <AvatarDisplay imageUrl={user.profileImageUrl ?? null} name={user.username} size={size} onClick={onClick} />
+      <AvatarDisplay imageUrl={user.profileImageUrl ?? null} name={user.username ?? 'unknown'} size={size} onClick={onClick} />
     </MantineProvider>
   )
 }
 
 export const addUserMarker = (
   map: mapboxgl.Map,
-  user: FullUser,
+  user: MarkerUser,
   onClick: () => void
 ): { marker: mapboxgl.Marker, root: Root } => {
   const container = document.createElement('div')
@@ -60,7 +64,7 @@ export const addUserMarker = (
 export const getCircleStops = (miles: number, latitude: number): [number, number][] =>
   Array.from({ length: 20 }, (_, i) => [i, milesToPixels(miles, latitude, i)])
 
-export const addUserRange = (map: mapboxgl.Map, user: FullUser) => {
+export const addUserRange = (map: mapboxgl.Map, user: MarkerUser) => {
   if (!user.radiusMiles || user.radiusMiles === 0 || !user.location) return
   
   const lat = user.location.y

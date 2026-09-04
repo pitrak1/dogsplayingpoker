@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
 import type { ActiveSearch } from '@/pages/home/home'
-import { authResponseSchema, EditUserInput, fullUserSchema, paginatedUsersSchema } from 'dogsplayingpoker-shared/user'
+import { authResponseSchema, EditUserInput, fullUserSchema, paginatedUsersSchema, publicPaginatedUsersSchema } from 'dogsplayingpoker-shared/user'
 import { useAuth } from '@/context/auth'
 
 export const useUserByUsername = (username: string) => {
@@ -13,11 +13,12 @@ export const useUserByUsername = (username: string) => {
   })
 }
 
-export const useSearchUsers = (input: ActiveSearch | null) =>
-  useQuery({
-    queryKey: ['users', input],
+export const useSearchUsers = (input: ActiveSearch | null) => {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['users', input, !!user],
     queryFn: () =>
-      api.get(paginatedUsersSchema, '/users/search', {
+      api.get(user ? paginatedUsersSchema : publicPaginatedUsersSchema, '/users/search', {
         swLat: String(input!.swLat),
         swLng: String(input!.swLng),
         neLat: String(input!.neLat),
@@ -28,6 +29,7 @@ export const useSearchUsers = (input: ActiveSearch | null) =>
       }),
     enabled: !!input
   })
+}
 
 export const useLogin = () =>
   useMutation({

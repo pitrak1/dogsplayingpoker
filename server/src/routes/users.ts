@@ -8,8 +8,9 @@ import { idInputSchema } from 'dogsplayingpoker-shared/common'
 
 export const userRoutes = new Hono<AppEnv>()
   .get('/search', zValidator('query', searchUserInputSchema), async (c) => {
+    const userId = c.get('userId')
     const params = c.req.valid('query')
-    const users = await userService.searchUsersNearby(params)
+    const users = await userService.searchUsersNearby({ isAuthenticated: !!userId, ...params })
     return c.json(users)
   })
   .use(requireAuth)

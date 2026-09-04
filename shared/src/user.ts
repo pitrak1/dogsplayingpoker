@@ -22,6 +22,15 @@ export const userSchema = z.object({
 
 export type User = z.infer<typeof userSchema>
 
+export const publicUserSchema = userSchema.pick({
+  id: true,
+  profileImageUrl: true,
+  location: true,
+  radiusMiles: true,
+})
+
+export type PublicUser = z.infer<typeof publicUserSchema>
+
 export const createUserInputSchema = z.object({
   username: z.string().min(1),
   email: z.string().min(1),
@@ -90,3 +99,14 @@ export const paginatedUsersSchema = z.object({
 })
 
 export type PaginatedUsers = z.infer<typeof paginatedUsersSchema>
+
+export const publicPaginatedUsersSchema = z.object({
+  users: z.array(publicUserSchema),
+  totalCount: z.number().int().nonnegative(),
+})
+
+export type PublicPaginatedUsers = z.infer<typeof publicPaginatedUsersSchema>
+
+export type SearchUser = FullUser | PublicUser
+
+export const isFullUser = (user: SearchUser): user is FullUser => 'username' in user

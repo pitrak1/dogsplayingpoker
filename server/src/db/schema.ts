@@ -9,6 +9,7 @@ import {
   geometry,
 } from 'drizzle-orm/pg-core'
 import { relations, getTableColumns } from 'drizzle-orm'
+import { publicUserSchema } from 'dogsplayingpoker-shared/user'
 
 export type UserRow = typeof users.$inferSelect
 export type NewUserRow = typeof users.$inferInsert
@@ -48,6 +49,18 @@ export const users = pgTable('users', {
 const { password: _password, ...userColumns } = getTableColumns(users)
 export const safeUserColumns = userColumns
 export type SafeUserRow = Omit<UserRow, 'password'>
+
+const pickColumns = <T extends Record<string, unknown>, K extends keyof T>(
+  cols: T,
+  keys: readonly K[],
+): Pick<T, K> =>
+  Object.fromEntries(keys.map((k) => [k, cols[k]])) as Pick<T, K>
+
+// This is a restricted form of user that is only showed when the user is not authenticated
+export const publicUserColumns = pickColumns(
+  getTableColumns(users),
+  publicUserSchema.keyof().options,
+)
 
 export const pets = pgTable('pets', {
   id: serial('id').primaryKey(),

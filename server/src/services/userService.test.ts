@@ -144,6 +144,7 @@ describe('userService.searchUsersNearby', () => {
     swLat: 41.85, swLng: -87.70,
     neLat: 41.95, neLng: -87.55,
     centerLat: 41.88, centerLng: -87.63,
+    isAuthenticated: true as const
   }
 
   it('includes users inside the envelope', async () => {

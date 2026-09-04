@@ -1,15 +1,14 @@
 import { useRef, useEffect } from 'react'
 import { useMapboxMap } from '@/hooks/useMapboxMap'
-import type { FullUser } from 'dogsplayingpoker-shared/user'
-import { addUserRange, removeUserRange } from '@/lib/maps'
+import { addUserRange, removeUserRange, type MarkerUser } from '@/lib/maps'
 import type { MapPosition } from 'dogsplayingpoker-shared/common'
 import { useMapboxMapMarkers } from '@/hooks/useMapboxMapMarkers'
 import { renderUserMarker } from '@/lib/maps'
 import './userMap.scss'
 
-type MapProps = {
-  users: FullUser[] | FullUser
-  highlightedUser?: FullUser | null
+type MapProps<U extends MarkerUser> = {
+  users: U[] | U
+  highlightedUser?: U | null
   initialPosition: MapPosition
   caption?: string
   /* If you lock movement and do not provide an onScroll/onDoubleClick, zooming is centered */
@@ -19,12 +18,12 @@ type MapProps = {
   onMapMove?: (map: mapboxgl.Map) => void
   onScroll?: (map: mapboxgl.Map, e: WheelEvent) => void
   onDoubleClick?: (map: mapboxgl.Map, e: MouseEvent) => void
-  onClickMarker?: (user: FullUser) => void
-  onHoverMarker?: (user: FullUser | null) => void
+  onClickMarker?: (user: U) => void
+  onHoverMarker?: (user: U | null) => void
   children?: React.ReactNode
 }
 
-export function UserMap({ 
+export function UserMap<U extends MarkerUser>({ 
   users, 
   highlightedUser, 
   initialPosition,
@@ -37,7 +36,7 @@ export function UserMap({
   onClickMarker,
   onHoverMarker,
   children
-}: MapProps) {
+}: MapProps<U>) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const { mapRef } = useMapboxMap({
     container: mapContainerRef,
@@ -49,7 +48,7 @@ export function UserMap({
     onDoubleClick,
   })
   const { markerRootsRef } = useMapboxMapMarkers({ mapRef, users, onClickMarker, onHoverMarker })
-  const previousHighlightedUserRef = useRef<FullUser | null>(null)
+  const previousHighlightedUserRef = useRef<U | null>(null)
 
   useEffect(() => {
     if (!mapRef.current) return

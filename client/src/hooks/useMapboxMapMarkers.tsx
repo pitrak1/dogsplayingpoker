@@ -1,21 +1,20 @@
 import { useEffect, useRef } from 'react'
-import { FullUser } from 'dogsplayingpoker-shared/user'
 import type { Root } from 'react-dom/client'
-import { addUserMarker } from '@/lib/maps'
+import { addUserMarker, type MarkerUser } from '@/lib/maps'
 
-type Props = {
+type Props<U extends MarkerUser> = {
   mapRef: React.RefObject<mapboxgl.Map | null>
-  users: FullUser[] | FullUser
-  onClickMarker?: (user: FullUser) => void
-  onHoverMarker?: (user: FullUser | null) => void
+  users: U[] | U
+  onClickMarker?: (user: U) => void
+  onHoverMarker?: (user: U | null) => void
 }
 
-export const useMapboxMapMarkers = ({
+export const useMapboxMapMarkers = <U extends MarkerUser>({
   mapRef,
   users,
   onClickMarker,
   onHoverMarker
-}: Props) => {
+}: Props<U>) => {
   const markersRef = useRef(new Map<number, mapboxgl.Marker>())
   const markerRootsRef = useRef<Map<number, Root>>(new Map())
 
@@ -26,7 +25,7 @@ export const useMapboxMapMarkers = ({
     const markers = markersRef.current
     const roots = markerRootsRef.current
 
-    const registerUserMarker = (user: FullUser) => {
+    const registerUserMarker = (user: U) => {
       if (!user.location) return
 
       // Render the UserAvatar component and attach the onClick handler
