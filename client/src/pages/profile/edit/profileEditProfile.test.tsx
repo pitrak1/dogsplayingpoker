@@ -19,6 +19,7 @@ const mockAuth = (overrides?: Partial<FullUser>) => {
   vi.spyOn(authContext, 'setAuthUser').mockImplementation(setAuthUser)
   vi.spyOn(authContext, 'useAuth').mockReturnValue({
     user,
+    ready: true,
     setAuth: vi.fn(),
     clearAuth: vi.fn(),
   })

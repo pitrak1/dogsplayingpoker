@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import * as userService from '@/services/userService'
-import { setRefreshCookie, getRefreshCookie } from '@/lib/auth'
+import { setRefreshCookie, getRefreshCookie, clearRefreshCookie } from '@/lib/auth'
 import { AppEnv } from '../types'
 import { AuthError, ConflictError } from '@/lib/errors'
 
@@ -48,13 +48,14 @@ export const authRoutes = new Hono<AppEnv>()
       throw e
     }
   })
-  .post('/refresh', (c) => {
+  .post('/refresh', async (c) => {
     const token = getRefreshCookie(c)
     if (!token) return c.json({ message: 'No refresh token' }, 401)
     try {
-      const { authToken } = userService.refreshAccessToken(token)
-      return c.json({ authToken })
+      const { authToken, user } = await userService.refreshAccessToken(token)
+      return c.json({ authToken, user })
     } catch {
+      clearRefreshCookie(c)
       return c.json({ message: 'Invalid or expired refresh token' }, 401)
     }
   })

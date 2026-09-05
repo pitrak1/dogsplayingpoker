@@ -3,6 +3,7 @@ TODO List:
 - Initial deploy - DONE 8/18
 - comb through type naming - DONE 9/1
 - add strict zod testing for server contract tests/audit required fields for each endpoint
+- Add proper logout support on server side
 - Better loading display for different pages
 - Better work in progress for different pages
 - socketing

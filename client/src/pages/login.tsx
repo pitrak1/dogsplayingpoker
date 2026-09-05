@@ -1,5 +1,5 @@
 import { ErrorBanner } from '@/components/forms/errorBanner'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth'
 import { useLogin } from '@/api/users'
 import { ApiError } from '@/api/errors'
@@ -7,6 +7,9 @@ import { PasswordInput, TextInput, Button } from '@mantine/core'
 import { useFormValidation } from '@/hooks/useFormValidation'
 import { z } from 'zod'
 import './login.scss'
+
+// this isn't strictly necessary, but useLocation's Location type has state typed as `any`
+type LoginLocationState = { from?: { pathname: string } } | null
 
 const loginSchema = z.object({
   email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email'}),
@@ -32,7 +35,9 @@ export function Login() {
     } = useFormValidation<LoginFormState, typeof loginSchema>(emptyFormState, loginSchema)
   const { mutateAsync: loginUser, isPending } = useLogin()
   const { setAuth } = useAuth()
+  const location = useLocation()
   const navigate = useNavigate()
+  const from = (location.state as LoginLocationState)?.from?.pathname ?? '/'
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -44,7 +49,7 @@ export function Login() {
     try {
       const { authToken, user } = await loginUser(result.data)
       setAuth(authToken, user)
-      navigate('/', { replace: true })
+      navigate(from, { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.field) {

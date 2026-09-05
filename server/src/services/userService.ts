@@ -74,9 +74,11 @@ export const createUser = async (input: CreateUserInput) => {
   }
 }
 
-export const refreshAccessToken = (refreshToken: string) => {
+export const refreshAccessToken = async (refreshToken: string) => {
   const payload = verifyRefreshToken(refreshToken)
-  return { authToken: generateAuthToken(payload.userId) }
+  const user = await getFullUserById(payload.userId)
+  if (!user) throw new AuthError('User no longer exists')
+  return { authToken: generateAuthToken(user.id), user }
 }
 
 type SearchParams = SearchUserInput & { isAuthenticated: boolean }

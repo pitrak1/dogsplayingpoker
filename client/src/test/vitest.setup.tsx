@@ -29,7 +29,7 @@ Object.defineProperty(window, 'localStorage', {
 })
 
 import { useEffect } from 'react'
-import { vi } from 'vitest'
+import { beforeEach, vi } from 'vitest'
 
 vi.mock('@/components/userMap', () => ({
   UserMap: ({ children, onMapReady, isBlocked }: any) => {
@@ -73,3 +73,20 @@ export const clearAllCookies = () => {
     document.cookie = `${name}=; path=/; max-age=0`
   })
 }
+// AuthProvider calls /auth/refresh on mount when there's no access token cookie, and
+// jsdom's fetch can't resolve relative URLs. Stub fetch globally and default every test
+// to "no session" (401). restoreMocks resets implementations between tests, so the
+// default is re-applied in beforeEach rather than set once here.
+export const mockFetch = vi.fn()
+vi.stubGlobal('fetch', mockFetch)
+
+beforeEach(() => {
+  mockFetch.mockReset()
+  mockFetch.mockResolvedValue(new Response(null, { status: 401 }))
+})
+
+export const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })

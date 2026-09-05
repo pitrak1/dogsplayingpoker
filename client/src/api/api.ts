@@ -1,4 +1,5 @@
-import { rawFetch, BASE_URL } from './fetch'
+import { rawFetch } from './fetch'
+import { BASE_URL } from '@/constants/api'
 import { ApiError } from './errors'
 import { apiErrorSchema } from 'dogsplayingpoker-shared/error'
 import { z } from 'zod'

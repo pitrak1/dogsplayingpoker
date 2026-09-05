@@ -3,6 +3,7 @@ import { fullUserSchema, type FullUser } from 'dogsplayingpoker-shared/user'
 import { setCookie, getCookie, deleteCookie } from '@/lib/cookies'
 import { useQueryClient } from '@tanstack/react-query'
 import { socket } from '@/socket'
+import { refreshAuthToken } from '@/api/refresh'
 
 const AUTH_MAX_AGE = 15 * 60
 const AUTH_TOKEN_KEY = 'authToken'
@@ -13,7 +14,11 @@ let _setUserState: ((user: FullUser | null) => void) | null = null
 /* eslint-disable react-refresh/only-export-components */
 export const getAuthToken = () => getCookie(AUTH_TOKEN_KEY)
 export const setAuthToken = (token: string) => setCookie(AUTH_TOKEN_KEY, token, AUTH_MAX_AGE)
-export const clearAuth = () => deleteCookie(AUTH_TOKEN_KEY)
+export const clearAuth = () => {
+  deleteCookie(AUTH_TOKEN_KEY)
+  deleteCookie(USER_KEY)
+  _setUserState?.(null)
+}
 export const setAuthUser = (user: FullUser) => {
   setCookie(USER_KEY, JSON.stringify(user), AUTH_MAX_AGE)
   _setUserState?.(user)
@@ -36,6 +41,7 @@ const readStoredUser = (): FullUser | null => {
 
 type AuthContextType = {
   user: FullUser | null
+  ready: boolean
   setAuth: (token: string, user: FullUser) => void
   clearAuth: () => void
 }
@@ -44,15 +50,31 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<FullUser | null>(readStoredUser)
+  const [ready, setReady] = useState(() => !!getCookie(AUTH_TOKEN_KEY))
   _setUserState = setUser
   const queryClient = useQueryClient()
 
+  // The ready flag indicates whether we are done finding out if we have a token or not
+  // This effect makes it so when the app first loads, we follow one of two paths:
+  // 1. If we have a token, we connect the socket immediately
+  // 2. If we don't have a token, we attempt to refresh it and then connect the socket if successful
   useEffect(() => {
-    const token = getCookie(AUTH_TOKEN_KEY)
-    if (token && !socket.connected) {
-      socket.auth = { token }
-      socket.connect()
+    const connectSocket = () => {
+      const token = getCookie(AUTH_TOKEN_KEY)
+      if (token && !socket.connected) {
+        socket.auth = { token }
+        socket.connect()
+      }
     }
+
+    if (getCookie(AUTH_TOKEN_KEY)) {
+      connectSocket()
+      return
+    }
+    
+    refreshAuthToken()
+      .then(connectSocket)
+      .finally(() => setReady(true))
   }, [])
 
   const setAuth = (token: string, user: FullUser) => {
@@ -72,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setAuth, clearAuth }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, ready, setAuth, clearAuth }}>{children}</AuthContext.Provider>
   )
 }
 
