@@ -1,6 +1,6 @@
 @use '@/styles/global' as *;
 
-.about {
+.privacy {
   @include flex-display(column, 1rem, flex-start, center);
   padding: 2rem 0 5rem 0;
 

@@ -1,4 +1,4 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, NavLink, Accordion } from "@mantine/core";
 
 export const theme = createTheme({
   colors: {
@@ -45,5 +45,11 @@ export const theme = createTheme({
     Button: {
       defaultProps: { color: 'brand' },
     },
+    NavLink: NavLink.extend({
+      styles: { label: { fontSize: 'var(--mantine-font-size-md)' } },
+    }),
+    Accordion: Accordion.extend({
+      styles: { label: { fontWeight: 'bold' }}
+    })
   },
 })

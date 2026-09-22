@@ -10,15 +10,19 @@ import { ProfileEdit } from '@/pages/profile/edit/profileEdit'
 import { Chats } from '@/pages/chats/chats'
 import { ChatInvites } from '@/pages/chatInvites/chatInvites'
 import { RequireAuth } from './components/requireAuth'
+import { ScrollToHash } from './components/scrollToHash'
+import { Privacy } from './pages/privacy'
 
 export function App() {
   return (
     <BrowserRouter>
+      <ScrollToHash />
       <Header />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile/:username" element={<RequireAuth><Profile /></RequireAuth>} />

@@ -2,4 +2,8 @@
 
 .header-nav__button {
   @include borderless-button();
+
+  &:hover {
+    background: var(--mantine-color-brand-3);
+  }
 }
