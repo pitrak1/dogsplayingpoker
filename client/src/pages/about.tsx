@@ -50,6 +50,14 @@ export function About() {
       <section id="faq">
         <h2>FAQ</h2>
         <Accordion order={3} value={value} onChange={setValue}>
+          <Accordion.Item value="app-name" w="800px" id="app-name">
+            <Accordion.Control>Why is it called "DogsPlayingPoker"?</Accordion.Control>
+            <Accordion.Panel>
+              <p>The whole concept of the app is for dogs to have friends.  And I thought, what would a group of dog friends do together?  Poker, of course.</p>
+              <p>I looked up the name, and while I was worried it was the name of a painting, it's actually a colloquial name for a group of paintings.  I think that should make the name open for re-use, but I don't know the law.</p>
+            </Accordion.Panel>
+          </Accordion.Item>
+
           <Accordion.Item value="direct-percentage-payment-model" w="800px" id="direct-percentage-payment-model">
             <Accordion.Control>What's wrong with a direct percentage payment model?</Accordion.Control>
             <Accordion.Panel>
