@@ -6,7 +6,7 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     restoreMocks: true,
-    setupFiles: ['./src/test/vitest.setup.ts'],
+    setupFiles: ['./src/test/loadEnv.ts', './src/test/vitest.setup.ts'],
     globalSetup: ['./src/test/vitest.globalSetup.ts'],
     fileParallelism: false,
     include: ['src/**/*.test.ts']

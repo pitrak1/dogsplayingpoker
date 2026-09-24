@@ -7,6 +7,7 @@ import { PG_UNIQUE_VIOLATION, AuthError, ConflictError } from '@/lib/errors'
 import { DatabaseError } from 'pg'
 import type { NewUserRow } from '@/db/schema'
 import type { SQL } from 'drizzle-orm'
+import { normalizeEmail } from '@/lib/email'
 import type { CreateUserInput, EditUserInput, PublicPaginatedUsers, PaginatedUsers, SearchUserInput } from 'dogsplayingpoker-shared/user'
 
 const getFullUser = async (user: SafeUserRow) => {
@@ -34,7 +35,7 @@ export const getUserByUsername = async (username: string) => {
 
 export const loginUser = async (email: string, password: string) => {
   const rows = await db.select().from(users)
-    .where(and(eq(users.email, email), isNull(users.deletedAt)))
+    .where(and(eq(users.email, normalizeEmail(email)), isNull(users.deletedAt)))
   const row = rows[0]
   if (!row) throw new AuthError('Invalid credentials')
   const valid = await bcrypt.compare(password, row.password)
@@ -56,7 +57,7 @@ export const createUser = async (input: CreateUserInput) => {
     const hashed = await bcrypt.hash(input.password, 12)
     const rows = await db.insert(users).values({
       username: input.username,
-      email: input.email,
+      email: normalizeEmail(input.email),
       password: hashed,
     }).returning(safeUserColumns)
     const user = rows[0]

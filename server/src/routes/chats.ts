@@ -5,6 +5,8 @@ import { idInputSchema, paginationInputSchema } from 'dogsplayingpoker-shared/co
 import { getChatsForUser, getChatMessages } from '@/services/chatService'
 import * as chatService from '@/services/chatService'
 import { createMessageInputSchema } from 'dogsplayingpoker-shared/message'
+import { rateLimit, byUser } from '@/lib/rateLimit'
+import { messageLimiter } from '@/lib/limiters'
 
 export const chatRoutes = new Hono<AuthedEnv>()
   .get('/', zValidator('query', paginationInputSchema), async (c) => {
@@ -21,7 +23,7 @@ export const chatRoutes = new Hono<AuthedEnv>()
     const messages = await getChatMessages(id);
     return c.json(messages)
   })
-  .post('/:id', zValidator('param', idInputSchema), zValidator('json', createMessageInputSchema), async (c) => {
+  .post('/:id', rateLimit(messageLimiter, byUser), zValidator('param', idInputSchema), zValidator('json', createMessageInputSchema), async (c) => {
       const userId = c.get('userId')
       const { id } = c.req.valid('param')
       const input = c.req.valid('json')

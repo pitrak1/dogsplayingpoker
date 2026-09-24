@@ -9,3 +9,8 @@ services:
       - '5433:5432'  # 5433 so it doesn't collide with any local Postgres on 5432
     tmpfs:
       - /var/lib/postgresql/data  # in-memory storage, faster, wiped on restart
+  redis-test:
+    image: redis:7-alpine
+    ports:
+      - '6380:6379'  # 6380 so it doesn't collide with any local Redis on 6379
+    command: redis-server --save "" --appendonly no  # no persistence, wiped on restart

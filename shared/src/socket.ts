@@ -4,6 +4,8 @@ import { User } from './user'
 export type ServerToClientEvents = {
  messageReceived: (user: User, message: Message) => void
  messageNotification: (chatId: number) => void
+ // Emitted instead of messageReceived when the sender is over the message limit.
+ rateLimited: (retryAfterSeconds: number) => void
 }
 
 export type ClientToServerEvents = {

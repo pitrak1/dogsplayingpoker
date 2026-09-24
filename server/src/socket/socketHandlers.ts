@@ -1,6 +1,8 @@
 import { TypedServer, TypedSocket } from "./types"
 import { createMessage } from '@/services/chatService'
 import { getUserById } from "@/services/userService"
+import { tryConsume } from '@/lib/rateLimit'
+import { messageLimiter } from '@/lib/limiters'
 
 export const registerUser = (io: TypedServer, socket: TypedSocket) => void(async () => {
   const userId = socket.data.userId
@@ -25,6 +27,11 @@ const leaveChat = async (socket: TypedSocket, chatId: number) => {
 const sendMessage = async (io: TypedServer, socket: TypedSocket, chatId: number, content: string) => {
   console.log('sent message', socket.data.userId, chatId, content)
   const userId = socket.data.userId
+  const allowed = await tryConsume(messageLimiter, String(userId))
+  if (!allowed.ok) {
+    socket.emit('rateLimited', allowed.retryAfter)
+    return
+  }
   const message = await createMessage(userId, chatId, { content })
   const user = await getUserById(userId)
   io.to(`chat:${chatId}`).emit('messageReceived', user, message)

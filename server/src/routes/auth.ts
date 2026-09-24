@@ -5,6 +5,8 @@ import * as userService from '@/services/userService'
 import { setRefreshCookie, getRefreshCookie, clearRefreshCookie } from '@/lib/auth'
 import { AppEnv } from '../types'
 import { AuthError, ConflictError } from '@/lib/errors'
+import { tryConsume, hashEmail } from '@/lib/rateLimit'
+import { loginAccountLimiter } from '@/lib/limiters'
 
 const loginSchema = z.object({
   email: z.email(),
@@ -20,8 +22,15 @@ const registerSchema = z.object({
 export const authRoutes = new Hono<AppEnv>()
   .post('/login', zValidator('json', loginSchema), async (c) => {
     const body = c.req.valid('json')
+    const limiterKey = hashEmail(body.email)
+    const allowed = await tryConsume(loginAccountLimiter, limiterKey)
+    if (!allowed.ok) {
+      c.header('Retry-After', String(allowed.retryAfter))
+      return c.json({ message: 'Too many failed login attempts' }, 429)
+    }
     try {
       const { authToken, refreshToken, user } = await userService.loginUser(body.email, body.password)
+      await loginAccountLimiter.delete(limiterKey)
       setRefreshCookie(c, refreshToken)
       return c.json({ authToken, user })
     } catch (e) {

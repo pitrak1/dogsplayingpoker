@@ -13,6 +13,8 @@ import { zValidator } from '@hono/zod-validator'
 import { createChatInviteInputSchema } from 'dogsplayingpoker-shared/invite'
 import { paginationInputSchema } from 'dogsplayingpoker-shared/common'
 import { idInputSchema } from 'dogsplayingpoker-shared/common'
+import { rateLimit, byUser } from '@/lib/rateLimit'
+import { inviteLimiter } from '@/lib/limiters'
 
 export const inviteRoutes = new Hono<AuthedEnv>()
   .get('/sent', zValidator('query', paginationInputSchema), async (c) => {
@@ -55,6 +57,7 @@ export const inviteRoutes = new Hono<AuthedEnv>()
   )
   .post(
     '/',
+    rateLimit(inviteLimiter, byUser),
     zValidator('json', createChatInviteInputSchema),
     async (c) => {
       const userId = c.get('userId')
